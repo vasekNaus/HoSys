@@ -47,11 +47,18 @@ partial class Program
     var folderPath = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\PowerBI\202603";
     var connStr = "Server=.\\SQL2022;Database=Hockey;Trusted_Connection=True;TrustServerCertificate=True;";
 
-    foreach (var file in Directory.EnumerateFiles(folderPath, "*.xlsx"))
-    {
-      //if (file.Contains("Krsová") || file.Contains("Kuchař"))
-      await ImportRun.ImportAsync(file, connStr);
-    }
+    //foreach (var file in Directory.EnumerateFiles(folderPath, "*.xlsx"))
+    //{
+    //  //if (file.Contains("Krsová") || file.Contains("Kuchař"))
+    //  await ImportRun.ImportAsync(file, connStr);
+    //}
+
+    // Import zápasů z games.xlsx
+    var db = host.Services.GetRequiredService<SportSys.Database.Context.SportSysDbContext>();
+    using var http = new HttpClient();
+    var gamesFile = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\Source\SportSys\src\SportSys.ConsoleApp\games.xlsx";
+    await MatchImportRun.ImportAsync(gamesFile, db, http);
+
     Console.WriteLine("Done");
     Console.ReadLine();
   }
