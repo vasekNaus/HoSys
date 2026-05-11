@@ -1,10 +1,10 @@
 -- VIEW zastupující abstraktní entitu SportEvent (TPC – Table Per Concrete type).
 -- Tabulka SportEvent v databázi neexistuje; konkrétní entity jsou Training a Match.
 -- VIEW slouží pro dotazy přes obě tabulky najednou.
--- POZOR: dbo.Training musí mít Id nastavené přes DEFAULT (NEXT VALUE FOR [dbo].[SportEventSeq]),
+-- POZOR: sport.Training musí mít Id nastavené přes DEFAULT (NEXT VALUE FOR [sport].[SportEventSeq]),
 --        nikoliv přes IDENTITY, aby byly Id jedinečné napříč oběma tabulkami.
 
-CREATE VIEW [dbo].[SportEvent]
+CREATE VIEW [sport].[SportEvent]
 AS
 SELECT
 	[Id],
@@ -17,7 +17,7 @@ SELECT
 	[DurationMinutes],
 	[Note],
 	'Training' AS [EventType]
-FROM [dbo].[Training]
+FROM [sport].[Training]
 UNION ALL
 SELECT
 	[Id],
@@ -30,5 +30,5 @@ SELECT
 	[DurationMinutes],
 	[Note],
 	'Match' AS [EventType]
-FROM [dbo].[Match]
+FROM [sport].[Match]
 GO

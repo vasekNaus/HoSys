@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[Opponent](
+CREATE TABLE [sport].[Opponent](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
 	[Address] [nvarchar](200) NOT NULL,
@@ -11,9 +11,9 @@ CREATE TABLE [dbo].[Opponent](
 )
 GO
 
-ALTER TABLE [dbo].[Opponent]  WITH CHECK ADD  CONSTRAINT [FK_Opponent_IceRink] FOREIGN KEY([HomeIceRink_Id])
-REFERENCES [dbo].[IceRink] ([Id])
+ALTER TABLE [sport].[Opponent]  WITH CHECK ADD  CONSTRAINT [FK_Opponent_IceRink] FOREIGN KEY([HomeIceRink_Id])
+REFERENCES [sport].[IceRink] ([Id])
 GO
 
-ALTER TABLE [dbo].[Opponent] CHECK CONSTRAINT [FK_Opponent_IceRink]
+ALTER TABLE [sport].[Opponent] CHECK CONSTRAINT [FK_Opponent_IceRink]
 GO

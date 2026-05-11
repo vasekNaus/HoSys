@@ -1,4 +1,4 @@
-CREATE SEQUENCE [dbo].[SportEventSeq]
+CREATE SEQUENCE [sport].[SportEventSeq]
 	AS [int]
 	START WITH 1
 	INCREMENT BY 1

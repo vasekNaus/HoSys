@@ -6,16 +6,19 @@ Informační systém pro sportovní organizaci. Slouží jako nadstavba nad exis
 
 | Vrstva | Technologie |
 |---|---|
-| Backend | ASP.NET Core (.NET 10), Razor Pages / Blazor Server |
-| Databáze | Microsoft SQL Server, Entity Framework Core 10 |
-| Frontend | HTML, CSS (bez Bootstrapu), Vanilla JS (bez jQuery) |
-| API | REST (ASP.NET Core Minimal API / Controllers) |
+| Backend | ASP.NET Core (.NET 10), Razor Pages + Blazor Server |
+| Databáze | Microsoft SQL Server 2019+, Entity Framework Core 10 |
+| ORM / migrace | EF Core 10 – TPC dědičnost, sdílené DB sekvence, `dotnet ef` |
+| Frontend | HTML, CSS (vlastní, bez frameworků), Vanilla JS |
+| API | ASP.NET Core Minimal API (selektivně) |
+| Import dat | ExcelDataReader (`.xlsx` → SQL Server) |
 
 ## Předpoklady
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- Microsoft SQL Server 2019+ (nebo SQL Server Express)
+- Microsoft SQL Server 2019+ (nebo SQL Server Express / LocalDB)
 - Visual Studio 2022+ nebo VS Code s rozšířením C#
+- EF Core CLI: `dotnet tool install --global dotnet-ef`
 
 ## Rychlý start
 
@@ -24,14 +27,16 @@ Informační systém pro sportovní organizaci. Slouží jako nadstavba nad exis
 git clone <url>
 
 # 2. Nastavit connection string v appsettings.json
-# "ConnectionStrings": { "DefaultConnection": "Server=...;Database=SportSys;..." }
+# "ConnectionStrings": { "DefaultConnection": "Server=.;Database=SportSys;Trusted_Connection=True;" }
 
-# 3. Aplikovat databázové migrace
+# 3. Aplikovat databázové migrace (EF Core CLI)
 dotnet ef database update --project src/SportSys.Database
 
 # 4. Spustit aplikaci
 dotnet run --project src/SportSys.Web
 ```
+
+> Migrace automaticky vytvoří schéma včetně sekvence `SportEventSeq` sdílené mezi `Training` a `Match` (TPC vzor).
 
 ## Struktura projektu
 
