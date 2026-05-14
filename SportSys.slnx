@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Apollo/">
+    <Project Path="src/Apollo/MultiTarget/Apollo.HttpService/Apollo.HttpService.csproj" />
+  </Folder>
   <Project Path="src/SportSys.ConsoleApp/SportSys.ConsoleApp.csproj" />
   <Project Path="src/SportSys.Database/SportSys.Database.csproj" Id="3566e93e-2b8c-44b7-893a-1cef309cd633" />
 </Solution>

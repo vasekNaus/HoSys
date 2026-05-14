@@ -5,7 +5,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>sportstys-consoleapp-secrets</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="MatchImportRun.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.8.0" />
@@ -17,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Apollo\MultiTarget\Apollo.HttpService\Apollo.HttpService.csproj" />
     <ProjectReference Include="..\SportSys.Database\SportSys.Database.csproj" />
   </ItemGroup>
 
