@@ -18,13 +18,16 @@ public partial class Coach
     public int Id { get; set; }
 
     [StringLength(50)]
-    public string FirstName { get; set; } = null!;
+    public required string FirstName { get; set; }
 
     [StringLength(50)]
-    public string LastName { get; set; } = null!;
+    public required string LastName { get; set; }
 
+    // Persisted computed column: (([FirstName]+N' ')+[LastName]) — hodnota pochází výhradně z DB.
+    // Setter je private, aby se předešlo ručnímu nastavení hodnoty, která bude přepsána DB.
+    // ⚠️ Při regeneraci EF Core Power Tools tuto změnu obnovte.
     [StringLength(101)]
-    public string FullName { get; set; } = null!;
+    public string FullName { get; private set; } = null!;
 
     [InverseProperty("Coach")]
     public virtual ICollection<CoachTrainingEntitlement> CoachTrainingEntitlementCoaches { get; set; } = new List<CoachTrainingEntitlement>();

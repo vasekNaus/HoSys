@@ -1,0 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SportSys.Database.Models.sportSchema;
+
+namespace SportSys.Database.Configurations;
+
+public class TrainingConfiguration : IEntityTypeConfiguration<Training>
+{
+    public void Configure(EntityTypeBuilder<Training> builder)
+    {
+        builder.Property(e => e.Id)
+               .HasDefaultValueSql("(NEXT VALUE FOR [sport].[SportEventSeq])", "DF_Training_Id");
+
+        builder.Property(e => e.DurationMinutes)
+               .HasComputedColumnSql("(datediff(minute,[TimeFrom],[TimeTo]))", stored: true);
+    }
+}

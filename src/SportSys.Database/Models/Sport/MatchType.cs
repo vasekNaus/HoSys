@@ -18,7 +18,7 @@ public partial class MatchType
     public int Id { get; set; }
 
     [StringLength(100)]
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     [InverseProperty("MatchType")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();

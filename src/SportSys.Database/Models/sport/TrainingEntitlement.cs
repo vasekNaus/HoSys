@@ -21,7 +21,7 @@ public partial class TrainingEntitlement
 
     [StringLength(10)]
     [Unicode(false)]
-    public string SeasonCategory_Name { get; set; } = null!;
+    public required string SeasonCategory_Name { get; set; }
 
     public int TrainingType_Id { get; set; }
 
@@ -39,13 +39,16 @@ public partial class TrainingEntitlement
 
     [ForeignKey("Season_Id, SeasonCategory_Name")]
     [InverseProperty("TrainingEntitlements")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 
     [ForeignKey("TrainingPhase_Id")]
     [InverseProperty("TrainingEntitlements")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPhase TrainingPhase { get; set; } = null!;
 
     [ForeignKey("TrainingType_Id")]
     [InverseProperty("TrainingEntitlements")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingType TrainingType { get; set; } = null!;
 }

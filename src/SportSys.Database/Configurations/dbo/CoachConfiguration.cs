@@ -1,0 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SportSys.Database.Models.dboSchema;
+
+namespace SportSys.Database.Configurations;
+
+public class CoachConfiguration : IEntityTypeConfiguration<Coach>
+{
+    public void Configure(EntityTypeBuilder<Coach> builder)
+    {
+        builder.Property(e => e.FullName)
+               .HasComputedColumnSql("(([FirstName]+N' ')+[LastName])", stored: true);
+    }
+}

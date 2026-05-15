@@ -21,18 +21,19 @@ public partial class SeasonCategory
     [Key]
     [StringLength(10)]
     [Unicode(false)]
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     public int Order { get; set; }
 
     [StringLength(4000)]
-    public string BirthYears { get; set; } = null!;
+    public required string BirthYears { get; set; }
 
     [InverseProperty("SeasonCategory")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
     [ForeignKey("Season_Id")]
     [InverseProperty("SeasonCategories")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Season Season { get; set; } = null!;
 
     [InverseProperty("SeasonCategory")]

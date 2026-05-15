@@ -18,7 +18,7 @@ public partial class Season
     public int Id { get; set; }
 
     [StringLength(50)]
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     public DateOnly From { get; set; }
 

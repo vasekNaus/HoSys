@@ -18,7 +18,7 @@ public partial class TrainingPhase
     public int Id { get; set; }
 
     [StringLength(50)]
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     [InverseProperty("TrainingPhase")]
     public virtual ICollection<Training> Training { get; set; } = new List<Training>();

@@ -26,14 +26,16 @@ public partial class CoachTraining
 
     [StringLength(50)]
     [Unicode(false)]
-    public string Note { get; set; } = null!;
+    public required string Note { get; set; }
 
     [ForeignKey("Coach_Id")]
     [InverseProperty("CoachTrainings")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Coach Coach { get; set; } = null!;
 
     [ForeignKey("ParticipationType_Id")]
     [InverseProperty("CoachTrainings")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual ParticipationType ParticipationType { get; set; } = null!;
 
     [ForeignKey("Training_Id")]

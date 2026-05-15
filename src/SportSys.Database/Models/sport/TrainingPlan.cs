@@ -21,7 +21,7 @@ public partial class TrainingPlan
 
     [StringLength(10)]
     [Unicode(false)]
-    public string SeasonCategory_Name { get; set; } = null!;
+    public required string SeasonCategory_Name { get; set; }
 
     public int TrainingType_Id { get; set; }
 
@@ -32,7 +32,7 @@ public partial class TrainingPlan
     public DateOnly To { get; set; }
 
     [StringLength(100)]
-    public string Location { get; set; } = null!;
+    public required string Location { get; set; }
 
     [Precision(0)]
     public TimeOnly TimeFrom { get; set; }
@@ -44,13 +44,14 @@ public partial class TrainingPlan
 
     [StringLength(10)]
     [Unicode(false)]
-    public string DayName { get; set; } = null!;
+    public required string DayName { get; set; }
 
     [InverseProperty("TrainingPlan")]
     public virtual ICollection<CoachTrainingPlan> CoachTrainingPlans { get; set; } = new List<CoachTrainingPlan>();
 
     [ForeignKey("Season_Id, SeasonCategory_Name")]
     [InverseProperty("TrainingPlans")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 
     [InverseProperty("TrainingPlan")]
@@ -58,9 +59,11 @@ public partial class TrainingPlan
 
     [ForeignKey("TrainingPhase_Id")]
     [InverseProperty("TrainingPlans")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPhase TrainingPhase { get; set; } = null!;
 
     [ForeignKey("TrainingType_Id")]
     [InverseProperty("TrainingPlans")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingType TrainingType { get; set; } = null!;
 }

@@ -21,7 +21,7 @@ public partial class Match
 
     [StringLength(10)]
     [Unicode(false)]
-    public string SeasonCategory_Name { get; set; } = null!;
+    public required string SeasonCategory_Name { get; set; }
 
     public int IceRink_Id { get; set; }
 
@@ -37,7 +37,7 @@ public partial class Match
 
     [StringLength(50)]
     [Unicode(false)]
-    public string Note { get; set; } = null!;
+    public required string Note { get; set; }
 
     [StringLength(10)]
     [Unicode(false)]
@@ -55,21 +55,26 @@ public partial class Match
 
     [ForeignKey("IceRink_Id")]
     [InverseProperty("Matches")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual IceRink IceRink { get; set; } = null!;
 
     [ForeignKey("MatchType_Id")]
     [InverseProperty("Matches")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual MatchType MatchType { get; set; } = null!;
 
     [ForeignKey("Opponent_Id")]
     [InverseProperty("Matches")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Opponent Opponent { get; set; } = null!;
 
     [ForeignKey("Season_Id")]
     [InverseProperty("Matches")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Season Season { get; set; } = null!;
 
     [ForeignKey("Season_Id, SeasonCategory_Name")]
     [InverseProperty("Matches")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 }

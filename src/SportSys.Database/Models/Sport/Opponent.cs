@@ -18,13 +18,13 @@ public partial class Opponent
     public int Id { get; set; }
 
     [StringLength(100)]
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     [StringLength(200)]
-    public string Address { get; set; } = null!;
+    public required string Address { get; set; }
 
     [StringLength(100)]
-    public string City { get; set; } = null!;
+    public required string City { get; set; }
 
     public int? HomeIceRink_Id { get; set; }
 

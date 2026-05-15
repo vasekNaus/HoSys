@@ -31,9 +31,11 @@ public partial class CoachTrainingPlan
 
     [ForeignKey("Coach_Id")]
     [InverseProperty("CoachTrainingPlans")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Coach Coach { get; set; } = null!;
 
     [ForeignKey("TrainingPlan_Id")]
     [InverseProperty("CoachTrainingPlans")]
+    [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPlan TrainingPlan { get; set; } = null!;
 }
