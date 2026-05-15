@@ -11,15 +11,15 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("MatchType", Schema = "sport")]
-public partial class MatchType
+[Table("TrainingState", Schema = "sport")]
+public partial class TrainingState
 {
     [Key]
     public int Id { get; set; }
 
-    [StringLength(100)]
+    [StringLength(50)]
     public string Name { get; set; } = null!;
 
-    [InverseProperty("MatchType")]
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    [InverseProperty("TrainingState")]
+    public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 }

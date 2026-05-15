@@ -1,0 +1,121 @@
+﻿{
+   "CodeGenerationMode": 6,
+   "ContextClassName": "HockeyContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "IrregularWords": null,
+   "MinimumProductVersion": "2.6.1248",
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PluralRules": null,
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "SportSys.Database",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "SingularRules": null,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Coach]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CoachRole]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[CoachTraining]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[CoachTrainingEntitlement]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[CoachTrainingPlan]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[IceRink]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[Match]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[MatchType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[Opponent]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[ParticipationType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[Season]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[SeasonCategory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[Training]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[TrainingEntitlement]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[TrainingPhase]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[TrainingPlan]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[TrainingState]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[sport].[TrainingType]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": true,
+   "UseDatabaseNames": true,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseInternalAccessModifiersForSprocsAndFunctions": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": true,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": true,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": true,
+   "UseSchemaNamespaces": true,
+   "UseSpatial": true,
+   "UseT4": false,
+   "UseT4Split": false
+}

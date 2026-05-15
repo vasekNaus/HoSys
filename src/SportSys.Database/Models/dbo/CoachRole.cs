@@ -9,17 +9,17 @@ using SportSys.Database.Models.dboSchema;
 using SportSys.Database.Models.sportSchema;
 
 
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.dboSchema;
 
-[Table("MatchType", Schema = "sport")]
-public partial class MatchType
+[Table("CoachRole")]
+public partial class CoachRole
 {
     [Key]
     public int Id { get; set; }
 
-    [StringLength(100)]
+    [StringLength(50)]
     public string Name { get; set; } = null!;
 
-    [InverseProperty("MatchType")]
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    [InverseProperty("CoachRole")]
+    public virtual ICollection<CoachTrainingEntitlement> CoachTrainingEntitlementCoachRoles { get; set; } = new List<CoachTrainingEntitlement>();
 }

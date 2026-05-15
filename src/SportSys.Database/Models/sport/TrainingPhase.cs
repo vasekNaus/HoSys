@@ -11,27 +11,21 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("Opponent", Schema = "sport")]
-public partial class Opponent
+[Table("TrainingPhase", Schema = "sport")]
+public partial class TrainingPhase
 {
     [Key]
     public int Id { get; set; }
 
-    [StringLength(100)]
+    [StringLength(50)]
     public string Name { get; set; } = null!;
 
-    [StringLength(200)]
-    public string Address { get; set; } = null!;
+    [InverseProperty("TrainingPhase")]
+    public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 
-    [StringLength(100)]
-    public string City { get; set; } = null!;
+    [InverseProperty("TrainingPhase")]
+    public virtual ICollection<TrainingEntitlement> TrainingEntitlements { get; set; } = new List<TrainingEntitlement>();
 
-    public int? HomeIceRink_Id { get; set; }
-
-    [ForeignKey("HomeIceRink_Id")]
-    [InverseProperty("Opponents")]
-    public virtual IceRink? HomeIceRink { get; set; }
-
-    [InverseProperty("Opponent")]
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    [InverseProperty("TrainingPhase")]
+    public virtual ICollection<TrainingPlan> TrainingPlans { get; set; } = new List<TrainingPlan>();
 }
