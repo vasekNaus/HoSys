@@ -12,7 +12,7 @@ using SportSys.Database.Models.sportSchema;
 namespace SportSys.Database.Models.sportSchema;
 
 [PrimaryKey("Season_Id", "Name")]
-[Table("SeasonCategory", Schema = "sport")]
+[Table(nameof(SeasonCategory), Schema = Schemas.Sport)]
 public partial class SeasonCategory
 {
     [Key]
@@ -28,20 +28,15 @@ public partial class SeasonCategory
     [StringLength(4000)]
     public required string BirthYears { get; set; }
 
-    [InverseProperty("SeasonCategory")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
-    [ForeignKey("Season_Id")]
-    [InverseProperty("SeasonCategories")]
+    [ForeignKey(nameof(Season_Id))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Season Season { get; set; } = null!;
 
-    [InverseProperty("SeasonCategory")]
     public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 
-    [InverseProperty("SeasonCategory")]
     public virtual ICollection<TrainingEntitlement> TrainingEntitlements { get; set; } = new List<TrainingEntitlement>();
 
-    [InverseProperty("SeasonCategory")]
     public virtual ICollection<TrainingPlan> TrainingPlans { get; set; } = new List<TrainingPlan>();
 }

@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("Match", Schema = "sport")]
+[Table(nameof(Match), Schema = Schemas.Sport)]
 public partial class Match
 {
     [Key]
@@ -53,28 +53,20 @@ public partial class Match
 
     public int MatchType_Id { get; set; }
 
-    [ForeignKey("IceRink_Id")]
-    [InverseProperty("Matches")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual IceRink IceRink { get; set; } = null!;
 
-    [ForeignKey("MatchType_Id")]
-    [InverseProperty("Matches")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual MatchType MatchType { get; set; } = null!;
 
-    [ForeignKey("Opponent_Id")]
-    [InverseProperty("Matches")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Opponent Opponent { get; set; } = null!;
 
-    [ForeignKey("Season_Id")]
-    [InverseProperty("Matches")]
+    [ForeignKey(nameof(Season_Id))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Season Season { get; set; } = null!;
 
-    [ForeignKey("Season_Id, SeasonCategory_Name")]
-    [InverseProperty("Matches")]
+    [ForeignKey(nameof(Season_Id) + ", " + nameof(SeasonCategory_Name))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 }

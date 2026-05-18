@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("TrainingEntitlement", Schema = "sport")]
+[Table(nameof(TrainingEntitlement), Schema = Schemas.Sport)]
 public partial class TrainingEntitlement
 {
     [Key]
@@ -34,21 +34,15 @@ public partial class TrainingEntitlement
     [Column(TypeName = "decimal(5, 2)")]
     public decimal DurationHours { get; set; }
 
-    [InverseProperty("TrainingEntitlement")]
     public virtual ICollection<CoachTrainingEntitlement> CoachTrainingEntitlements { get; set; } = new List<CoachTrainingEntitlement>();
 
-    [ForeignKey("Season_Id, SeasonCategory_Name")]
-    [InverseProperty("TrainingEntitlements")]
+    [ForeignKey(nameof(Season_Id) + ", " + nameof(SeasonCategory_Name))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 
-    [ForeignKey("TrainingPhase_Id")]
-    [InverseProperty("TrainingEntitlements")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPhase TrainingPhase { get; set; } = null!;
 
-    [ForeignKey("TrainingType_Id")]
-    [InverseProperty("TrainingEntitlements")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingType TrainingType { get; set; } = null!;
 }

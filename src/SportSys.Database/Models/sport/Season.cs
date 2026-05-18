@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("Season", Schema = "sport")]
+[Table(nameof(Season), Schema = Schemas.Sport)]
 public partial class Season
 {
     [Key]
@@ -24,12 +24,9 @@ public partial class Season
 
     public DateOnly To { get; set; }
 
-    [InverseProperty("Season")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
-    [InverseProperty("Season")]
     public virtual ICollection<SeasonCategory> SeasonCategories { get; set; } = new List<SeasonCategory>();
 
-    [InverseProperty("Season")]
     public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 }

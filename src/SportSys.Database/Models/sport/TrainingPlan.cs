@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("TrainingPlan", Schema = "sport")]
+[Table(nameof(TrainingPlan), Schema = Schemas.Sport)]
 public partial class TrainingPlan
 {
     [Key]
@@ -46,24 +46,17 @@ public partial class TrainingPlan
     [Unicode(false)]
     public required string DayName { get; set; }
 
-    [InverseProperty("TrainingPlan")]
     public virtual ICollection<CoachTrainingPlan> CoachTrainingPlans { get; set; } = new List<CoachTrainingPlan>();
 
-    [ForeignKey("Season_Id, SeasonCategory_Name")]
-    [InverseProperty("TrainingPlans")]
+    [ForeignKey(nameof(Season_Id) + ", " + nameof(SeasonCategory_Name))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 
-    [InverseProperty("TrainingPlan")]
     public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 
-    [ForeignKey("TrainingPhase_Id")]
-    [InverseProperty("TrainingPlans")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPhase TrainingPhase { get; set; } = null!;
 
-    [ForeignKey("TrainingType_Id")]
-    [InverseProperty("TrainingPlans")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingType TrainingType { get; set; } = null!;
 }

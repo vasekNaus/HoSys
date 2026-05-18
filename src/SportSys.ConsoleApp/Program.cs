@@ -21,8 +21,8 @@ partial class Program
           var connectionString = context.Configuration.GetConnectionString("DefaultConnection");
 
           // Registrace DbContextu
-          services.AddDbContext<SportSysDbContext>(options => options.UseSqlServer(connectionString));
-
+          services.AddDbContext<SportSysDbContext>(options =>
+            options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
           // Registrace HttpClient jako singleton
           //services.AddHttpClient();
           // Registrace konfigurace MapyCom a HttpService jako singleton
@@ -35,10 +35,6 @@ partial class Program
     //await host.Services.GetRequiredService<App>().RunAsync();
 
     Console.WriteLine("Hello, World!");
-
-
-    //vytáhnu si službu databáze
-    //var dbContext = host.Services.GetRequiredService<SportSysDbContext>();
 
     //DateTime now = DateTime.Now;
     //var timeOnlyNow = TimeOnly.FromDateTime(now);
@@ -62,14 +58,16 @@ partial class Program
     //}
 
     // Import zápasů z games.xlsx
-    /*
-    var db = host.Services.GetRequiredService<SportSys.Database.Context.SportSysDbContext>();
-    var http = host.Services.GetRequiredService<IHttpClientFactory>().CreateClient();
-    var gamesFile = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\Source\SportSys\src\SportSys.ConsoleApp\games.xlsx";
-    await MatchImportRun.ImportAsync(gamesFile, db, http);
-    */
-    var httpService = host.Services.GetRequiredService<SportSys.ConsoleApp.HttpService>();
-    var result = await httpService.Search("Zimní station, Domažlice");
+
+    using var scope = host.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<SportSysDbContext>();
+    var coaches = dbContext.Coaches.ToList();
+    //var http = host.Services.GetRequiredService<IHttpClientFactory>().CreateClient();
+    //var gamesFile = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\Source\SportSys\src\SportSys.ConsoleApp\games.xlsx";
+    //await MatchImportRun.ImportAsync(gamesFile, db, http);
+    //*/
+   var httpService = host.Services.GetRequiredService<SportSys.ConsoleApp.HttpService>();
+   var result = await httpService.Search("Zimní station, Domažlice");
 
     Console.WriteLine("Done");
     Console.ReadLine();

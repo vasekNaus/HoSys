@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.dboSchema;
 
-[Table("CoachRole")]
+[Table(nameof(CoachRole), Schema = Schemas.Dbo)]
 public partial class CoachRole
 {
     [Key]
@@ -20,6 +20,5 @@ public partial class CoachRole
     [StringLength(50)]
     public required string Name { get; set; }
 
-    [InverseProperty("CoachRole")]
     public virtual ICollection<CoachTrainingEntitlement> CoachTrainingEntitlementCoachRoles { get; set; } = new List<CoachTrainingEntitlement>();
 }

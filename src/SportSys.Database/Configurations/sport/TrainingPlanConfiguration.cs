@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SportSys.Database.Models.sportSchema;
 
-namespace SportSys.Database.Configurations;
+namespace SportSys.Database.Configurations.sport;
 
 public class TrainingPlanConfiguration : IEntityTypeConfiguration<TrainingPlan>
 {

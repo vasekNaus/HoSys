@@ -5,11 +5,11 @@ using SportSys.Database.Models.dboSchema;
 using SportSys.Database.Models.sportSchema;
 using MatchType = SportSys.Database.Models.sportSchema.MatchType;
 
-namespace SportSys.Database.Models;
+namespace SportSys.Database.Context;
 
-public partial class HockeyContext : DbContext
+public partial class SportSysDbContext : DbContext
 {
-    public HockeyContext(DbContextOptions<HockeyContext> options)
+    public SportSysDbContext(DbContextOptions<SportSysDbContext> options)
         : base(options)
     {
     }
@@ -56,7 +56,7 @@ public partial class HockeyContext : DbContext
         modelBuilder.HasSequence<int>("SportEventSeq", "sport").StartsAt(2022L);
 
         // Veškerá konfigurace entit je v IEntityTypeConfiguration<T> třídách v Configurations/
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(HockeyContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SportSysDbContext).Assembly);
 
         OnModelCreatingPartial(modelBuilder);
     }

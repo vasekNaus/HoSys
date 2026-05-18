@@ -12,7 +12,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("IceRink", Schema = "sport")]
+[Table(nameof(IceRink), Schema = Schemas.Sport)]
 public partial class IceRink
 {
     [Key]
@@ -29,12 +29,9 @@ public partial class IceRink
 
     public Geometry? Location { get; set; }
 
-    [InverseProperty("IceRink")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
-    [InverseProperty("IceRink")]
     public virtual ICollection<Training> Trainings { get; set; } = new List<Training>();
 
-    [InverseProperty("HomeIceRink")]
     public virtual ICollection<Opponent> Opponents { get; set; } = new List<Opponent>();
 }

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SportSys.Database.Models.dboSchema;
 
-namespace SportSys.Database.Configurations;
+namespace SportSys.Database.Configurations.dbo;
 
 public class CoachConfiguration : IEntityTypeConfiguration<Coach>
 {

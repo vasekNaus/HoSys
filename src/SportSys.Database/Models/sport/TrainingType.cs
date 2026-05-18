@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("TrainingType", Schema = "sport")]
+[Table(nameof(TrainingType), Schema = Schemas.Sport)]
 public partial class TrainingType
 {
     [Key]
@@ -20,12 +20,9 @@ public partial class TrainingType
     [StringLength(50)]
     public required string Name { get; set; }
 
-    [InverseProperty("TrainingType")]
     public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 
-    [InverseProperty("TrainingType")]
     public virtual ICollection<TrainingEntitlement> TrainingEntitlements { get; set; } = new List<TrainingEntitlement>();
 
-    [InverseProperty("TrainingType")]
     public virtual ICollection<TrainingPlan> TrainingPlans { get; set; } = new List<TrainingPlan>();
 }

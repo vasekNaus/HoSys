@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("Training", Schema = "sport")]
+[Table(nameof(Training), Schema = Schemas.Sport)]
 public partial class Training
 {
     [Key]
@@ -47,40 +47,27 @@ public partial class Training
     [Unicode(false)]
     public required string Note { get; set; }
 
-    [ForeignKey("Season_Id")]
-    [InverseProperty("Training")]
+    [ForeignKey(nameof(Season_Id))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Season Season { get; set; } = null!;
 
-    [ForeignKey("Season_Id, SeasonCategory_Name")]
-    [InverseProperty("Training")]
+    [ForeignKey(nameof(Season_Id) + ", " + nameof(SeasonCategory_Name))]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual SeasonCategory SeasonCategory { get; set; } = null!;
 
-    [ForeignKey("IceRink_Id")]
-    [InverseProperty("Trainings")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual IceRink IceRink { get; set; } = null!;
 
-    [ForeignKey("TrainingPhase_Id")]
-    [InverseProperty("Training")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPhase TrainingPhase { get; set; } = null!;
 
-    [ForeignKey("TrainingPlan_Id")]
-    [InverseProperty("Training")]
     public virtual TrainingPlan? TrainingPlan { get; set; }
 
-    [ForeignKey("TrainingState_Id")]
-    [InverseProperty("Training")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingState TrainingState { get; set; } = null!;
 
-    [ForeignKey("TrainingType_Id")]
-    [InverseProperty("Training")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingType TrainingType { get; set; } = null!;
 
-    [InverseProperty("Training")]
     public virtual ICollection<CoachTraining> CoachTrainings { get; set; } = new List<CoachTraining>();
 }

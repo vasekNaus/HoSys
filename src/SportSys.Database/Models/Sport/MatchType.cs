@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("MatchType", Schema = "sport")]
+[Table(nameof(MatchType), Schema = Schemas.Sport)]
 public partial class MatchType
 {
     [Key]
@@ -20,6 +20,5 @@ public partial class MatchType
     [StringLength(100)]
     public required string Name { get; set; }
 
-    [InverseProperty("MatchType")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 }

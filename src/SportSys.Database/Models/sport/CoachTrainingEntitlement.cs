@@ -12,7 +12,7 @@ using SportSys.Database.Models.sportSchema;
 namespace SportSys.Database.Models.sportSchema;
 
 [PrimaryKey("Coach_Id", "TrainingEntitlement_Id", "CoachRole_Id")]
-[Table("CoachTrainingEntitlement", Schema = "sport")]
+[Table(nameof(CoachTrainingEntitlement), Schema = Schemas.Sport)]
 public partial class CoachTrainingEntitlement
 {
     [Key]
@@ -24,18 +24,12 @@ public partial class CoachTrainingEntitlement
     [Key]
     public int CoachRole_Id { get; set; }
 
-    [ForeignKey("Coach_Id")]
-    [InverseProperty("CoachTrainingEntitlementCoaches")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Coach Coach { get; set; } = null!;
 
-    [ForeignKey("CoachRole_Id")]
-    [InverseProperty("CoachTrainingEntitlementCoachRoles")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual CoachRole CoachRole { get; set; } = null!;
 
-    [ForeignKey("TrainingEntitlement_Id")]
-    [InverseProperty("CoachTrainingEntitlements")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingEntitlement TrainingEntitlement { get; set; } = null!;
 }

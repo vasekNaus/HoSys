@@ -11,7 +11,7 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table("Opponent", Schema = "sport")]
+[Table(nameof(Opponent), Schema = Schemas.Sport)]
 public partial class Opponent
 {
     [Key]
@@ -28,10 +28,7 @@ public partial class Opponent
 
     public int? HomeIceRink_Id { get; set; }
 
-    [ForeignKey("HomeIceRink_Id")]
-    [InverseProperty("Opponents")]
     public virtual IceRink? HomeIceRink { get; set; }
 
-    [InverseProperty("Opponent")]
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 }

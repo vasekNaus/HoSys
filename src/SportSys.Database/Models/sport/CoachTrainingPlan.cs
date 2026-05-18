@@ -12,7 +12,7 @@ using SportSys.Database.Models.sportSchema;
 namespace SportSys.Database.Models.sportSchema;
 
 [PrimaryKey("Coach_Id", "TrainingPlan_Id", "ValidFrom", "ValidTo")]
-[Table("CoachTrainingPlan", Schema = "sport")]
+[Table(nameof(CoachTrainingPlan), Schema = Schemas.Sport)]
 [Index("Coach_Id", "ValidFrom", "ValidTo", Name = "IX_CoachTraining_Coach_Date")]
 [Index("TrainingPlan_Id", "ValidFrom", "ValidTo", Name = "IX_CoachTraining_Training_Date")]
 public partial class CoachTrainingPlan
@@ -29,13 +29,9 @@ public partial class CoachTrainingPlan
     [Key]
     public DateOnly ValidTo { get; set; }
 
-    [ForeignKey("Coach_Id")]
-    [InverseProperty("CoachTrainingPlans")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual Coach Coach { get; set; } = null!;
 
-    [ForeignKey("TrainingPlan_Id")]
-    [InverseProperty("CoachTrainingPlans")]
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPlan TrainingPlan { get; set; } = null!;
 }
