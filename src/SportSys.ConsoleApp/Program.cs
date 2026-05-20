@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Context;
 
@@ -58,6 +59,26 @@ partial class Program
     //}
 
     // Import zápasů z games.xlsx
+
+    // Kontrola a aplikace čekajících EF Core migrací
+    await using (var migrationScope = host.Services.CreateAsyncScope())
+    {
+      var db = migrationScope.ServiceProvider.GetRequiredService<SportSysDbContext>();
+      var logger = migrationScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+      var pending = (await db.Database.GetPendingMigrationsAsync()).ToList();
+      if (pending.Count > 0)
+      {
+        logger.LogInformation("Aplikuji {Count} čekající migrace: {Migrations}",
+          pending.Count, string.Join(", ", pending));
+        await db.Database.MigrateAsync();
+        logger.LogInformation("Migrace úspěšně aplikovány.");
+      }
+      else
+      {
+        logger.LogInformation("Databáze je aktuální, žádné migrace nečekají.");
+      }
+    }
 
     using var scope = host.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<SportSysDbContext>();
