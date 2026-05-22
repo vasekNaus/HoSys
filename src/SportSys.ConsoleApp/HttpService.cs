@@ -41,7 +41,7 @@ namespace SportSys.ConsoleApp
       throw new NotImplementedException();
     }
 
-    public async Task<Root> Search(string query)
+    public async Task<IceRink> Search(string query)
     {
       var qs = new Dictionary<string, string>()
       {
@@ -54,9 +54,17 @@ namespace SportSys.ConsoleApp
       Console.WriteLine(response);
       if (!response.IsValid || response.Response is null)
         throw new InvalidOperationException($"Search request failed: {response}");
-      return response.Response;
+      var item = response.Response.Items.FirstOrDefault();
+      if (item == null)
+        throw new InvalidOperationException($"No results found for query: {query}");
+      return new IceRink(
+        item.Name,
+        item.Label,
+        item.Location,
+        item.RegionalStructure.FirstOrDefault()?.Name ?? "",
+        item.Position.Lat,
+        item.Position.Lon
+      );
     }
-
-    
   }
 }

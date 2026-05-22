@@ -31,8 +31,6 @@ public partial class Training
 
   public int? TrainingPlanId { get; set; }
 
-  public int IceRinkId { get; set; }
-
   [StringLength(100)]
   [Unicode(false)]
   public required string Location { get; set; }
@@ -58,9 +56,6 @@ public partial class Training
   [ForeignKey(nameof(SeasonId) + ", " + nameof(SeasonCategoryName))]
   [DeleteBehavior(DeleteBehavior.ClientSetNull)]
   public virtual SeasonCategory SeasonCategory { get; set; } = null!;
-
-  [DeleteBehavior(DeleteBehavior.ClientSetNull)]
-  public virtual IceRink IceRink { get; set; } = null!;
 
   [DeleteBehavior(DeleteBehavior.ClientSetNull)]
   public virtual TrainingPhase TrainingPhase { get; set; } = null!;

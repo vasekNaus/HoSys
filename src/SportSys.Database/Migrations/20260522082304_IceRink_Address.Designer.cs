@@ -13,8 +13,8 @@ using SportSys.Database.Context;
 namespace SportSys.Database.Migrations
 {
     [DbContext(typeof(SportSysDbContext))]
-    [Migration("20260522041925_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260522082304_IceRink_Address")]
+    partial class IceRink_Address
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -206,11 +206,6 @@ namespace SportSys.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -224,6 +219,18 @@ namespace SportSys.Database.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasDefaultValue("", "DF_IceRink_ZipCode");
+
                     b.HasKey("Id");
 
                     b.ToTable("IceRink", "sport");
@@ -236,7 +243,7 @@ namespace SportSys.Database.Migrations
                         .HasColumnType("int")
                         .HasDefaultValueSql("(NEXT VALUE FOR [sport].[SportEventSeq])", "DF_Match_Id");
 
-                    b.Property<int>("Away")
+                    b.Property<int?>("Away")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("Date")
@@ -247,7 +254,7 @@ namespace SportSys.Database.Migrations
                         .HasColumnType("int")
                         .HasComputedColumnSql("(datediff(minute,[TimeFrom],[TimeTo]))", true);
 
-                    b.Property<int>("Home")
+                    b.Property<int?>("Home")
                         .HasColumnType("int");
 
                     b.Property<int>("IceRinkId")
@@ -494,9 +501,6 @@ namespace SportSys.Database.Migrations
                         .HasColumnType("int")
                         .HasComputedColumnSql("(datediff(minute,[TimeFrom],[TimeTo]))", true);
 
-                    b.Property<int>("IceRinkId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -542,9 +546,6 @@ namespace SportSys.Database.Migrations
 
                     b.ToTable("Training", "sport", t =>
                         {
-                            t.Property("IceRinkId")
-                                .HasColumnName("IceRink_Id");
-
                             t.Property("SeasonCategoryName")
                                 .HasColumnName("SeasonCategory_Name");
 
@@ -936,11 +937,6 @@ namespace SportSys.Database.Migrations
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.Training", b =>
                 {
-                    b.HasOne("SportSys.Database.Models.sportSchema.IceRink", "IceRink")
-                        .WithMany("Trainings")
-                        .HasForeignKey("IceRinkId")
-                        .IsRequired();
-
                     b.HasOne("SportSys.Database.Models.sportSchema.Season", "Season")
                         .WithMany("Training")
                         .HasForeignKey("SeasonId")
@@ -969,8 +965,6 @@ namespace SportSys.Database.Migrations
                         .WithMany("Training")
                         .HasForeignKey("SeasonId", "SeasonCategoryName")
                         .IsRequired();
-
-                    b.Navigation("IceRink");
 
                     b.Navigation("Season");
 
@@ -1052,8 +1046,6 @@ namespace SportSys.Database.Migrations
                     b.Navigation("Matches");
 
                     b.Navigation("Opponents");
-
-                    b.Navigation("Trainings");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.MatchType", b =>

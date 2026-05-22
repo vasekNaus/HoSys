@@ -15,23 +15,24 @@ namespace SportSys.Database.Models.sportSchema;
 [Table(nameof(IceRink), Schema = Schemas.Sport)]
 public partial class IceRink
 {
-    [Key]
-    public int Id { get; set; }
+  [Key]
+  public int Id { get; set; }
 
-    [StringLength(100)]
-    public required string Name { get; set; }
-    
-    [StringLength(200)]
-    public required string Address { get; set; }
+  [StringLength(100)]
+  public required string Name { get; set; }
 
-    [StringLength(100)]
-    public required string City { get; set; }
+  [StringLength(200)]
+  public required string Street { get; set; }
 
-    public Geometry? Location { get; set; }
+  [StringLength(100)]
+  public required string City { get; set; }
 
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+  [StringLength(100)]
+  public required string ZipCode { get; set; }
 
-    public virtual ICollection<Training> Trainings { get; set; } = new List<Training>();
+  public Geometry? Location { get; set; }
 
-    public virtual ICollection<Opponent> Opponents { get; set; } = new List<Opponent>();
+  public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+
+  public virtual ICollection<Opponent> Opponents { get; set; } = new List<Opponent>();
 }

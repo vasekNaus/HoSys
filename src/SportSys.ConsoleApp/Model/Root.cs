@@ -4,6 +4,15 @@ using System.Text;
 
 namespace SportSys.ConsoleApp.Model;
 
+public record class IceRink(
+  string Name,
+  string Street,
+  string ZipCode,
+  string City,
+  double Lat,
+  double Lon
+);
+
 public record class Root
 {
   public List<Item> Items { get; init; } = [];

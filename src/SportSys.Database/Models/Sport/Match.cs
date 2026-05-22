@@ -47,9 +47,9 @@ public partial class Match
 
     public bool IsHome { get; set; }
 
-    public int Home { get; set; }
+    public int? Home { get; set; }
 
-    public int Away { get; set; }
+    public int? Away { get; set; }
 
     public int MatchTypeId { get; set; }
 

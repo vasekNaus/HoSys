@@ -220,8 +220,8 @@ namespace SportSys.Database.Migrations
                     MatchCode = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true),
                     Opponent_Id = table.Column<int>(type: "int", nullable: false),
                     IsHome = table.Column<bool>(type: "bit", nullable: false),
-                    Home = table.Column<int>(type: "int", nullable: false),
-                    Away = table.Column<int>(type: "int", nullable: false),
+                    Home = table.Column<int>(type: "int", nullable: true),
+                    Away = table.Column<int>(type: "int", nullable: true),
                     MatchType_Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -411,7 +411,6 @@ namespace SportSys.Database.Migrations
                     TrainingPhase_Id = table.Column<int>(type: "int", nullable: false),
                     TrainingState_Id = table.Column<int>(type: "int", nullable: false),
                     TrainingPlan_Id = table.Column<int>(type: "int", nullable: true),
-                    IceRink_Id = table.Column<int>(type: "int", nullable: false),
                     Location = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     TimeFrom = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: false),
                     TimeTo = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: false),
@@ -422,12 +421,6 @@ namespace SportSys.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Training", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Training_IceRink_IceRink_Id",
-                        column: x => x.IceRink_Id,
-                        principalSchema: "sport",
-                        principalTable: "IceRink",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Training_SeasonCategory_SeasonCategory_Season_Id_SeasonCategory_Name",
                         columns: x => new { x.SeasonCategory_Season_Id, x.SeasonCategory_Name },
