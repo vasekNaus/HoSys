@@ -1,9 +1,16 @@
 <Solution>
   <Folder Name="/Apollo/">
+    <Project Path="src/Apollo/Core/Apollo.Data.Core/Apollo.Data.Core.csproj" />
     <Project Path="src/Apollo/MultiTarget/Apollo.HttpService/Apollo.HttpService.csproj" />
+    <Project Path="src/Apollo/Standard/Apollo.Utils/Apollo.Utils.csproj" />
   </Folder>
-  <Project Path="src/SportSys.Application/SportSys.Application.csproj" Id="a7fd54f9-88f4-48ec-bfd0-a192acfc752c" />
-  <Project Path="src/SportSys.Contract/SportSys.Contract.csproj" Id="24abea74-a575-4711-842d-fbfa0c029e13" />
+  <Folder Name="/DB/">
+    <File Path="src/DB Model/Localhost.scmp" />
+  </Folder>
+  <Project Path="src/SportSys.Application/SportSys.Model.csproj" Id="a7fd54f9-88f4-48ec-bfd0-a192acfc752c" />
   <Project Path="src/SportSys.ConsoleApp/SportSys.ConsoleApp.csproj" />
+  <Project Path="src/SportSys.Contract/SportSys.Contract.csproj" Id="24abea74-a575-4711-842d-fbfa0c029e13" />
   <Project Path="src/SportSys.Database/SportSys.Database.csproj" Id="3566e93e-2b8c-44b7-893a-1cef309cd633" />
+  <Project Path="src/SportSys.Razor/SportSys.Razor.csproj" Id="96e521d2-1030-4ccd-8711-7128b963acfe" />
+  <Project Path="src/SportSys.Web/SportSys.Web.csproj" Id="c92835f5-a888-49ae-ae89-fdac4fd06bca" />
 </Solution>

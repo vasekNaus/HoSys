@@ -9,7 +9,7 @@ public class MatchConfiguration : IEntityTypeConfiguration<Match>
     public void Configure(EntityTypeBuilder<Match> builder)
     {
         builder.Property(e => e.Id)
-               .HasDefaultValueSql("(NEXT VALUE FOR [sport].[SportEventSeq])", "DF__Match__Id");
+               .HasDefaultValueSql("(NEXT VALUE FOR [sport].[SportEventSeq])", "DF_Match_Id");
 
         builder.Property(e => e.DurationMinutes)
                .HasComputedColumnSql("(datediff(minute,[TimeFrom],[TimeTo]))", stored: true);

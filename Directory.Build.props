@@ -1,0 +1,9 @@
+<Project>
+
+  <!-- Suppress NuGet audit warning for log4net 2.0.15 vulnerability.
+       log4net is a transitive dependency of the Apollo submodule and cannot be updated here. -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-4f7c-pmjv-c25w" />
+  </ItemGroup>
+
+</Project>

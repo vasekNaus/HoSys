@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SportSys.Database.Enums;
 using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Configurations.sport;
@@ -8,7 +9,9 @@ public class ParticipationTypeConfiguration : IEntityTypeConfiguration<Participa
 {
     public void Configure(EntityTypeBuilder<ParticipationType> builder)
     {
-        // Název PK constraint se liší od konvence (obsahuje mezeru) — nelze vyjádřit Data Annotation
-        builder.HasKey(e => e.Id).HasName("PK_ParticipationType ");
+        builder.HasData(
+            Enum.GetValues<EParticipationType>()
+                .Select(e => new ParticipationType(e))
+        );
     }
 }

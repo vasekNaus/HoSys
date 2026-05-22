@@ -26,4 +26,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Apollo\Core\Apollo.Data.Core\Apollo.Data.Core.csproj" />
+  </ItemGroup>
+
 </Project>
