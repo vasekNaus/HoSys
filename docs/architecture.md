@@ -28,6 +28,8 @@ SportSys je vícevrstvá webová aplikace postavená na .NET 10. Skládá se z n
 | Projekt | Typ | Popis |
 |---|---|---|
 | `SportSys.Database` | Class Library | EF Core modely, `SportSysDbContext`, migrace |
+| `SportSys.Model` | Class Library | Sdílené doménové objekty a DTO |
+| `SportSys.Contract` | Class Library | Aplikační logika, services |
 | `SportSys.Web` | ASP.NET Core Web App | Razor Pages / Blazor Server, REST API (připravováno) |
 | `SportSys.ConsoleApp` | Console App | Pomocné CLI nástroje – import dat z Excelu |
 

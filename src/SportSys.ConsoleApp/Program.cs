@@ -24,11 +24,10 @@ partial class Program
           // Registrace DbContextu
           services.AddDbContext<SportSysDbContext>(options =>
             options.UseSqlServer(connectionString, x => x.UseNetTopologySuite()));
-          // Registrace HttpClient jako singleton
           //services.AddHttpClient();
           // Registrace konfigurace MapyCom a HttpService jako singleton
-          services.Configure<SportSys.ConsoleApp.Model.Config.MapyCom>(context.Configuration.GetSection("MapyCom"));
-          services.AddSingleton<SportSys.ConsoleApp.HttpService>();
+          services.Configure<SportSys.Contract.Config.MapyCom>(context.Configuration.GetSection("MapyCom"));
+          services.AddSingleton<SportSys.Contract.Services.HttpService>();
 
         })
         .Build();
@@ -87,7 +86,7 @@ partial class Program
     //var gamesFile = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\Source\SportSys\src\SportSys.ConsoleApp\games.xlsx";
     //await MatchImportRun.ImportAsync(gamesFile, db, http);
     //*/
-   var httpService = host.Services.GetRequiredService<SportSys.ConsoleApp.HttpService>();
+   var httpService = host.Services.GetRequiredService<SportSys.Contract.Services.HttpService>();
    var result = await httpService.Search("Zimní station, Domažlice");
 
     Console.WriteLine("Done");

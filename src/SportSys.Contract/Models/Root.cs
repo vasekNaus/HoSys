@@ -1,22 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SportSys.ConsoleApp.Model;
-
-public record class IceRink(
-  string Name,
-  string Street,
-  string ZipCode,
-  string City,
-  double Lat,
-  double Lon
-);
+namespace SportSys.Contract.Models;
 
 public record class Root
 {
   public List<Item> Items { get; init; } = [];
-  //public List<object> Locality { get; init; } = [];
 }
 
 public record class Item
@@ -28,6 +14,7 @@ public record class Item
   public Position Position { get; init; } = new();
   public List<RegionalStructure> RegionalStructure { get; init; } = [];
   public string Type { get; init; } = "";
+  public string? Zip { get; init; }
 }
 
 public record class Position
@@ -40,5 +27,5 @@ public record class RegionalStructure
 {
   public string Name { get; init; } = "";
   public string Type { get; init; } = "";
-  public string? IsoCode { get; init; }  // je jen u country
+  public string? IsoCode { get; init; }  // jen u country
 }
