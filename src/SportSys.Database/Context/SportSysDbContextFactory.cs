@@ -14,7 +14,7 @@ public class SportSysDbContextFactory : IDesignTimeDbContextFactory<SportSysDbCo
             .Build();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? "Server=.\\SQL2022;Database=SportSys;Trusted_Connection=True;TrustServerCertificate=True;";
+            ?? "Server=.\\SQL2025;Database=SportSys;Trusted_Connection=True;TrustServerCertificate=True;";
 
         var optionsBuilder = new DbContextOptionsBuilder<SportSysDbContext>();
         optionsBuilder.UseSqlServer(connectionString, x => x.UseNetTopologySuite());

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using SportSys.Database.Context;
@@ -12,9 +13,11 @@ using SportSys.Database.Context;
 namespace SportSys.Database.Migrations
 {
     [DbContext(typeof(SportSysDbContext))]
-    partial class SportSysDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260526073840_Match_ResultJson")]
+    partial class Match_ResultJson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,13 +243,13 @@ namespace SportSys.Database.Migrations
                         .HasColumnType("int")
                         .HasDefaultValueSql("(NEXT VALUE FOR [sport].[SportEventSeq])", "DF_Match_Id");
 
-                    b.Property<int>("AwayTeamId")
+                    b.Property<int>("AwayOpponentId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<int>("HomeTeamId")
+                    b.Property<int>("HomeOpponentId")
                         .HasColumnType("int");
 
                     b.Property<int>("IceRinkId")
@@ -283,11 +286,11 @@ namespace SportSys.Database.Migrations
 
                     b.ToTable("Match", "sport", t =>
                         {
-                            t.Property("AwayTeamId")
-                                .HasColumnName("AwayTeam_Id");
+                            t.Property("AwayOpponentId")
+                                .HasColumnName("AwayOpponent_Id");
 
-                            t.Property("HomeTeamId")
-                                .HasColumnName("HomeTeam_Id");
+                            t.Property("HomeOpponentId")
+                                .HasColumnName("HomeOpponent_Id");
 
                             t.Property("IceRinkId")
                                 .HasColumnName("IceRink_Id");
@@ -335,6 +338,41 @@ namespace SportSys.Database.Migrations
                         {
                             Id = 3,
                             Name = "Turnaj"
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.sportSchema.Opponent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("HomeIceRinkId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Opponent", "sport", t =>
+                        {
+                            t.Property("HomeIceRinkId")
+                                .HasColumnName("HomeIceRink_Id");
                         });
                 });
 
@@ -427,17 +465,10 @@ namespace SportSys.Database.Migrations
                     b.Property<string>("CompetitionCode")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
+                        .HasMaxLength(5)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(10)")
+                        .HasColumnType("varchar(5)")
                         .HasDefaultValue("", "DF_SeasonCategory_CompetitionCode");
-
-                    b.Property<string>("CompetitionTeamName")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasDefaultValue("", "DF_SeasonCategory_CompetitionTeamName");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -448,46 +479,6 @@ namespace SportSys.Database.Migrations
                         {
                             t.Property("SeasonId")
                                 .HasColumnName("Season_Id");
-                        });
-                });
-
-            modelBuilder.Entity("SportSys.Database.Models.sportSchema.Team", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
-                    b.Property<int?>("HomeIceRinkId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Team", "sport", t =>
-                        {
-                            t.Property("HomeIceRinkId")
-                                .HasColumnName("HomeIceRink_Id");
                         });
                 });
 
@@ -885,14 +876,14 @@ namespace SportSys.Database.Migrations
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.Match", b =>
                 {
-                    b.HasOne("SportSys.Database.Models.sportSchema.Team", "AwayTeam")
+                    b.HasOne("SportSys.Database.Models.sportSchema.Opponent", "AwayOpponent")
                         .WithMany("AwayMatches")
-                        .HasForeignKey("AwayTeamId")
+                        .HasForeignKey("AwayOpponentId")
                         .IsRequired();
 
-                    b.HasOne("SportSys.Database.Models.sportSchema.Team", "HomeTeam")
+                    b.HasOne("SportSys.Database.Models.sportSchema.Opponent", "HomeOpponent")
                         .WithMany("HomeMatches")
-                        .HasForeignKey("HomeTeamId")
+                        .HasForeignKey("HomeOpponentId")
                         .IsRequired();
 
                     b.HasOne("SportSys.Database.Models.sportSchema.IceRink", "IceRink")
@@ -940,9 +931,9 @@ namespace SportSys.Database.Migrations
                                 .HasForeignKey("MatchId");
                         });
 
-                    b.Navigation("AwayTeam");
+                    b.Navigation("AwayOpponent");
 
-                    b.Navigation("HomeTeam");
+                    b.Navigation("HomeOpponent");
 
                     b.Navigation("IceRink");
 
@@ -955,6 +946,15 @@ namespace SportSys.Database.Migrations
                     b.Navigation("SeasonCategory");
                 });
 
+            modelBuilder.Entity("SportSys.Database.Models.sportSchema.Opponent", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.sportSchema.IceRink", "HomeIceRink")
+                        .WithMany("Opponents")
+                        .HasForeignKey("HomeIceRinkId");
+
+                    b.Navigation("HomeIceRink");
+                });
+
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.SeasonCategory", b =>
                 {
                     b.HasOne("SportSys.Database.Models.sportSchema.Season", "Season")
@@ -963,15 +963,6 @@ namespace SportSys.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Season");
-                });
-
-            modelBuilder.Entity("SportSys.Database.Models.sportSchema.Team", b =>
-                {
-                    b.HasOne("SportSys.Database.Models.sportSchema.IceRink", "HomeIceRink")
-                        .WithMany("Teams")
-                        .HasForeignKey("HomeIceRinkId");
-
-                    b.Navigation("HomeIceRink");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.Training", b =>
@@ -1084,12 +1075,19 @@ namespace SportSys.Database.Migrations
                 {
                     b.Navigation("Matches");
 
-                    b.Navigation("Teams");
+                    b.Navigation("Opponents");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.MatchType", b =>
                 {
                     b.Navigation("Matches");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.sportSchema.Opponent", b =>
+                {
+                    b.Navigation("AwayMatches");
+
+                    b.Navigation("HomeMatches");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.ParticipationType", b =>
@@ -1115,13 +1113,6 @@ namespace SportSys.Database.Migrations
                     b.Navigation("TrainingEntitlements");
 
                     b.Navigation("TrainingPlans");
-                });
-
-            modelBuilder.Entity("SportSys.Database.Models.sportSchema.Team", b =>
-                {
-                    b.Navigation("AwayMatches");
-
-                    b.Navigation("HomeMatches");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sportSchema.Training", b =>

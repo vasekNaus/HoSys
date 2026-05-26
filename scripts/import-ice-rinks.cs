@@ -4,7 +4,7 @@
 // Parametry:
 //   --conn           Connection string k databázi SportSys (povinný)
 //   --api-key        API klíč Mapy.com (povinný)
-//   --html           Cesta k IceRink.html (výchozí: src/DB Model/Migration/IceRink.html od cwd)
+//   --html           Cesta k IceRink.html (výchozí: src/data/IceRink.html od cwd)
 //   --base-url       Base URL Mapy.com API (výchozí: https://api.mapy.com/)
 //   --geocode-route  Route pro geocoding (výchozí: /v1/geocode)
 

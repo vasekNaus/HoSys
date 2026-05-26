@@ -25,6 +25,13 @@ public partial class SeasonCategory
 
     public int Order { get; set; }
 
+    [StringLength(10)]
+    [Unicode(false)]
+    public required string CompetitionCode { get; set; } = string.Empty;
+
+    [StringLength(100)]
+    public required string CompetitionTeamName { get; set; } = string.Empty;
+
     [StringLength(4000)]
     public required string BirthYears { get; set; }
 

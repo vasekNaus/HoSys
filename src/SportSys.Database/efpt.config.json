@@ -51,7 +51,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[sport].[Opponent]",
+         "Name": "[sport].[Team]",
          "ObjectType": 0
       },
       {

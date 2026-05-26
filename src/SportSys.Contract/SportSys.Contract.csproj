@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Apollo\MultiTarget\Apollo.HttpService\Apollo.HttpService.csproj" />
+    <ProjectReference Include="..\SportSys.Database\SportSys.Database.csproj" />
     <ProjectReference Include="..\SportSys.Model\SportSys.Model.csproj" />
   </ItemGroup>
 

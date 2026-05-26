@@ -28,6 +28,7 @@ partial class Program
           // Registrace konfigurace MapyCom a HttpService jako singleton
           services.Configure<SportSys.Contract.Config.MapyCom>(context.Configuration.GetSection("MapyCom"));
           services.AddSingleton<SportSys.Contract.Services.HttpService>();
+          services.AddScoped<SportSys.Contract.Services.CsvMatchImportService>();
 
         })
         .Build();
@@ -88,6 +89,16 @@ partial class Program
     //*/
    var httpService = host.Services.GetRequiredService<SportSys.Contract.Services.HttpService>();
    var result = await httpService.Search("Zimní station, Domažlice");
+
+    // Import zápasů z hokejového svazu (CSV)
+    // SeasonCategory záznamy musí mít nastavený CompetitionCode odpovídající hodnotám sloupce Soutěž v CSV.
+    var importService = scope.ServiceProvider.GetRequiredService<SportSys.Contract.Services.CsvMatchImportService>();
+    var csvFile = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\Source\SportSys\src\Data\Zapasy.csv";
+    const int seasonId = 1;   // TODO: nastavit Id sezóny
+    var importResult = await importService.ImportAsync(csvFile, seasonId);
+    Console.WriteLine($"Import dokončen: vloženo {importResult.Inserted}, přeskočeno {importResult.Skipped}");
+    foreach (var warning in importResult.Warnings)
+        Console.WriteLine($"  [varování] {warning}");
 
     Console.WriteLine("Done");
     Console.ReadLine();

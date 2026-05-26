@@ -1,4 +1,4 @@
-﻿
+
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -11,11 +11,14 @@ using SportSys.Database.Models.sportSchema;
 
 namespace SportSys.Database.Models.sportSchema;
 
-[Table(nameof(Opponent), Schema = Schemas.Sport)]
-public partial class Opponent
+[Table(nameof(Team), Schema = Schemas.Sport)]
+public partial class Team
 {
     [Key]
     public int Id { get; set; }
+
+    [StringLength(5)]
+    public required string Code { get; set; }
 
     [StringLength(100)]
     public required string Name { get; set; }
@@ -30,5 +33,9 @@ public partial class Opponent
 
     public virtual IceRink? HomeIceRink { get; set; }
 
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    [InverseProperty(nameof(Match.HomeTeam))]
+    public virtual ICollection<Match> HomeMatches { get; set; } = new List<Match>();
+
+    [InverseProperty(nameof(Match.AwayTeam))]
+    public virtual ICollection<Match> AwayMatches { get; set; } = new List<Match>();
 }

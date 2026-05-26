@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using SportSys.Database.Context;
@@ -12,9 +13,11 @@ using SportSys.Database.Context;
 namespace SportSys.Database.Migrations
 {
     [DbContext(typeof(SportSysDbContext))]
-    partial class SportSysDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260526080410_Opponent_RenameToTeam")]
+    partial class Opponent_RenameToTeam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,17 +430,10 @@ namespace SportSys.Database.Migrations
                     b.Property<string>("CompetitionCode")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
+                        .HasMaxLength(5)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(10)")
+                        .HasColumnType("varchar(5)")
                         .HasDefaultValue("", "DF_SeasonCategory_CompetitionCode");
-
-                    b.Property<string>("CompetitionTeamName")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasDefaultValue("", "DF_SeasonCategory_CompetitionTeamName");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -468,11 +464,6 @@ namespace SportSys.Database.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
 
                     b.Property<int?>("HomeIceRinkId")
                         .HasColumnType("int");

@@ -31,7 +31,7 @@ public class SportSysDbContext : DbContext
 
   public virtual DbSet<MatchType> MatchTypes { get; set; }
 
-  public virtual DbSet<Opponent> Opponents { get; set; }
+  public virtual DbSet<Team> Teams { get; set; }
 
   public virtual DbSet<ParticipationType> ParticipationTypes { get; set; }
 

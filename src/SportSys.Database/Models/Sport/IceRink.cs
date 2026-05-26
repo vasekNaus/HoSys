@@ -34,5 +34,5 @@ public partial class IceRink
 
   public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
-  public virtual ICollection<Opponent> Opponents { get; set; } = new List<Opponent>();
+  public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
 }

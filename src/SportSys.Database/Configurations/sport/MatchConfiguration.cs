@@ -11,7 +11,18 @@ public class MatchConfiguration : IEntityTypeConfiguration<Match>
         builder.Property(e => e.Id)
                .HasDefaultValueSql("(NEXT VALUE FOR [sport].[SportEventSeq])", "DF_Match_Id");
 
-        builder.Property(e => e.DurationMinutes)
-               .HasComputedColumnSql("(datediff(minute,[TimeFrom],[TimeTo]))", stored: true);
+        // Dvě FK na stejnou tabulku Team – explicitní konfigurace zabraňuje ambiguitě
+        builder.HasOne(m => m.HomeTeam)
+               .WithMany(o => o.HomeMatches)
+               .HasForeignKey(m => m.HomeTeamId)
+               .OnDelete(DeleteBehavior.ClientSetNull);
+
+        builder.HasOne(m => m.AwayTeam)
+               .WithMany(o => o.AwayMatches)
+               .HasForeignKey(m => m.AwayTeamId)
+               .OnDelete(DeleteBehavior.ClientSetNull);
+
+        // Výsledek zápasu jako JSON sloupec
+        builder.OwnsOne(m => m.Result, r => r.ToJson("Result"));
     }
 }

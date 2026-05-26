@@ -8,6 +8,12 @@ public class SeasonCategoryConfiguration : IEntityTypeConfiguration<SeasonCatego
 {
     public void Configure(EntityTypeBuilder<SeasonCategory> builder)
     {
+        builder.Property(e => e.CompetitionCode)
+               .HasDefaultValue(string.Empty, "DF_SeasonCategory_CompetitionCode");
+
+        builder.Property(e => e.CompetitionTeamName)
+               .HasDefaultValue(string.Empty, "DF_SeasonCategory_CompetitionTeamName");
+
         builder.Property(e => e.BirthYears)
                .HasDefaultValue("[]", "DF_SeasonCategory_BirthYears");
     }

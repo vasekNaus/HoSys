@@ -9,8 +9,8 @@ CREATE TABLE [sport].[Match](
 	[DurationMinutes]  AS (datediff(minute,[TimeFrom],[TimeTo])) PERSISTED,
 	[Note] [varchar](50) NOT NULL,
 	[MatchCode] [varchar](10) NOT NULL,
-	[Opponent_Id] [int] NOT NULL,
-	[IsHome] [bit] NOT NULL,
+	[HomeTeam_Id] [int] NOT NULL,
+	[AwayTeam_Id] [int] NOT NULL,
 	[GoalsScored] [tinyint] NULL,
 	[GoalsConceded] [tinyint] NULL,
 	[MatchState_Id] [int] NOT NULL,
@@ -51,11 +51,18 @@ GO
 ALTER TABLE [sport].[Match] CHECK CONSTRAINT [FK_Match_IceRink]
 GO
 
-ALTER TABLE [sport].[Match]  WITH CHECK ADD  CONSTRAINT [FK_Match_Opponent] FOREIGN KEY([Opponent_Id])
-REFERENCES [sport].[Opponent] ([Id])
+ALTER TABLE [sport].[Match]  WITH CHECK ADD  CONSTRAINT [FK_Match_HomeTeam] FOREIGN KEY([HomeTeam_Id])
+REFERENCES [sport].[Team] ([Id])
 GO
 
-ALTER TABLE [sport].[Match] CHECK CONSTRAINT [FK_Match_Opponent]
+ALTER TABLE [sport].[Match] CHECK CONSTRAINT [FK_Match_HomeTeam]
+GO
+
+ALTER TABLE [sport].[Match]  WITH CHECK ADD  CONSTRAINT [FK_Match_AwayTeam] FOREIGN KEY([AwayTeam_Id])
+REFERENCES [sport].[Team] ([Id])
+GO
+
+ALTER TABLE [sport].[Match] CHECK CONSTRAINT [FK_Match_AwayTeam]
 GO
 
 ALTER TABLE [sport].[Match]  WITH CHECK ADD  CONSTRAINT [CHK_Match_TimeRange] CHECK  (([TimeTo]>[TimeFrom]))
