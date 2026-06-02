@@ -1,0 +1,139 @@
+@use 'vars' as *;
+
+$ScreenStop: 1000px;
+
+.calendar {
+  width:  100%;
+  border: 1px solid var(--color-border-default);
+
+  @media (min-width: $ScreenStop) {
+    display:        flex;
+    flex-direction: column;
+  }
+
+  // Názvy dnů
+  > header {
+    display: none;
+
+    @media (min-width: $ScreenStop) {
+      display:        flex;
+      flex-direction: row;
+    }
+
+    > div {
+      flex:             1;
+      border:           1px solid var(--color-border-default);
+      text-align:       center;
+      padding:          1ex;
+      font-weight:      bold;
+      background-color: var(--color-brand-secondary);
+      color:            var(--color-text-inverse);
+    }
+  }
+
+  section.week {
+    @media (min-width: $ScreenStop) {
+      display:        flex;
+      flex-direction: row;
+    }
+
+    // Jeden den
+    > article {
+      flex:   1;
+      border: 1px solid var(--color-border-default);
+
+      @media (min-width: $ScreenStop) {
+        min-height: 10em;
+      }
+
+      header {
+        margin:  calc(1ex / 2);
+        padding: 1ex;
+
+        @media (min-width: $ScreenStop) {
+          text-align: right;
+        }
+      }
+
+      header::before {
+        content: attr(data-dow);
+        float:   right;
+
+        @media (min-width: $ScreenStop) {
+          content: initial;
+          float:   none;
+        }
+      }
+
+      &.today {
+        background-color: var(--color-brand-primary-subtle);
+
+        header {
+          font-weight: bold;
+        }
+      }
+
+      &.weekend {
+        background-color: var(--color-brand-secondary-subtle);
+      }
+
+      // Seznam událostí
+      ul {
+        margin:          0;
+        padding:         0;
+        list-style-type: none;
+
+        li {
+          display:          block;
+          margin:           calc(1ex / 4);
+          padding:          calc(1ex / 2);
+          background-color: var(--color-brand-primary-subtle);
+
+          &.system {
+            border: 2px solid var(--color-border-strong);
+          }
+
+          &.maintenance {
+            font-size: 70%;
+            border:    1px dotted var(--color-border-strong);
+          }
+
+          &:target {
+            font-weight: bold;
+          }
+
+          &[title]::after {
+            content:    attr(title);
+            display:    block;
+            clear:      both;
+            font-style: italic;
+            font-size:  90%;
+          }
+
+          time {
+            font-size: 80%;
+
+            &.begin::after  { content: '\2026'; }
+            &.end::before   { content: '\2026'; }
+          }
+
+          span.middle::before { content: '\2026\2026'; }
+
+          a, span { display: block; }
+
+          a {
+            &:link, &:visited {
+              color:           inherit;
+              text-decoration: none;
+            }
+
+            &:hover, &:active {
+              color:           inherit;
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -92,6 +92,11 @@ StyleCopReport.xml
 *_wpftmp.csproj
 *.log
 logs/
+
+# SCSS — vygenerovaný CSS je artefakt buildu, necommitovat
+src/SportSys.Razor/wwwroot/css/site.css
+src/SportSys.Razor/wwwroot/css/site.css.map
+
 *.vspscc
 *.vssscc
 .builds

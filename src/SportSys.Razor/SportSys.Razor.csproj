@@ -7,6 +7,17 @@
     <UserSecretsId>aspnet-SportSys.Razor-a657e1d6-3c70-4940-b69a-e7573260aeac</UserSecretsId>
   </PropertyGroup>
 
+  <!-- Kompilace SCSS → wwwroot/css/site.css před každým buildem -->
+  <Target Name="NpmInstall" BeforeTargets="CompileSass" Condition="!Exists('$(MSBuildProjectDirectory)\node_modules')">
+    <Message Importance="high" Text="Instaluji npm balíčky (sass)..." />
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <Target Name="CompileSass" BeforeTargets="Build">
+    <Message Importance="high" Text="Kompiluji SCSS → wwwroot/css/site.css" />
+    <Exec Command="npm run build:css" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />

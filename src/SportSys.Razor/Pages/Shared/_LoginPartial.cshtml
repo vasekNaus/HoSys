@@ -1,17 +1,19 @@
 ﻿@using System.Security.Principal
 
-<ul class="navbar-nav">
 @if (User.Identity?.IsAuthenticated == true)
 {
-        <span class="navbar-text text-dark">Hello @User.Identity?.Name!</span>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a>
-        </li>
+    <span class="text-muted small">
+        <i class="fa-solid fa-user fa-fw"></i> @User.Identity?.Name
+    </span>
+    <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut"
+       class="button secondary" style="min-width:auto;padding:.35rem .9rem;">
+        <i class="fa-solid fa-right-from-bracket fa-fw"></i> Odhlásit
+    </a>
 }
 else
 {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn">Sign in</a>
-        </li>
+    <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn"
+       class="button secondary" style="min-width:auto;padding:.35rem .9rem;">
+        <i class="fa-solid fa-right-to-bracket fa-fw"></i> Přihlásit
+    </a>
 }
-</ul>

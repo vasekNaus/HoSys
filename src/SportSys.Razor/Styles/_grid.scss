@@ -1,0 +1,67 @@
+@use 'vars' as *;
+
+table.grid {
+  width:            100%;
+  border-collapse:  collapse;
+  background-color: var(--color-surface-1);
+  box-shadow:       var(--shadow-sm);
+  font-size:        .95rem;
+
+  th, td {
+    padding:        .6rem .9rem;
+    border:         1px solid var(--color-border-default);
+    text-align:     left;
+    vertical-align: top;
+  }
+
+  thead {
+    th {
+      background-color: var(--color-brand-secondary);
+      color:            var(--color-text-inverse);
+      font-weight:      700;
+      white-space:      nowrap;
+    }
+
+    tr {
+      border-bottom: double 3px var(--color-brand-primary);
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(even) {
+        background-color: var(--color-bg-subtle);
+      }
+
+      &:hover {
+        background-color: var(--color-interactive-hover) !important;
+      }
+
+      &.new td {
+        background-color: var(--color-brand-primary-subtle);
+        font-style:       italic;
+      }
+    }
+
+    td.buttons {
+      white-space: nowrap;
+      text-align:  right;
+    }
+  }
+
+  tfoot {
+    tr {
+      border-top: double 3px var(--color-border-default);
+
+      &:hover {
+        background-color: var(--color-interactive-hover) !important;
+      }
+    }
+  }
+}
+
+td.buttons,
+td.r {
+  text-align:  right;
+  white-space: nowrap;
+}

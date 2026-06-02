@@ -1,0 +1,12 @@
+// Vstupní bod SCSS — importuje všechny parciály ve správném pořadí
+// Výstup: wwwroot/css/site.css
+
+@use 'vars';      // CSS Custom Properties (tokeny) + SCSS proměnné
+@use 'layout';    // Reset, html/body, header, nav, main, footer
+@use 'forms';     // Tlačítka, formuláře, validace
+@use 'grid';      // table.grid
+@use 'details';   // table.details
+@use 'modal';     // CSS :target modály
+@use 'utilities'; // .l .r .c .fl .fr .strong .infobox atd.
+@use 'tasklist';  // ul.tasklist
+@use 'calendar';  // .calendar

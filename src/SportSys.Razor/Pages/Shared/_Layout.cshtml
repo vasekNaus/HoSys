@@ -1,52 +1,63 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SportSys.Razor</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - SportSys</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeyd+qKJxOIsITedCe7YEvpS6p5VTBL6RcfPi+dw/HaW9GfcS9hnZLJTKQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SportSys.Razor.styles.css" asp-append-version="true" />
+    <script>
+        // Aplikuj uložené téma co nejdříve, aby nedocházelo k blikání
+        (function () {
+            var t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">SportSys.Razor</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - SportSys.Razor - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        <a class="site-title" asp-area="" asp-page="/Index">
+            <i class="fa-solid fa-hockey-puck fa-fw"></i> SportSys
+        </a>
+        <div class="header-actions">
+            <partial name="_LoginPartial" />
+            <button class="btn-theme-toggle" id="themeToggle" aria-label="Přepnout světlý/tmavý režim" title="Přepnout světlý/tmavý režim">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
         </div>
+    </header>
+
+    <nav>
+        <input type="checkbox" id="nav-toggle" hidden />
+        <label for="nav-toggle" aria-label="Otevřít navigaci">☰</label>
+        <ul>
+            <li><a asp-area="" asp-page="/Index"><i class="fa-solid fa-house fa-fw"></i> Úvod</a></li>
+            <li><a asp-area="" asp-page="/Privacy"><i class="fa-solid fa-shield fa-fw"></i> Ochrana soukromí</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        @if (ViewData["Title"] is string title && !string.IsNullOrEmpty(title))
+        {
+            <h1>@title</h1>
+        }
+        @RenderBody()
+    </main>
+
+    <footer>
+        &copy; @DateTime.Now.Year SportSys &mdash; <a asp-area="" asp-page="/Privacy">Ochrana soukromí</a>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-client-validation/0.11.0/aspnet-client-validation.min.js"
+            integrity="sha512-KBPXBsXJEk5lLPFGq3UCSwGMKmGaYf4WnfpXMiLOA7/R/z0DJG3x5MOqaJjnFcmTEyBe7dF0YlhPWsVNH9Fg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        new aspnetValidation.ValidationService().bootstrap();
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

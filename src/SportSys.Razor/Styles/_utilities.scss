@@ -1,0 +1,32 @@
+// Utility třídy — vyčleněny do vlastního souboru (na rozdíl od ReP, kde jsou v _layout.scss)
+
+.l { text-align: left  !important; }
+.r { text-align: right !important; }
+.c { text-align: center !important; }
+
+.fl { float: left; }
+.fr { float: right; }
+
+strong, .strong { font-weight: 700; }
+small,  .small  { font-size: 80%; }
+em,     .em     { font-style: italic; }
+
+.tag {
+  padding:       0 .5ex;
+  border-radius: 3px;
+}
+
+.text-muted { color: var(--color-text-muted); }
+
+.infobox {
+  background-color: var(--color-info-subtle);
+  border:           1px solid var(--color-info);
+  border-radius:    4px;
+  color:            var(--color-info-text);
+  padding:          .75rem 1rem;
+  margin-bottom:    1rem;
+
+  i {
+    color: var(--color-info);
+  }
+}

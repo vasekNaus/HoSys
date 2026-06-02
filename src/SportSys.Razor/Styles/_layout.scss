@@ -1,0 +1,191 @@
+@use 'vars' as *;
+
+// Reset
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size:        16px;
+  background-color: var(--color-brand-secondary);
+  min-height:       100%;
+}
+
+body {
+  font-family:      $FontFamily;
+  font-size:        1rem;
+  line-height:      1.6;
+  color:            var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  max-width:        $MaxWidth;
+  margin:           $Padding auto;
+  padding:          0 $Padding;
+  transition:       background-color .2s, color .2s;
+
+  @media (max-width: $StopMin) {
+    margin:  0 auto;
+    padding: 0 12px;
+  }
+}
+
+// Typografie
+h1, h2, h3, h4, h5, h6 {
+  color:         var(--color-text-primary);
+  font-weight:   700;
+  line-height:   1.2;
+  margin-top:    1.5rem;
+  margin-bottom: .5rem;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+
+a {
+  color:           var(--color-text-brand);
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--color-brand-primary);
+  }
+}
+
+p { margin: 0 0 1rem; }
+
+code {
+  font-family:      monospace;
+  font-size:        .9em;
+  background-color: var(--color-bg-subtle);
+  padding:          .1em .3em;
+  border-radius:    3px;
+}
+
+// Header
+body > header {
+  background-color: var(--color-brand-secondary);
+  color:            var(--color-text-inverse);
+  padding:          0 $Padding;
+  display:          flex;
+  align-items:      center;
+  justify-content:  space-between;
+  min-height:       $NavHeight;
+  margin:           0 (-$Padding) $Padding;
+  border-bottom:    3px solid var(--color-brand-primary);
+
+  .site-title {
+    font-size:       1.25rem;
+    font-weight:     700;
+    color:           var(--color-text-inverse);
+    text-decoration: none;
+    letter-spacing:  .02em;
+
+    &:hover {
+      color: var(--color-accent-gold);
+    }
+  }
+
+  .header-actions {
+    display:     flex;
+    align-items: center;
+    gap:         .75rem;
+  }
+
+  .btn-theme-toggle {
+    background:    none;
+    border:        1px solid rgba(255, 255, 255, .30);
+    color:         var(--color-text-inverse);
+    border-radius: 4px;
+    padding:       .35rem .6rem;
+    cursor:        pointer;
+    font-size:     .9rem;
+    line-height:   1;
+    transition:    border-color .2s, background .2s;
+
+    &:hover {
+      background:   rgba(255, 255, 255, .12);
+      border-color: rgba(255, 255, 255, .60);
+    }
+  }
+}
+
+// Navigace — checkbox hamburger hack (žádný JavaScript)
+body > nav {
+  background-color: var(--color-brand-secondary-active);
+  margin:           0 (-$Padding) $Padding;
+  position:         relative;
+
+  input[type="checkbox"]#nav-toggle {
+    position: absolute;
+    left:     -9999px;
+  }
+
+  label[for="nav-toggle"] {
+    display:     none;
+    cursor:      pointer;
+    padding:     .75rem $Padding;
+    color:       var(--color-text-inverse);
+    font-size:   1.4rem;
+    line-height: 1;
+    user-select: none;
+  }
+
+  ul {
+    list-style: none;
+    margin:     0;
+    padding:    0;
+    display:    flex;
+    flex-wrap:  wrap;
+
+    li a {
+      display:         block;
+      padding:         .75rem $Padding;
+      color:           var(--color-text-inverse);
+      text-decoration: none;
+      font-weight:     500;
+      transition:      background-color .15s;
+
+      &:hover,
+      &.active {
+        background-color: var(--color-brand-primary);
+        color:            var(--color-on-brand-primary);
+      }
+    }
+  }
+
+  @media (max-width: $StopMin) {
+    label[for="nav-toggle"] {
+      display: block;
+    }
+
+    ul {
+      display:        none;
+      flex-direction: column;
+    }
+
+    input[type="checkbox"]#nav-toggle:checked ~ ul {
+      display: flex;
+    }
+  }
+}
+
+// Hlavní obsah
+main {
+  padding-bottom: $Padding;
+}
+
+// Footer
+body > footer {
+  border-top: 1px solid var(--color-border-default);
+  margin:     $Padding (-$Padding) 0;
+  padding:    $Padding;
+  color:      var(--color-text-muted);
+  font-size:  .875rem;
+
+  a {
+    color: var(--color-text-muted);
+
+    &:hover {
+      color: var(--color-brand-primary);
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "sportsys-razor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "sass Styles/site.scss wwwroot/css/site.css --style=compressed --no-source-map",
+    "watch:css": "sass --watch Styles/site.scss:wwwroot/css/site.css"
+  },
+  "devDependencies": {
+    "sass": "^1.77.8"
+  }
+}

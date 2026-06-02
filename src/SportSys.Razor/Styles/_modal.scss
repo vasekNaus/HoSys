@@ -1,0 +1,57 @@
+@use 'vars' as *;
+
+.modal {
+  visibility:      hidden;
+  opacity:         0;
+  position:        fixed;
+  inset:           0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      var(--color-overlay);
+  z-index:         1000;
+  transition:      opacity .15s, visibility .15s;
+
+  &:target {
+    visibility: visible;
+    opacity:    1;
+  }
+
+  > article,
+  > form {
+    background-color: var(--color-surface-1);
+    border-radius:    6px;
+    box-shadow:       var(--shadow-lg);
+    max-width:        480px;
+    width:            90%;
+    overflow:         hidden;
+    text-align:       center;
+
+    @media (max-width: $StopMin) {
+      max-width: 95%;
+      width:     95%;
+    }
+
+    > header {
+      background-color: var(--color-brand-secondary);
+      color:            var(--color-text-inverse);
+      padding:          1rem $Padding;
+      font-weight:      700;
+      font-size:        1.1rem;
+      text-align:       left;
+    }
+
+    > p {
+      padding: $Padding;
+      margin:  0;
+    }
+
+    > footer {
+      padding:         .75rem $Padding;
+      border-top:      1px solid var(--color-border-subtle);
+      display:         flex;
+      gap:             .5rem;
+      justify-content: flex-end;
+    }
+  }
+}
