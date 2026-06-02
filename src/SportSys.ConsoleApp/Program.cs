@@ -83,13 +83,16 @@ partial class Program
     using var scope = host.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<SportSysDbContext>();
     var coaches = dbContext.Coaches.ToList();
+    var matches = dbContext.Matches.ToList();
+    var trainings = dbContext.Training.ToList();
     //var http = host.Services.GetRequiredService<IHttpClientFactory>().CreateClient();
     //var gamesFile = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\Source\SportSys\src\SportSys.ConsoleApp\games.xlsx";
     //await MatchImportRun.ImportAsync(gamesFile, db, http);
     //*/
-   var httpService = host.Services.GetRequiredService<SportSys.Contract.Services.HttpService>();
-   var result = await httpService.Search("Zimní station, Domažlice");
+    var httpService = host.Services.GetRequiredService<SportSys.Contract.Services.HttpService>();
+   //var result = await httpService.Search("Zimní station, Domažlice");
 
+    /*
     // Import zápasů z hokejového svazu (CSV)
     // SeasonCategory záznamy musí mít nastavený CompetitionCode odpovídající hodnotám sloupce Soutěž v CSV.
     var importService = scope.ServiceProvider.GetRequiredService<SportSys.Contract.Services.CsvMatchImportService>();
@@ -99,6 +102,8 @@ partial class Program
     Console.WriteLine($"Import dokončen: vloženo {importResult.Inserted}, přeskočeno {importResult.Skipped}");
     foreach (var warning in importResult.Warnings)
         Console.WriteLine($"  [varování] {warning}");
+    */
+
 
     Console.WriteLine("Done");
     Console.ReadLine();
