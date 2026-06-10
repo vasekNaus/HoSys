@@ -8,6 +8,9 @@ SportSys je informační systém pro hokejový klub postavený na .NET 10. Jde o
 # Sestavení celé solution
 dotnet build SportSys.slnx
 
+# Spuštění webové aplikace
+dotnet run --project src/SportSys.Razor
+
 # Spuštění konzolové aplikace (import dat)
 dotnet run --project src/SportSys.ConsoleApp
 
@@ -20,22 +23,30 @@ dotnet ef migrations list --project src/SportSys.Database
 Konfigurační soubory (`appsettings.json`) nejsou commitovány – connection stringy se nastavují lokálně nebo přes user secrets:
 
 ```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.;Database=SportSys;..."  --project src/SportSys.Razor
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.;Database=SportSys;..."  --project src/SportSys.ConsoleApp
 ```
 
 ## Architektura projektu
 
-Solution používá nový formát `.slnx`. Projekty:
+Solution používá nový formát `.slnx`. Vrstvová závislost: **Razor → Contract → Database → SQL Server**
 
 | Projekt | Typ | Role |
 |---|---|---|
 | `SportSys.Database` | Class Library | EF Core modely, DbContext, migrace, konfigurace |
+| `SportSys.Model` | Class Library | Doménové objekty a DTO sdílené napříč vrstvami |
+| `SportSys.Contract` | Class Library | Aplikační servisy; závisí na Database, vrací Model objekty |
+| `SportSys.Razor` | ASP.NET Core Web App | Razor Pages / Blazor Server; závisí **výhradně** na Contract |
 | `SportSys.ConsoleApp` | Console App | Import dat z Excelu (trenéři, zápasy) do SQL Serveru |
-| `SportSys.Application` | Class Library | Aplikační vrstva (ve vývoji) |
-| `SportSys.Contract` | Class Library | Sdílené kontrakty / DTO (ve vývoji) |
 | `src/Apollo/` | Git submodul | Interní sdílená knihovna (HttpService, atd.) |
 
-Závislosti: `ConsoleApp → Database → SQL Server`. Webová vrstva (Razor Pages / Blazor Server) zatím není v solution.
+**Klíčové pravidlo:** `SportSys.Razor` nesmí přímo referencovat `SportSys.Database`. Veškerý přístup k databázi jde přes injektované servisy z `SportSys.Contract`.
+
+Registrace servisů v `Program.cs` (Razor):
+```csharp
+builder.Services.AddSportSysServices(builder.Configuration);
+```
+`AddSportSysServices` je extension metoda v `SportSys.Contract/ServiceCollectionExtensions.cs` – registruje `SportSysDbContext` + všechny Contract servisy.
 
 ## Databázový model
 
@@ -73,9 +84,36 @@ SQL view spojující `Training UNION ALL Match` s rozlišovacím sloupcem `Event
 
 Všechny projekty mají `<Nullable>enable</Nullable>` a `<ImplicitUsings>enable</ImplicitUsings>`. Dodržovat nullable anotace; vyhýbat se `null!` bez komentáře.
 
-### FK pojmenování v modelech
+### Konvence modelů a EF Core konfigurace
 
-Cizí klíče jsou pojmenovány vzorem `{Entity}_{Id}` / `{Entity}_{Name}` (např. `Season_Id`, `SeasonCategory_Name`), jak generuje EF Core Power Tools.
+**Data atributy mají přednost před Fluent API.** Veškerá konfigurace, kterou lze vyjádřit pomocí data atributů, patří přímo na modely v `Models/`. Fluent API v `Configurations/` se používá **výhradně** pro věci, které data atributy neumožňují:
+
+| Lze atributem | Patří do modelu |
+|---|---|
+| Tabulka, schéma | `[Table("Nazev", Schema = Schemas.Dbo)]` |
+| Primární klíč | `[Key]` / `[PrimaryKey(nameof(A), nameof(B))]` |
+| FK + navigace | `[ForeignKey(nameof(PropertyId))]` na nav. vlastnosti |
+| Chování při mazání | `[DeleteBehavior(DeleteBehavior.Cascade)]` na nav. vlastnosti |
+| Délka řetězce | `[StringLength(50)]` |
+| Unicode / VARCHAR | `[Unicode(false)]` |
+| Přesnost | `[Precision(0)]` |
+| Název sloupce | `[Column("sloupec")]` |
+| Typ sloupce | `[Column(TypeName = "decimal(5,2)")]` |
+| Unikátní index | `[Index(nameof(Prop), IsUnique = true)]` (na třídě) |
+| Složený index | `[Index(nameof(A), nameof(B), Name = "IX_...")]` (na třídě) |
+| Inverzní navigace | `[InverseProperty(nameof(Other.Nav))]` |
+
+**Výlučně Fluent API** (atribut neexistuje nebo ho EF nedokáže vyhodnotit ze zdrojového kódu):
+- `HasComputedColumnSql(...)` – persisted computed sloupce (DurationMinutes, FullName)
+- `HasDefaultValueSql(...)` / `HasDefaultValue(...)` s pojmenovaným constraintem
+- `UseTpcMappingStrategy()` – TPC dědičnost
+- `HasConversion(...)` – value convertory (např. JSON pro MatchResult)
+- `HasData(...)` – seed data (lookup tabulky)
+- `HasSequence(...)` – databázové sekvence
+
+Konfigurační soubor v `Configurations/` se vytváří **jen tehdy**, když je pro entitu skutečně něco k vyjádření pomocí Fluent API.
+
+
 
 ### Import z Excelu
 

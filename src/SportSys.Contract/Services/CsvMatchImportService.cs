@@ -5,8 +5,9 @@ using Microsoft.Extensions.Logging;
 using SportSys.Contract.Models;
 using SportSys.Database.Context;
 using SportSys.Database.Enums;
-using DbMatch = SportSys.Database.Models.sportSchema.Match;
-using DbMatchResult = SportSys.Database.Models.sportSchema.MatchResult;
+using SportSys.Database.Models.sport;
+using DbMatch = SportSys.Database.Models.sport.Match;
+using DbMatchResult = SportSys.Database.Models.sport.MatchResult;
 
 namespace SportSys.Contract.Services;
 
@@ -29,7 +30,7 @@ public class CsvMatchImportService
   /// <summary>
   /// Importuje zápasy z CSV souboru.
   /// Kategorie sezóny se určuje automaticky z hodnoty sloupce Soutěž
-  /// porovnáním s <see cref="SportSys.Database.Models.sportSchema.SeasonCategory.CompetitionCode"/>.
+  /// porovnáním s <see cref="SeasonCategory.CompetitionCode"/>.
   /// </summary>
   /// <param name="csvFilePath">Cesta ke středníkovému CSV souboru (UTF-8).</param>
   /// <param name="seasonId">ID sezóny, ke které se zápasy přiřadí.</param>

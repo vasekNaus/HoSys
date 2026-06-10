@@ -6,10 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Models.dboSchema;
-using SportSys.Database.Models.sportSchema;
 
-
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [PrimaryKey("SeasonId", "Name")]
 [Table(nameof(SeasonCategory), Schema = Schemas.Sport)]

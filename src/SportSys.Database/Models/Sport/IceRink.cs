@@ -7,10 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using SportSys.Database.Models.dboSchema;
-using SportSys.Database.Models.sportSchema;
 
-
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [Table(nameof(IceRink), Schema = Schemas.Sport)]
 public partial class IceRink

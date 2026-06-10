@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SportSys.Database.Models.dboSchema;
+using SportSys.Database.Models.dbo;
 
 namespace SportSys.Database.Configurations.dbo;
 

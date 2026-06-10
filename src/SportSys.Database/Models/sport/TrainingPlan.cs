@@ -8,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Models.dboSchema;
 using SportSys.Database.Models.sportSchema;
 
-
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [Table(nameof(TrainingPlan), Schema = Schemas.Sport)]
 public partial class TrainingPlan

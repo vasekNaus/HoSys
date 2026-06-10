@@ -6,31 +6,42 @@ SportSys je vícevrstvá webová aplikace postavená na .NET 10. Skládá se z n
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  SportSys.Web  (Razor Pages / Blazor Server)        │
+│  SportSys.Razor  (Razor Pages / Blazor Server)      │
 │  – UI, API endpointy                                │
+│  – závisí VÝHRADNĚ na SportSys.Contract             │
 └──────────────────────┬──────────────────────────────┘
                        │ závisí na
 ┌──────────────────────▼──────────────────────────────┐
-│  SportSys.Database                                  │
-│  – EF Core modely, DbContext, migrace               │
-│  – Models.Emr  (read-only napojení na ext. systém)  │
-└──────────────────────┬──────────────────────────────┘
-                       │ MSSQL
-┌──────────────────────▼──────────────────────────────┐
+│  SportSys.Contract                                  │
+│  – business logika, aplikační servisy               │
+│  – mapování DB entit na SportSys.Model objekty      │
+└──────────┬───────────────────────────┬──────────────┘
+           │ závisí na                 │ vrací
+┌──────────▼──────────┐   ┌───────────▼──────────────┐
+│  SportSys.Database  │   │  SportSys.Model           │
+│  – EF Core modely   │   │  – doménové objekty / DTO │
+│  – DbContext        │   │  – sdílené napříč vrstvami│
+│  – migrace          │   └──────────────────────────┘
+│  – Models.Emr       │
+└──────────┬──────────┘
+           │ MSSQL
+┌──────────▼──────────────────────────────────────────┐
 │  SQL Server                                         │
 │  – databáze SportSys  (vlastní schéma dbo)          │
 │  – databáze externího systému  (schéma plan)        │
 └─────────────────────────────────────────────────────┘
 ```
 
+> **Klíčové pravidlo:** `SportSys.Razor` nesmí přímo referencovat `SportSys.Database`. Veškerý přístup k databázi jde výhradně přes servisy v `SportSys.Contract`.
+
 ## Projekty
 
 | Projekt | Typ | Popis |
 |---|---|---|
 | `SportSys.Database` | Class Library | EF Core modely, `SportSysDbContext`, migrace |
-| `SportSys.Model` | Class Library | Sdílené doménové objekty a DTO |
-| `SportSys.Contract` | Class Library | Aplikační logika, services |
-| `SportSys.Web` | ASP.NET Core Web App | Razor Pages / Blazor Server, REST API (připravováno) |
+| `SportSys.Model` | Class Library | Sdílené doménové objekty a DTO (vrácené servisy) |
+| `SportSys.Contract` | Class Library | Aplikační servisy; závisí na Database, vrací Model objekty |
+| `SportSys.Razor` | ASP.NET Core Web App | Razor Pages / Blazor Server; závisí **výhradně** na Contract |
 | `SportSys.ConsoleApp` | Console App | Pomocné CLI nástroje – import dat z Excelu |
 
 ## Databázový model
@@ -101,20 +112,22 @@ Modely v `SportSys.Database/Models/Emr/` jsou mapovány na schéma `plan` extern
 
 ### Registrace služeb (`Program.cs`)
 
-Standardní konfigurace pro kombinaci Razor Pages a Blazor Server:
+Standardní konfigurace pro kombinaci Razor Pages a Blazor Server. Přístup k databázi jde výhradně přes extension metodu `AddSportSysServices` z `SportSys.Contract` – Razor projekt nevolá `AddDbContext` přímo:
 
 ```csharp
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddDbContext<SportSysDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Registrace všech Contract servisů + SportSysDbContext
+builder.Services.AddSportSysServices(builder.Configuration);
 
 var app = builder.Build();
 app.MapRazorPages();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 ```
+
+`AddSportSysServices` je extension metoda definovaná v `SportSys.Contract/ServiceCollectionExtensions.cs`. Registruje `SportSysDbContext` pomocí connection stringu `ConnectionStrings:DefaultConnection` z konfigurace a všechny Contract servisy.
 
 Blazor komponenty lze integrovat přímo do Razor Pages pomocí tag helperu:
 
@@ -133,21 +146,14 @@ Konvence:
 - JSON request/response
 - HTTP status kódy dle sémantiky (200, 201, 400, 404, 409...)
 - Autentizace řešena na úrovni ASP.NET Core middleware (cookie auth / JWT – TBD)
+- Endpointy **nesmí** volat `SportSysDbContext` přímo – používají injektované Contract servisy
 
-Příklad registrace Minimal API endpointu:
+Příklad registrace Minimal API endpointu (přes Contract servis):
 
 ```csharp
-app.MapGet("/api/v1/trainings", async (SportSysDbContext db) =>
-    await db.Trainings.ToListAsync())
+app.MapGet("/api/v1/trainings", async (ITrainingService svc) =>
+    await svc.GetAllAsync())
     .RequireAuthorization();
-
-app.MapPost("/api/v1/trainings", async (Training training, SportSysDbContext db) =>
-{
-    db.Trainings.Add(training);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/v1/trainings/{training.Id}", training);
-})
-.RequireAuthorization();
 ```
 
 ## Konfigurace

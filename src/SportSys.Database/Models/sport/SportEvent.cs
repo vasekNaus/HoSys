@@ -2,17 +2,18 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using SportSys.Database.Models.sportSchema;
 
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 public abstract class SportEvent
 {
     [Key]
     public int Id { get; set; }
 
+    [Column("SeasonCategory_Season_Id")]
     public int SeasonId { get; set; }
 
+    [Column("SeasonCategory_Name")]
     [StringLength(10)]
     [Unicode(false)]
     public required string SeasonCategoryName { get; set; }

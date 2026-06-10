@@ -5,11 +5,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using SportSys.Database.Models.dboSchema;
-using SportSys.Database.Models.sportSchema;
+using SportSys.Database.Models.dbo;
 
-
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [PrimaryKey("CoachId", "TrainingPlanId", "ValidFrom", "ValidTo")]
 [Table(nameof(CoachTrainingPlan), Schema = Schemas.Sport)]

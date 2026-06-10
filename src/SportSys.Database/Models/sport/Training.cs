@@ -7,7 +7,7 @@ using SportSys.Database.Models.dboSchema;
 using SportSys.Database.Models.sportSchema;
 
 
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [Table(nameof(Training), Schema = Schemas.Sport)]
 public partial class Training : SportEvent

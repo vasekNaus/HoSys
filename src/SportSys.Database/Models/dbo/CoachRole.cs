@@ -6,8 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Models.dboSchema;
-using SportSys.Database.Models.sportSchema;
-
+using SportSys.Database.Models.sport;
 
 namespace SportSys.Database.Models.dboSchema;
 

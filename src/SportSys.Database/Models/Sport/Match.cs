@@ -1,11 +1,10 @@
 ﻿#nullable enable
+using Microsoft.EntityFrameworkCore;
+using SportSys.Database.Models.sportSchema;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using SportSys.Database.Models.dboSchema;
-using SportSys.Database.Models.sportSchema;
 
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [Table(nameof(Match), Schema = Schemas.Sport)]
 public partial class Match : SportEvent
@@ -36,5 +35,5 @@ public partial class Match : SportEvent
     public virtual Team AwayTeam { get; set; } = null!;
 
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
-    public virtual MatchType MatchType { get; set; } = null!;
+    public virtual sportSchema.MatchType MatchType { get; set; } = null!;
 }

@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Serilog;
+using SportSys.Contract;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,13 +12,11 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
-builder.Services.AddAuthorization(options =>
-{
-  // By default, all incoming requests will be authorized according to the default policy.
-  options.FallbackPolicy = options.DefaultPolicy;
-});
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
+
+// Registrace SportSysDbContext, Identity, Claims transformation, Contract servisů a authorization policies
+builder.Services.AddSportSysServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -37,6 +34,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

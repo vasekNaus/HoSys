@@ -6,10 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Models.dboSchema;
-using SportSys.Database.Models.sportSchema;
 
-
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [Table(nameof(Season), Schema = Schemas.Sport)]
 public partial class Season

@@ -1,4 +1,4 @@
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 /// <summary>
 /// Výsledek zápasu ukládaný jako JSON sloupec na entitě <see cref="Match"/>.
