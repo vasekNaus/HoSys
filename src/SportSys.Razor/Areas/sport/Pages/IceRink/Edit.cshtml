@@ -1,0 +1,48 @@
+@page
+@model EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nový zimní stadion" : "Upravit zimní stadion";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Input.Id" />
+
+    <p>
+        <label asp-for="Input.Name"></label>
+        <input asp-for="Input.Name" type="text" />
+        <span asp-validation-for="Input.Name" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label asp-for="Input.Street"></label>
+        <input asp-for="Input.Street" type="text" />
+        <span asp-validation-for="Input.Street" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label asp-for="Input.City"></label>
+        <input asp-for="Input.City" type="text" />
+        <span asp-validation-for="Input.City" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label asp-for="Input.ZipCode"></label>
+        <input asp-for="Input.ZipCode" type="text" />
+        <span asp-validation-for="Input.ZipCode" class="field-validation-error"></span>
+    </p>
+
+    <footer>
+        <button type="submit" class="button">
+            <i class="fa-solid fa-floppy-disk fa-fw"></i> Uložit
+        </button>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-xmark fa-fw"></i> Zrušit
+        </a>
+    </footer>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

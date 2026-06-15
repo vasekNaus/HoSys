@@ -61,6 +61,8 @@ public static class ServiceCollectionExtensions
     });
 
     services.AddScoped<CsvMatchImportService>();
+    services.AddScoped<IceRinkService>();
+    services.AddScoped<TrainingScheduleService>();
 
     return services;
   }

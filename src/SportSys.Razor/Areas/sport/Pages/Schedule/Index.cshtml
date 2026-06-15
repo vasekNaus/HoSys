@@ -1,0 +1,141 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Rozvrh tréninků";
+    var invariant = System.Globalization.CultureInfo.InvariantCulture;
+}
+
+<h1>Rozvrh tréninků</h1>
+
+<form method="get" class="schedule-filter">
+
+    <div class="schedule-filter-row">
+
+        @* Sezóna *@
+        <div class="field">
+            <label for="SeasonId">Sezóna</label>
+            <select id="SeasonId" name="SeasonId" class="textbox"
+                    onchange="this.form.submit()">
+                <option value="">— vyberte sezónu —</option>
+                @foreach (var s in Model.Seasons)
+                {
+                    <option value="@s.Id" selected="@(Model.SeasonId == s.Id)">@s.Name</option>
+                }
+            </select>
+        </div>
+
+        @* Datum od *@
+        <div class="field">
+            <label for="DateFrom">Od</label>
+            <input type="date" id="DateFrom" name="DateFrom" class="textbox"
+                   value="@Model.DateFrom?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        @* Datum do *@
+        <div class="field">
+            <label for="DateTo">Do</label>
+            <input type="date" id="DateTo" name="DateTo" class="textbox"
+                   value="@Model.DateTo?.ToString("yyyy-MM-dd")" />
+        </div>
+
+    </div>
+
+    @if (Model.SeasonCategories.Count > 0)
+    {
+        <fieldset class="schedule-filter-categories">
+            <legend>Kategorie</legend>
+            <div class="schedule-filter-checkboxes">
+                @foreach (var cat in Model.SeasonCategories)
+                {
+                    var isChecked = Model.SelectedCategories.Contains(cat.Name);
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="SelectedCategories" value="@cat.Name"
+                               checked="@isChecked" />
+                        @cat.Name
+                    </label>
+                }
+            </div>
+        </fieldset>
+    }
+    else if (Model.SeasonId.HasValue)
+    {
+        <p class="text-muted">Pro zvolenou sezónu nejsou definovány žádné kategorie.</p>
+    }
+
+    @if (Model.SeasonId.HasValue && Model.SeasonCategories.Count > 0)
+    {
+        <div class="schedule-filter-actions">
+            <button type="submit" class="button">
+                <i class="fa-solid fa-calendar-days fa-fw"></i> Zobrazit rozvrh
+            </button>
+        </div>
+    }
+
+</form>
+
+@if (Model.HasResults)
+{
+    @* Legenda *@
+    <div class="schedule-legend">
+        @foreach (var (cat, color) in Model.CategoryColorMap)
+        {
+            <div class="schedule-legend-item">
+                <span class="schedule-legend-swatch" style="background-color: @color"></span>
+                <span>@cat</span>
+            </div>
+        }
+    </div>
+
+    @* Časová osa *@
+    <div class="schedule-timeline">
+
+        @* Záhlaví s časovými značkami *@
+        <div class="schedule-header">
+            <div class="schedule-date-col"></div>
+            <div class="schedule-track schedule-track--header">
+                @foreach (var (label, left) in Model.TimelineMarkers())
+                {
+                    <span class="schedule-marker" style="left: @left.ToString("F2", invariant)%">@label</span>
+                }
+            </div>
+        </div>
+
+        @* Řádky dnů *@
+        @foreach (var date in Model.DateRange)
+        {
+            var trainings = Model.Schedule.TryGetValue(date, out var t) ? t : [];
+            var rowClass  = IndexModel.IsWeekend(date) ? "schedule-row schedule-row--weekend" : "schedule-row";
+
+            <div class="@rowClass">
+                <div class="schedule-date-col">
+                    <span class="schedule-dow">@IndexModel.FormatDow(date)</span>
+                    <span class="schedule-datenum">@IndexModel.FormatDate(date)</span>
+                </div>
+                <div class="schedule-track">
+                    @foreach (var (_, markerLeft) in Model.TimelineMarkers())
+                    {
+                        <span class="schedule-gridline" style="left: @markerLeft.ToString("F2", invariant)%"></span>
+                    }
+                    @foreach (var tr in trainings)
+                    {
+                        var blockLeft  = Model.GetLeft(tr.TimeFrom);
+                        var blockWidth = Model.GetWidth(tr.TimeFrom, tr.TimeTo);
+                        var color      = Model.GetCategoryColor(tr.SeasonCategoryName);
+                        var tooltip    = $"{tr.SeasonCategoryName} · {tr.TrainingTypeName} · {tr.Location}"
+                                         + (string.IsNullOrEmpty(tr.Note) ? "" : $" · {tr.Note}");
+                        <div class="schedule-block"
+                             style="left: @blockLeft.ToString("F2", invariant)%; width: @blockWidth.ToString("F2", invariant)%; background-color: @color"
+                             title="@tooltip">
+                            <span class="schedule-block-cat">@tr.SeasonCategoryName</span>
+                            <span class="schedule-block-time">@tr.TimeFrom.ToString("H:mm")–@tr.TimeTo.ToString("H:mm")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+else if (Model.SeasonId.HasValue && Model.SelectedCategories.Count > 0)
+{
+    <p class="text-muted">Pro zadané parametry nebyly nalezeny žádné tréninky.</p>
+}

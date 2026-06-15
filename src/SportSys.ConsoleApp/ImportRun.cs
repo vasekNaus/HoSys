@@ -85,13 +85,19 @@ public static class ImportRun
           string categoryName = GetString(dr, "Soupiska");
           string participationType = GetString(dr, "Účast / neúčast");
           string note = GetString(dr, "Poznámka");
+          
 
-          if (datum.HasValue && casOd.HasValue && casDo.HasValue && iceTyp.ToLower() == "trénink" && !string.IsNullOrEmpty(categoryName) && !string.IsNullOrEmpty(participationType))
+          if (string.IsNullOrEmpty(note))
           {
-            var t = new Training(1, DateOnly.FromDateTime(datum.Value), TimeOnly.FromTimeSpan(casOd.Value), TimeOnly.FromTimeSpan(casDo.Value),
+            note = GetString(dr, "Název");
+          }
+
+          if (datum.HasValue && casOd.HasValue && casDo.HasValue && iceTyp.ToLower().Contains("trénink") && !string.IsNullOrEmpty(categoryName) && !string.IsNullOrEmpty(participationType))
+          {
+            var t = new Training(3, DateOnly.FromDateTime(datum.Value), TimeOnly.FromTimeSpan(casOd.Value), TimeOnly.FromTimeSpan(casDo.Value),
                                  categoryName, participationType, note, coachLastName);
 
-            using var cmd = new SqlCommand("[dbo].[procImportCoachTrainingKIS]", conn, (SqlTransaction)tx);
+            using var cmd = new SqlCommand("[sport].[ImportCoachTrainingKIS]", conn, (SqlTransaction)tx);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.Add(new SqlParameter("@seasonId", SqlDbType.Int) { Value = t.SessionId });

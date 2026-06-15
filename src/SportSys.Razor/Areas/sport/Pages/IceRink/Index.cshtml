@@ -1,0 +1,59 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Zimní stadiony";
+}
+
+@if (Model.StatusMessage is not null)
+{
+    <div class="infobox">
+        <i class="fa-solid fa-circle-check fa-fw"></i> @Model.StatusMessage
+    </div>
+}
+
+<p>
+    <a class="button" asp-page="Edit">
+        <i class="fa-solid fa-plus fa-fw"></i> Přidat zimní stadion
+    </a>
+</p>
+
+@if (Model.IceRinks.Count == 0)
+{
+    <p class="text-muted">Žádné zimní stadiony nejsou zadány.</p>
+}
+else
+{
+    <table class="grid">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Ulice</th>
+                <th>Město</th>
+                <th>PSČ</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rink in Model.IceRinks)
+            {
+                <tr>
+                    <td>@rink.Name</td>
+                    <td>@rink.Street</td>
+                    <td>@rink.City</td>
+                    <td>@rink.ZipCode</td>
+                    <td class="buttons">
+                        <a class="button secondary" asp-page="Edit" asp-route-id="@rink.Id">
+                            <i class="fa-solid fa-pen fa-fw"></i> Upravit
+                        </a>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@rink.Id" style="display:inline">
+                            <button type="submit" class="button tertiary"
+                                    onclick="return confirm('Opravdu chcete smazat zimní stadion @Html.Raw(Html.Encode(rink.Name))?')">
+                                <i class="fa-solid fa-trash fa-fw"></i> Smazat
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

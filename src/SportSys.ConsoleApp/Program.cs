@@ -49,14 +49,14 @@ partial class Program
     //  diff3 = EF.Functions.DateDiffMinute(timeOnlyNow, x.TimeFrom)  //x.Block!.Date.ToDateTime(TimeOnly.MinValue)
     //}).ToList();
 
-    var folderPath = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\PowerBI\202603";
-    var connStr = "Server=.\\SQL2022;Database=Hockey;Trusted_Connection=True;TrustServerCertificate=True;";
+    var folderPath = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\PowerBI\202605";
+    var connStr = "Server=.\\SQL2025;Database=SportSys;Trusted_Connection=True;TrustServerCertificate=True;";
 
-    //foreach (var file in Directory.EnumerateFiles(folderPath, "*.xlsx"))
-    //{
-    //  //if (file.Contains("Krsová") || file.Contains("Kuchař"))
-    //  await ImportRun.ImportAsync(file, connStr);
-    //}
+    foreach (var file in Directory.EnumerateFiles(folderPath, "*.xlsx"))
+    {
+      if (file.Contains("Krasanovský") || file.Contains("Vondryska"))
+        await ImportRun.ImportAsync(file, connStr);
+    }
 
     // Import zápasů z games.xlsx
 
@@ -90,7 +90,7 @@ partial class Program
     //await MatchImportRun.ImportAsync(gamesFile, db, http);
     //*/
     var httpService = host.Services.GetRequiredService<SportSys.Contract.Services.HttpService>();
-   //var result = await httpService.Search("Zimní station, Domažlice");
+    //var result = await httpService.Search("Zimní station, Domažlice");
 
     /*
     // Import zápasů z hokejového svazu (CSV)

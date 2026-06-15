@@ -1,0 +1,242 @@
+@use 'vars' as *;
+
+// ================================================================
+// ROZVRH TRÉNINKŮ — Týdenní timeline vizualizace
+// ================================================================
+
+$date-col-width:  5rem;
+$track-height:    3.5rem;
+$header-height:   1.75rem;
+
+// ── Filtr ────────────────────────────────────────────────────────
+
+.schedule-filter {
+  margin-bottom: 1.5rem;
+}
+
+.schedule-filter-row {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       1rem;
+  margin-bottom: 1rem;
+
+  .field {
+    display:        flex;
+    flex-direction: column;
+    gap:            .25rem;
+    min-width:      10rem;
+    flex:           1;
+
+    label {
+      font-size:   .875rem;
+      font-weight: 600;
+      color:       var(--color-text-secondary);
+    }
+
+    select,
+    input[type="date"] {
+      font-family:      $FontFamily;
+      font-size:        1rem;
+      padding:          .45rem .75rem;
+      border:           1px solid var(--color-border-strong);
+      border-radius:    4px;
+      background-color: var(--color-surface-1);
+      color:            var(--color-text-primary);
+      transition:       border-color .15s;
+
+      &:focus {
+        outline:      none;
+        border-color: var(--color-border-focus);
+      }
+    }
+  }
+}
+
+.schedule-filter-categories {
+  border:        1px solid var(--color-border-default);
+  border-radius: 4px;
+  padding:       .75rem 1rem;
+  margin-bottom: 1rem;
+
+  legend {
+    font-size:   .875rem;
+    font-weight: 600;
+    color:       var(--color-text-secondary);
+    padding:     0 .375rem;
+  }
+}
+
+.schedule-filter-checkboxes {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       .5rem 1.5rem;
+}
+
+.checkbox-label {
+  display:     flex;
+  align-items: center;
+  gap:         .375rem;
+  cursor:      pointer;
+  font-size:   .9375rem;
+
+  input[type="checkbox"] {
+    width:  1rem;
+    height: 1rem;
+    cursor: pointer;
+    accent-color: var(--color-brand-primary);
+  }
+}
+
+.schedule-filter-actions {
+  margin-top: .5rem;
+}
+
+// ── Legenda kategorií ────────────────────────────────────────────
+
+.schedule-legend {
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           .375rem .875rem;
+  margin-bottom: 1rem;
+}
+
+.schedule-legend-item {
+  display:     flex;
+  align-items: center;
+  gap:         .375rem;
+  font-size:   .875rem;
+}
+
+.schedule-legend-swatch {
+  width:         .875rem;
+  height:        .875rem;
+  border-radius: 2px;
+  flex-shrink:   0;
+}
+
+// ── Timeline ─────────────────────────────────────────────────────
+
+.schedule-timeline {
+  border:        1px solid var(--color-border-default);
+  border-radius: 4px;
+  overflow:      hidden;
+  font-size:     .8125rem;
+}
+
+// Záhlaví s časovými popisky
+.schedule-header {
+  display:          flex;
+  background-color: var(--color-surface-2);
+  border-bottom:    1px solid var(--color-border-default);
+
+  .schedule-date-col {
+    border-right: 1px solid var(--color-border-default);
+  }
+
+  .schedule-track--header {
+    min-height: $header-height;
+  }
+}
+
+// Řádek jednoho dne
+.schedule-row {
+  display:       flex;
+  border-bottom: 1px solid var(--color-border-subtle);
+
+  &:last-child { border-bottom: none; }
+
+  &--weekend {
+    background-color: var(--color-brand-secondary-subtle);
+  }
+}
+
+// Sloupec s datem
+.schedule-date-col {
+  width:           $date-col-width;
+  flex-shrink:     0;
+  padding:         .375rem .5rem;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  border-right:    1px solid var(--color-border-default);
+  line-height:     1.3;
+}
+
+.schedule-dow {
+  font-weight: 700;
+  color:       var(--color-text-secondary);
+}
+
+.schedule-datenum {
+  color: var(--color-text-primary);
+}
+
+// Dráha (track) – časová osa
+.schedule-track {
+  flex:     1;
+  position: relative;
+  min-height: $track-height;
+  overflow: hidden;
+}
+
+// Svislé mřížkové čáry
+.schedule-gridline {
+  position:    absolute;
+  top:         0;
+  bottom:      0;
+  width:       1px;
+  background:  var(--color-border-subtle);
+  pointer-events: none;
+}
+
+// Časové popisky v záhlaví
+.schedule-marker {
+  position:    absolute;
+  top:         50%;
+  transform:   translateY(-50%);
+  font-size:   .6875rem;
+  color:       var(--color-text-muted);
+  white-space: nowrap;
+  padding-left: 3px;
+  user-select: none;
+}
+
+// Blok tréninku
+.schedule-block {
+  position:      absolute;
+  top:           .3125rem;
+  bottom:        .3125rem;
+  border-radius: 3px;
+  padding:       .125rem .375rem;
+  color:         #fff;
+  overflow:      hidden;
+  cursor:        default;
+  display:       flex;
+  flex-direction: column;
+  justify-content: center;
+  text-shadow:   0 1px 2px rgba(0, 0, 0, .4);
+  box-shadow:    0 1px 3px rgba(0, 0, 0, .2);
+  transition:    filter .1s;
+
+  &:hover {
+    filter:  brightness(1.1);
+    z-index: 10;
+  }
+}
+
+.schedule-block-cat {
+  font-weight:  700;
+  font-size:    .75rem;
+  line-height:  1.2;
+  white-space:  nowrap;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-block-time {
+  font-size:    .6875rem;
+  line-height:  1.2;
+  opacity:      .9;
+  white-space:  nowrap;
+}
