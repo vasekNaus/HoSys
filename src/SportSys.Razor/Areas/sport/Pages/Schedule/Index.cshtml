@@ -104,6 +104,7 @@
         @foreach (var date in Model.DateRange)
         {
             var trainings = Model.Schedule.TryGetValue(date, out var t) ? t : [];
+            var lanes     = IndexModel.GetLanes(trainings);
             var rowClass  = IndexModel.IsWeekend(date) ? "schedule-row schedule-row--weekend" : "schedule-row";
 
             <div class="@rowClass">
@@ -111,23 +112,38 @@
                     <span class="schedule-dow">@IndexModel.FormatDow(date)</span>
                     <span class="schedule-datenum">@IndexModel.FormatDate(date)</span>
                 </div>
-                <div class="schedule-track">
-                    @foreach (var (_, markerLeft) in Model.TimelineMarkers())
+                <div class="schedule-tracks">
+                    @if (lanes.Count == 0)
                     {
-                        <span class="schedule-gridline" style="left: @markerLeft.ToString("F2", invariant)%"></span>
+                        <div class="schedule-track">
+                            @foreach (var (_, markerLeft) in Model.TimelineMarkers())
+                            {
+                                <span class="schedule-gridline" style="left: @markerLeft.ToString("F2", invariant)%"></span>
+                            }
+                        </div>
                     }
-                    @foreach (var tr in trainings)
+                    @for (var laneIdx = 0; laneIdx < lanes.Count; laneIdx++)
                     {
-                        var blockLeft  = Model.GetLeft(tr.TimeFrom);
-                        var blockWidth = Model.GetWidth(tr.TimeFrom, tr.TimeTo);
-                        var color      = Model.GetCategoryColor(tr.SeasonCategoryName);
-                        var tooltip    = $"{tr.SeasonCategoryName} · {tr.TrainingTypeName} · {tr.Location}"
-                                         + (string.IsNullOrEmpty(tr.Note) ? "" : $" · {tr.Note}");
-                        <div class="schedule-block"
-                             style="left: @blockLeft.ToString("F2", invariant)%; width: @blockWidth.ToString("F2", invariant)%; background-color: @color"
-                             title="@tooltip">
-                            <span class="schedule-block-cat">@tr.SeasonCategoryName</span>
-                            <span class="schedule-block-time">@tr.TimeFrom.ToString("H:mm")–@tr.TimeTo.ToString("H:mm")</span>
+                        var laneTrainings = lanes[laneIdx];
+                        <div class="schedule-track">
+                            @foreach (var (_, markerLeft) in Model.TimelineMarkers())
+                            {
+                                <span class="schedule-gridline" style="left: @markerLeft.ToString("F2", invariant)%"></span>
+                            }
+                            @foreach (var tr in laneTrainings)
+                            {
+                                var blockLeft  = Model.GetLeft(tr.TimeFrom);
+                                var blockWidth = Model.GetWidth(tr.TimeFrom, tr.TimeTo);
+                                var color      = Model.GetCategoryColor(tr.SeasonCategoryName);
+                                var tooltip    = $"{tr.SeasonCategoryName} · {tr.TrainingTypeName} · {tr.Location}"
+                                                 + (string.IsNullOrEmpty(tr.Note) ? "" : $" · {tr.Note}");
+                                <div class="schedule-block"
+                                     style="left: @blockLeft.ToString("F2", invariant)%; width: @blockWidth.ToString("F2", invariant)%; background-color: @color"
+                                     title="@tooltip">
+                                    <span class="schedule-block-cat">@tr.SeasonCategoryName</span>
+                                    <span class="schedule-block-time">@tr.TimeFrom.ToString("H:mm")–@tr.TimeTo.ToString("H:mm")</span>
+                                </div>
+                            }
                         </div>
                     }
                 </div>

@@ -20,10 +20,16 @@ public class IndexModel : PageModel
         "#84cc16", // limetková
     ];
 
-    public static readonly TimeOnly TimelineStart = new(6, 0);
-    public static readonly TimeOnly TimelineEnd   = new(22, 0);
+    /// <summary>Počet hodin přidaných před začátkem prvního tréninku.</summary>
+    public const int TimelinePaddingBeforeHours = 1;
 
-    private static readonly double TotalTimelineMinutes =
+    /// <summary>Počet hodin přidaných za koncem posledního tréninku.</summary>
+    public const int TimelinePaddingAfterHours = 1;
+
+    public TimeOnly TimelineStart { get; private set; } = new(6, 0);
+    public TimeOnly TimelineEnd   { get; private set; } = new(22, 0);
+
+    private double TotalTimelineMinutes =>
         (TimelineEnd.ToTimeSpan() - TimelineStart.ToTimeSpan()).TotalMinutes;
 
     private readonly TrainingScheduleService _service;
@@ -92,6 +98,17 @@ public class IndexModel : PageModel
 
             Schedule = trainings.GroupBy(t => t.Date)
                                 .ToDictionary(g => g.Key, g => g.ToList());
+
+            if (trainings.Count > 0)
+            {
+                var minHour = trainings.Min(t => t.TimeFrom).Hour;
+                var maxEnd  = trainings.Max(t => t.TimeTo);
+                var maxHour = maxEnd.Hour + (maxEnd.Minute > 0 ? 1 : 0);
+
+                TimelineStart = new TimeOnly(Math.Max(0,  minHour - TimelinePaddingBeforeHours), 0);
+                TimelineEnd   = new TimeOnly(Math.Min(23, maxHour + TimelinePaddingAfterHours),  0);
+            }
+
             HasResults = true;
         }
     }
@@ -130,4 +147,29 @@ public class IndexModel : PageModel
 
     public static bool IsWeekend(DateOnly d)
         => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+    /// <summary>
+    /// Rozdělí tréninky do pruhů (lanes) tak, aby se nepřekrývaly.
+    /// Vrací seznam pruhů – každý pruh je seznam nepřekrývajících se tréninků.
+    /// </summary>
+    public static List<List<TrainingScheduleItemDto>> GetLanes(List<TrainingScheduleItemDto> trainings)
+    {
+        var lanes = new List<List<TrainingScheduleItemDto>>();
+        foreach (var tr in trainings.OrderBy(t => t.TimeFrom))
+        {
+            var placed = false;
+            foreach (var lane in lanes)
+            {
+                if (lane[^1].TimeTo <= tr.TimeFrom)
+                {
+                    lane.Add(tr);
+                    placed = true;
+                    break;
+                }
+            }
+            if (!placed)
+                lanes.Add([tr]);
+        }
+        return lanes;
+    }
 }
