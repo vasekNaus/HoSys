@@ -64,6 +64,12 @@ public static class ServiceCollectionExtensions
     services.AddScoped<IceRinkService>();
     services.AddScoped<TrainingScheduleService>();
 
+    services.AddScoped<ManufacturerService>();
+    services.AddScoped<LocationService>();
+    services.AddScoped<LoanService>();
+    services.AddScoped<CategoryService>();
+    services.AddScoped<InventoryItemService>();
+
     return services;
   }
 }

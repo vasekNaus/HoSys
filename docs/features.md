@@ -57,6 +57,25 @@ Hlavní motivace vzniku systému. Umožňuje porovnat skutečně využitý ledov
 - Generování platebních příkazů na základě smluv a odpracovaných hodin
 - Export do formátu pro internetové bankovnictví (připravováno)
 
+## Modul: Skladové hospodářství
+
+- Evidence hokejové výstroje a majetku klubu
+- Unikátní inventární číslo pro každou položku (formát `INV-YYYY-NNNNNN`) – neměnné po vytvoření
+- QR kódy pro rychlou identifikaci při inventurách a mobilním skenování
+- Sledování stavu položky: Ve skladu / Přidělena / Zapůjčena / V servisu / Ztracena / Vyřazena
+- Evidence zápůjček členům klubu s historií vydání a vrácení
+- Pohyby skladu – každá operace vytváří auditní záznam (`InventoryTransaction`)
+- Stromová kategorizace výstroje (dresy, helmy, brusle, …) a majetku (IT, tělocvična, …)
+- Evidence výrobců (`Manufacturer`) a umístění (`Location`) – sdílené entity v `dbo`
+- Dva typy položek (TPC dědičnost):
+  - `Equipment` – výstroj s vazbou na velikost
+  - `Asset` – majetek se sériovým číslem a zárukou
+- Evidence nákupních dokladů a financování pořízení
+- Historie umístění každé položky
+- Podpora periodických inventur (`InventorySession` + `InventoryCheck`)
+
+Podrobná specifikace: [inventory.md](inventory.md)
+
 ## Nástroje a integrace
 
 | Nástroj | Popis |

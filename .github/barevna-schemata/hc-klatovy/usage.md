@@ -64,8 +64,13 @@ document.documentElement.setAttribute(
 
 ```css
 .site-header {
-  background-color: var(--color-brand-secondary);    /* námořní */
+  background-color: var(--color-brand-primary);     /* červená — primární brand */
   color:            var(--color-text-inverse);       /* bílá */
+  border-bottom:    3px solid rgba(255, 255, 255, .25); /* jemná bílá linka */
+}
+
+.site-nav {
+  background-color: var(--color-brand-primary-active); /* tmavší červená */
 }
 ```
 

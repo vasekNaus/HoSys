@@ -1,0 +1,30 @@
+@* Rekurzivní partial pro jeden uzel stromu kategorií.
+   Model: SportSys.Contract.Models.inventory.CategoryTreeNode
+   Volán z Index.cshtml a rekurzivně sám ze sebe pro poduzly. *@
+@model SportSys.Contract.Models.inventory.CategoryTreeNode
+
+@{
+    var hasChildren = Model.Children.Count > 0;
+    var inactiveClass = Model.IsActive ? "" : " category-tree__node--inactive";
+}
+
+<li class="category-tree__node@(inactiveClass)">
+    @if (hasChildren)
+    {
+        <details open>
+            <summary class="category-tree__summary">
+                @await Html.PartialAsync("_CategoryTreeNodeContent", Model)
+            </summary>
+            <ul class="category-tree__children">
+                @foreach (var child in Model.Children)
+                {
+                    await Html.RenderPartialAsync("_CategoryTreeNode", child);
+                }
+            </ul>
+        </details>
+    }
+    else
+    {
+        @await Html.PartialAsync("_CategoryTreeNodeContent", Model)
+    }
+</li>

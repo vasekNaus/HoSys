@@ -1,0 +1,43 @@
+@page
+@model EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nový výrobce" : "Upravit výrobce";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Input.Id" />
+
+    <p>
+        <label asp-for="Input.Name"></label>
+        <input asp-for="Input.Name" type="text" />
+        <span asp-validation-for="Input.Name" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label asp-for="Input.Website"></label>
+        <input asp-for="Input.Website" type="url" />
+        <span asp-validation-for="Input.Website" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label class="checkbox-label">
+            <input asp-for="Input.IsActive" type="checkbox" />
+            Aktivní
+        </label>
+    </p>
+
+    <footer>
+        <button type="submit" class="button">
+            <i class="fa-solid fa-floppy-disk fa-fw"></i> Uložit
+        </button>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-arrow-left fa-fw"></i> Zpět
+        </a>
+    </footer>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

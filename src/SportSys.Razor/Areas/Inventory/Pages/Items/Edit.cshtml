@@ -1,0 +1,152 @@
+@page
+@model EditModel
+@{
+    ViewData["Title"] = Model.IsNew
+        ? (Model.Input.ItemType == "Asset" ? "Nový majetek" : "Nová výstroj")
+        : $"Upravit — {Model.Input.Name}";
+    string itemTypeName = Model.Input.ItemType == "Asset" ? "Majetek" : "Výstroj";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Input.Id" />
+    <input type="hidden" asp-for="Input.ItemType" />
+
+    @* Typ položky *@
+    <p>
+        <label>Typ položky</label>
+        @if (Model.IsNew)
+        {
+            <span>@itemTypeName</span>
+            <span class="description">Typ nelze po uložení změnit.</span>
+        }
+        else
+        {
+            <strong>@itemTypeName</strong>
+        }
+    </p>
+
+    @* ══ SPOLEČNÉ POLE ══ *@
+    <fieldset>
+        <legend>Základní údaje</legend>
+
+        <p>
+            <label asp-for="Input.InventoryNumber"></label>
+            <input asp-for="Input.InventoryNumber" type="text" class="short" />
+            <span asp-validation-for="Input.InventoryNumber" class="field-validation-error"></span>
+        </p>
+
+        <p>
+            <label asp-for="Input.Name"></label>
+            <input asp-for="Input.Name" type="text" />
+            <span asp-validation-for="Input.Name" class="field-validation-error"></span>
+        </p>
+
+        <p>
+            <label asp-for="Input.Description"></label>
+            <textarea asp-for="Input.Description" rows="3"></textarea>
+        </p>
+
+        <p>
+            <label asp-for="Input.CategoryId"></label>
+            <select asp-for="Input.CategoryId" asp-items="Model.CategorySelectList"></select>
+            <span asp-validation-for="Input.CategoryId" class="field-validation-error"></span>
+        </p>
+
+        <p>
+            <label asp-for="Input.ManufacturerId"></label>
+            <select asp-for="Input.ManufacturerId" asp-items="Model.ManufacturerSelectList"></select>
+        </p>
+
+        <p>
+            <label asp-for="Input.ItemStatus"></label>
+            <select asp-for="Input.ItemStatus" asp-items="Model.StatusSelectList"></select>
+        </p>
+
+        <p>
+            <label asp-for="Input.AcquisitionDate"></label>
+            <input asp-for="Input.AcquisitionDate" type="date" />
+        </p>
+
+        <p>
+            <label asp-for="Input.AcquisitionPrice"></label>
+            <input asp-for="Input.AcquisitionPrice" type="number" step="0.01" min="0" class="short" />
+            <span asp-validation-for="Input.AcquisitionPrice" class="field-validation-error"></span>
+        </p>
+
+        <p>
+            <label asp-for="Input.AssignedLocationId"></label>
+            <select asp-for="Input.AssignedLocationId" asp-items="Model.LocationSelectList"></select>
+        </p>
+
+        <p>
+            <label asp-for="Input.CurrentLocationId"></label>
+            <select asp-for="Input.CurrentLocationId" asp-items="Model.LocationSelectList"></select>
+        </p>
+
+        <p>
+            <label class="checkbox-label">
+                <input asp-for="Input.IsActive" type="checkbox" />
+                @Html.DisplayNameFor(m => m.Input.IsActive)
+            </label>
+        </p>
+    </fieldset>
+
+    @* ══ VÝSTROJ — specifické pole ══ *@
+    <fieldset id="section-equipment" style="display: @(Model.Input.ItemType == "Equipment" ? "block" : "none")">
+        <legend>Výstroj</legend>
+
+        <p>
+            <label asp-for="Input.Size"></label>
+            <input asp-for="Input.Size" type="text" class="short" />
+            <span asp-validation-for="Input.Size" class="field-validation-error"></span>
+            <span class="description">Např. M, L, XL nebo 42.</span>
+        </p>
+    </fieldset>
+
+    @* ══ MAJETEK — specifické pole ══ *@
+    <fieldset id="section-asset" style="display: @(Model.Input.ItemType == "Asset" ? "block" : "none")">
+        <legend>Majetek</legend>
+
+        <p>
+            <label asp-for="Input.SerialNumber"></label>
+            <input asp-for="Input.SerialNumber" type="text" />
+            <span asp-validation-for="Input.SerialNumber" class="field-validation-error"></span>
+        </p>
+
+        <p>
+            <label asp-for="Input.WarrantyUntil"></label>
+            <input asp-for="Input.WarrantyUntil" type="date" />
+        </p>
+
+        <p>
+            <label asp-for="Input.ExternalId"></label>
+            <input asp-for="Input.ExternalId" type="text" />
+            <span asp-validation-for="Input.ExternalId" class="field-validation-error"></span>
+            <span class="description">Interní kód nebo číslo z externího systému.</span>
+        </p>
+    </fieldset>
+
+    <footer>
+        <button type="submit" class="button">
+            <i class="fa-solid fa-floppy-disk fa-fw"></i> Uložit
+        </button>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-arrow-left fa-fw"></i> Zpět na seznam
+        </a>
+    </footer>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Sekce pro typ položky — při přidání nové položky (skrytý input ItemType je readonly)
+        // Zatím statické zobrazení; pro budoucí přepínání typu při vytváření zde lze přidat toggle.
+        (function () {
+            var itemType = document.querySelector('input[name="Input.ItemType"]').value;
+            document.getElementById('section-equipment').style.display = itemType === 'Equipment' ? 'block' : 'none';
+            document.getElementById('section-asset').style.display = itemType === 'Asset' ? 'block' : 'none';
+        })();
+    </script>
+}

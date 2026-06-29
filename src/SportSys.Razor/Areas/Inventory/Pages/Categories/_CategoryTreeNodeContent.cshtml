@@ -1,0 +1,27 @@
+@* Obsah jednoho uzlu stromu: ikona + název + akční tlačítka.
+   Model: SportSys.Contract.Models.inventory.CategoryTreeNode *@
+@model SportSys.Contract.Models.inventory.CategoryTreeNode
+
+<span class="category-tree__label">
+    @if (!Model.IsActive)
+    {
+        <i class="fa-solid fa-eye-slash fa-fw category-tree__inactive-icon" title="Neaktivní"></i>
+    }
+    @Model.Name
+    @if (Model.HasSizes)
+    {
+        <i class="fa-solid fa-ruler fa-fw category-tree__sizes-icon" title="Má velikosti"></i>
+    }
+</span>
+<span class="category-tree__actions">
+    <a class="button secondary compact"
+       asp-area="Inventory" asp-page="/Categories/Edit" asp-route-id="@Model.Id"
+       title="Upravit">
+        <i class="fa-solid fa-pen fa-fw"></i>
+    </a>
+    <a class="button secondary compact"
+       asp-area="Inventory" asp-page="/Categories/Edit" asp-route-parentCategoryId="@Model.Id"
+       title="Přidat podkategorii">
+        <i class="fa-solid fa-plus fa-fw"></i>
+    </a>
+</span>

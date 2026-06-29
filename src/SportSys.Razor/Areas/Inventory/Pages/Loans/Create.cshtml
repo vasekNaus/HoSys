@@ -1,0 +1,158 @@
+@page
+@model CreateModel
+@{
+    ViewData["Title"] = "Nová výpůjčka";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<form method="post" id="loan-form">
+
+    @* Krok 1: Výběr člena *@
+    <section class="loan-section">
+        <h2>Krok 1 – Člen</h2>
+        <div class="field">
+            <label asp-for="Input.MemberId">Člen</label>
+            <select asp-for="Input.MemberId" class="textbox" id="member-select">
+                <option value="">— vyberte člena —</option>
+                @foreach (var m in Model.Members)
+                {
+                    <option value="@m.Id">@m.DisplayName</option>
+                }
+            </select>
+            <span asp-validation-for="Input.MemberId" class="field-validation-error"></span>
+        </div>
+    </section>
+
+    @* Krok 2: Přidávání položek *@
+    <section class="loan-section" id="scan-section">
+        <h2>Krok 2 – Položky</h2>
+        <div class="field">
+            <label for="scan-input">Inventární číslo</label>
+            <input type="text" id="scan-input"
+                   placeholder="Naskenujte nebo zadejte inventární číslo a stiskněte Enter…"
+                   autocomplete="off" class="textbox" />
+            <span id="scan-error" class="field-validation-error" style="display:none"></span>
+        </div>
+
+        <table class="grid" id="items-table">
+            <thead>
+                <tr>
+                    <th>Inventární číslo</th>
+                    <th>Název</th>
+                    <th>Kategorie</th>
+                    <th>Aktuální umístění</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="items-body">
+            </tbody>
+        </table>
+        <p id="items-empty" class="text-muted">Zatím nebyly přidány žádné položky.</p>
+    </section>
+
+    <footer>
+        <button type="submit" class="button" id="submit-btn">
+            <i class="fa-solid fa-hand-holding-box fa-fw"></i> Vytvořit výpůjčku
+        </button>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-arrow-left fa-fw"></i> Zpět
+        </a>
+    </footer>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const scanInput = document.getElementById('scan-input');
+        const scanError = document.getElementById('scan-error');
+        const itemsBody = document.getElementById('items-body');
+        const itemsEmpty = document.getElementById('items-empty');
+        const loanForm = document.getElementById('loan-form');
+        const addedNumbers = new Set();
+
+        scanInput.addEventListener('keydown', async (e) => {
+            if (e.key !== 'Enter') return;
+            e.preventDefault();
+
+            const number = scanInput.value.trim();
+            if (!number) return;
+
+            if (addedNumbers.has(number)) {
+                showError('Tato položka je již přidána.');
+                return;
+            }
+
+            scanError.style.display = 'none';
+
+            let data;
+            try {
+                const resp = await fetch(`?handler=Lookup&inventoryNumber=${encodeURIComponent(number)}`);
+                data = await resp.json();
+            } catch {
+                showError('Chyba při komunikaci se serverem.');
+                return;
+            }
+
+            if (!data.found || !data.isAvailable) {
+                showError(data.errorMessage || 'Položka není dostupná.');
+                return;
+            }
+
+            addedNumbers.add(number);
+            addRow(data);
+            addHiddenInput(number);
+            scanInput.value = '';
+            scanInput.focus();
+            itemsEmpty.style.display = 'none';
+        });
+
+        function showError(msg) {
+            scanError.textContent = msg;
+            scanError.style.display = 'block';
+            scanInput.select();
+        }
+
+        function addRow(item) {
+            const tr = document.createElement('tr');
+            const escapedNumber = item.inventoryNumber.replace(/'/g, "\\'");
+            tr.innerHTML = `
+                <td>${escapeHtml(item.inventoryNumber)}</td>
+                <td>${escapeHtml(item.name)}</td>
+                <td>${escapeHtml(item.categoryName)}</td>
+                <td>${escapeHtml(item.currentLocationName)}</td>
+                <td class="buttons">
+                    <button type="button" class="button tertiary"
+                            onclick="removeItem(this, '${escapedNumber}')">
+                        <i class="fa-solid fa-xmark fa-fw"></i> Odebrat
+                    </button>
+                </td>`;
+            itemsBody.appendChild(tr);
+        }
+
+        function addHiddenInput(number) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'Input.InventoryNumbers';
+            input.value = number;
+            input.dataset.number = number;
+            loanForm.appendChild(input);
+        }
+
+        function removeItem(btn, number) {
+            btn.closest('tr').remove();
+            addedNumbers.delete(number);
+            loanForm.querySelector(`input[data-number="${CSS.escape(number)}"]`)?.remove();
+            if (addedNumbers.size === 0) itemsEmpty.style.display = '';
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+    </script>
+}

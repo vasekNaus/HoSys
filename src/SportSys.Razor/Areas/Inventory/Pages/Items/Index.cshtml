@@ -1,0 +1,106 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Položky skladu";
+}
+
+@if (Model.StatusMessage is not null)
+{
+    <div class="infobox">
+        <i class="fa-solid fa-circle-check fa-fw"></i> @Model.StatusMessage
+    </div>
+}
+
+<form method="get" class="filter-form">
+    <div class="filter-row">
+        <div class="field">
+            <label asp-for="Filter.NameFilter"></label>
+            <input type="text" asp-for="Filter.NameFilter" class="textbox" placeholder="Název nebo inventární číslo…" />
+        </div>
+        <div class="field">
+            <label asp-for="Filter.ItemType"></label>
+            <select asp-for="Filter.ItemType" asp-items="Model.ItemTypeSelectList"></select>
+        </div>
+        <div class="field">
+            <label asp-for="Filter.CategoryId"></label>
+            <select asp-for="Filter.CategoryId" asp-items="Model.CategorySelectList"></select>
+        </div>
+        <div class="field">
+            <label asp-for="Filter.StatusFilter"></label>
+            <select asp-for="Filter.StatusFilter" asp-items="Model.StatusSelectList"></select>
+        </div>
+        <div class="field">
+            <label class="checkbox-label">
+                <input asp-for="Filter.ActiveOnly" type="checkbox" />
+                @Html.DisplayNameFor(m => m.Filter.ActiveOnly)
+            </label>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="button">
+                <i class="fa-solid fa-magnifying-glass fa-fw"></i> Hledat
+            </button>
+            <a class="button secondary" asp-page="Index">
+                <i class="fa-solid fa-filter-circle-xmark fa-fw"></i> Vymazat filtr
+            </a>
+        </div>
+    </div>
+</form>
+
+<p>
+    <a class="button" asp-page="Edit" asp-route-itemType="Equipment">
+        <i class="fa-solid fa-plus fa-fw"></i> Nová výstroj
+    </a>
+    <a class="button secondary" asp-page="Edit" asp-route-itemType="Asset">
+        <i class="fa-solid fa-plus fa-fw"></i> Nový majetek
+    </a>
+</p>
+
+@if (Model.Items.Count == 0)
+{
+    <p class="text-muted">Žádné položky nebyly nalezeny.</p>
+}
+else
+{
+    <table class="grid">
+        <thead>
+            <tr>
+                <th>Inv. číslo</th>
+                <th>Název</th>
+                <th>Typ</th>
+                <th>Kategorie</th>
+                <th>Výrobce</th>
+                <th>Stav</th>
+                <th>Aktivní</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><code>@item.InventoryNumber</code></td>
+                    <td>@item.Name</td>
+                    <td>@item.ItemTypeName</td>
+                    <td>@item.CategoryName</td>
+                    <td>@(item.ManufacturerName ?? "—")</td>
+                    <td>@item.StatusName</td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <i class="fa-solid fa-check fa-fw" style="color: var(--color-success-text)"></i>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td class="buttons">
+                        <a class="button secondary" asp-page="Edit" asp-route-id="@item.Id" asp-route-itemType="@item.ItemType">
+                            <i class="fa-solid fa-pen fa-fw"></i> Upravit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

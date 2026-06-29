@@ -1,0 +1,78 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Umístění";
+}
+
+@if (Model.StatusMessage is not null)
+{
+    <div class="infobox">
+        <i class="fa-solid fa-circle-check fa-fw"></i> @Model.StatusMessage
+    </div>
+}
+
+<form method="get" class="filter-form">
+    <div class="filter-row">
+        <div class="field">
+            <label for="NameFilter">Název</label>
+            <input type="text" id="NameFilter" name="NameFilter" class="textbox"
+                   value="@Model.NameFilter" placeholder="Hledat podle názvu…" />
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="button">
+                <i class="fa-solid fa-magnifying-glass fa-fw"></i> Hledat
+            </button>
+            <a class="button secondary" asp-page="Index">
+                <i class="fa-solid fa-filter-circle-xmark fa-fw"></i> Vymazat filtr
+            </a>
+        </div>
+    </div>
+</form>
+
+<p>
+    <a class="button" asp-page="Edit">
+        <i class="fa-solid fa-plus fa-fw"></i> Nové umístění
+    </a>
+</p>
+
+@if (Model.Locations.Count == 0)
+{
+    <p class="text-muted">Žádná umístění nejsou zadána.</p>
+}
+else
+{
+    <table class="grid">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Nadřazené umístění</th>
+                <th>Aktivní</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loc in Model.Locations)
+            {
+                <tr>
+                    <td>@loc.Name</td>
+                    <td>@(loc.ParentLocationName ?? "—")</td>
+                    <td>
+                        @if (loc.IsActive)
+                        {
+                            <i class="fa-solid fa-check fa-fw" style="color: var(--color-success-text)"></i>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td class="buttons">
+                        <a class="button secondary" asp-page="Edit" asp-route-id="@loc.Id">
+                            <i class="fa-solid fa-pen fa-fw"></i> Upravit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

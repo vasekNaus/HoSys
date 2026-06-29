@@ -1,0 +1,95 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Výpůjčky";
+}
+
+@if (Model.StatusMessage is not null)
+{
+    <div class="infobox">
+        <i class="fa-solid fa-circle-check fa-fw"></i> @Model.StatusMessage
+    </div>
+}
+
+<form method="get" class="filter-form">
+    <div class="filter-row">
+        <div class="field">
+            <label asp-for="Filter.MemberName"></label>
+            <input asp-for="Filter.MemberName" type="text" class="textbox"
+                   placeholder="Hledat podle člena…" />
+        </div>
+        <div class="field">
+            <label asp-for="Filter.DateFrom"></label>
+            <input asp-for="Filter.DateFrom" type="date"
+                   value="@Model.Filter.DateFrom?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="field">
+            <label asp-for="Filter.DateTo"></label>
+            <input asp-for="Filter.DateTo" type="date"
+                   value="@Model.Filter.DateTo?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="field" style="align-self: flex-end">
+            <label class="checkbox-label">
+                <input asp-for="Filter.ActiveOnly" type="checkbox" />
+                Pouze aktivní
+            </label>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="button">
+                <i class="fa-solid fa-magnifying-glass fa-fw"></i> Hledat
+            </button>
+            <a class="button secondary" asp-page="Index">
+                <i class="fa-solid fa-filter-circle-xmark fa-fw"></i> Vymazat filtr
+            </a>
+        </div>
+    </div>
+</form>
+
+<p>
+    <a class="button" asp-page="Create">
+        <i class="fa-solid fa-plus fa-fw"></i> Nová výpůjčka
+    </a>
+</p>
+
+@if (Model.Loans.Count == 0)
+{
+    <p class="text-muted">Žádné výpůjčky nebyly nalezeny.</p>
+}
+else
+{
+    <table class="grid">
+        <thead>
+            <tr>
+                <th>Číslo výpůjčky</th>
+                <th>Člen</th>
+                <th>Datum vydání</th>
+                <th>Počet položek</th>
+                <th>Vráceno</th>
+                <th>Stav</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loan in Model.Loans)
+            {
+                <tr>
+                    <td>@loan.LoanNumber</td>
+                    <td>@loan.MemberName</td>
+                    <td>@loan.LoanDate.ToString("d.M.yyyy")</td>
+                    <td>@loan.ItemCount</td>
+                    <td>@loan.ReturnedCount / @loan.ItemCount</td>
+                    <td>
+                        <span class="loan-status loan-status--@(loan.Status == "Aktivní" ? "active" : loan.Status == "Uzavřeno" ? "closed" : "partial")">
+                            @loan.Status
+                        </span>
+                    </td>
+                    <td class="buttons">
+                        <a class="button secondary" asp-page="Edit" asp-route-id="@loan.GroupId">
+                            <i class="fa-solid fa-eye fa-fw"></i> Detail
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

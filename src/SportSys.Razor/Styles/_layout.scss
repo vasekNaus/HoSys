@@ -7,7 +7,7 @@
 
 html {
   font-size:        16px;
-  background-color: var(--color-brand-secondary);
+  background-color: #e0d8d8;
   min-height:       100%;
 }
 
@@ -62,7 +62,7 @@ code {
 
 // Header
 body > header {
-  background-color: var(--color-brand-secondary);
+  background-color: var(--color-brand-primary);
   color:            var(--color-text-inverse);
   padding:          0 $Padding;
   display:          flex;
@@ -70,7 +70,7 @@ body > header {
   justify-content:  space-between;
   min-height:       $NavHeight;
   margin:           0 (-$Padding) $Padding;
-  border-bottom:    3px solid var(--color-brand-primary);
+  border-bottom:    3px solid rgba(255, 255, 255, .25);
 
   .site-title {
     font-size:       1.25rem;
@@ -110,7 +110,7 @@ body > header {
 
 // Navigace — checkbox hamburger hack (žádný JavaScript)
 body > nav {
-  background-color: var(--color-brand-secondary-active);
+  background-color: var(--color-surface-1);
   margin:           0 (-$Padding) $Padding;
   position:         relative;
 
@@ -123,7 +123,7 @@ body > nav {
     display:     none;
     cursor:      pointer;
     padding:     .75rem $Padding;
-    color:       var(--color-text-inverse);
+    color:       var(--color-text-primary);
     font-size:   1.4rem;
     line-height: 1;
     user-select: none;
@@ -139,7 +139,7 @@ body > nav {
     li a {
       display:         block;
       padding:         .75rem $Padding;
-      color:           var(--color-text-inverse);
+      color:           var(--color-text-primary);
       text-decoration: none;
       font-weight:     500;
       transition:      background-color .15s;

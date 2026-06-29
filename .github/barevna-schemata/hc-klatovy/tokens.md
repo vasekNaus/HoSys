@@ -12,8 +12,8 @@ Světlý mód je výchozím nastavením webu. Je vhodný pro čtení obsahu, adm
 
 ### Vizuální charakter
 - Bílé a světle šedé pozadí → prostor a čistota
-- Námořní modrá jako strukturální barva nadpisů a navigace
-- Červená jako energický akcent pro CTA a zvýraznění
+- **Červená jako primární strukturální barva** — header, navigace, CTA, zvýraznění
+- Námořní modrá jako sekundární barva pro tlačítka, text-akcenty a bordery
 - Zlatá minimálně, pouze pro prémiové sekce (trofeje, úspěchy)
 
 ### Tokeny

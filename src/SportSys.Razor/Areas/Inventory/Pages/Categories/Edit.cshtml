@@ -1,0 +1,62 @@
+@page
+@model EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nová kategorie" : "Upravit kategorii";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Input.Id" />
+
+    <p>
+        <label asp-for="Input.Name"></label>
+        <input asp-for="Input.Name" type="text" />
+        <span asp-validation-for="Input.Name" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label asp-for="Input.ParentCategoryId"></label>
+        <select asp-for="Input.ParentCategoryId" class="textbox">
+            <option value="">— žádná —</option>
+            @foreach (var cat in Model.ParentCategories)
+            {
+                <option value="@cat.Id" selected="@(Model.Input.ParentCategoryId == cat.Id)">@cat.Name</option>
+            }
+        </select>
+        <span asp-validation-for="Input.ParentCategoryId" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label asp-for="Input.SortOrder"></label>
+        <input asp-for="Input.SortOrder" type="number" min="0" />
+        <span asp-validation-for="Input.SortOrder" class="field-validation-error"></span>
+    </p>
+
+    <p>
+        <label class="checkbox-label">
+            <input asp-for="Input.IsActive" type="checkbox" />
+            Aktivní
+        </label>
+    </p>
+
+    <p>
+        <label asp-for="Input.AvailableSizesText"></label>
+        <span class="description">Jeden řádek = jedna velikost (např. XS, S, M, L, XL nebo 38, 39, 40…). Prázdné pole = kategorie nemá velikosti.</span>
+        <textarea asp-for="Input.AvailableSizesText" rows="6" class="textbox"></textarea>
+        <span asp-validation-for="Input.AvailableSizesText" class="field-validation-error"></span>
+    </p>
+
+    <footer>
+        <button type="submit" class="button">
+            <i class="fa-solid fa-floppy-disk fa-fw"></i> Uložit
+        </button>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-arrow-left fa-fw"></i> Zpět
+        </a>
+    </footer>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,110 @@
+@page "{id:int}"
+@model EditModel
+@{
+    ViewData["Title"] = $"Výpůjčka {Model.Loan?.LoanNumber}";
+}
+
+@if (Model.StatusMessage is not null)
+{
+    <div class="infobox">
+        <i class="fa-solid fa-circle-check fa-fw"></i> @Model.StatusMessage
+    </div>
+}
+
+@if (Model.Loan is null)
+{
+    <p class="text-muted">Výpůjčka nebyla nalezena.</p>
+}
+else
+{
+    @* Hlavička – jen čtení *@
+    <div class="details">
+        <dl>
+            <dt>Číslo výpůjčky</dt>
+            <dd>@Model.Loan.LoanNumber</dd>
+            <dt>Člen</dt>
+            <dd>@Model.Loan.MemberName</dd>
+            <dt>Datum vydání</dt>
+            <dd>@Model.Loan.LoanDate.ToString("d.M.yyyy")</dd>
+            @if (Model.Loan.ExpectedReturnDate.HasValue)
+            {
+                <dt>Plánované vrácení</dt>
+                <dd>@Model.Loan.ExpectedReturnDate.Value.ToString("d.M.yyyy")</dd>
+            }
+            <dt>Stav</dt>
+            <dd>
+                <span class="loan-status loan-status--@(Model.Loan.Status == "Aktivní" ? "active" : Model.Loan.Status == "Uzavřeno" ? "closed" : "partial")">
+                    @Model.Loan.Status
+                </span>
+            </dd>
+        </dl>
+    </div>
+
+    @* Hromadné vrácení *@
+    @if (Model.Loan.Items.Any(i => !i.IsReturned))
+    {
+        <form method="post" asp-page-handler="ReturnAll" asp-route-id="@Model.Loan.GroupId"
+              style="margin-bottom: 1rem;">
+            <button type="submit" class="button"
+                    onclick="return confirm('Opravdu vrátit všechny nevrácené položky?')">
+                <i class="fa-solid fa-check fa-fw"></i> Vrátit vše
+            </button>
+        </form>
+    }
+
+    @* Tabulka položek *@
+    <table class="grid">
+        <thead>
+            <tr>
+                <th>Inventární číslo</th>
+                <th>Název</th>
+                <th>Kategorie</th>
+                <th>Vráceno</th>
+                <th>Datum vrácení</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Loan.Items)
+            {
+                <tr>
+                    <td>@item.InventoryNumber</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.CategoryName</td>
+                    <td>
+                        @if (item.IsReturned)
+                        {
+                            <i class="fa-solid fa-check fa-fw" style="color: var(--color-success-text)"></i>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>@(item.ReturnedDate?.ToString("d.M.yyyy") ?? "—")</td>
+                    <td class="buttons">
+                        @if (!item.IsReturned)
+                        {
+                            <form method="post"
+                                  asp-page-handler="ReturnItem"
+                                  asp-route-id="@Model.Loan.GroupId"
+                                  asp-route-loanId="@item.LoanId"
+                                  style="display:inline">
+                                <button type="submit" class="button secondary"
+                                        onclick="return confirm('Potvrdit vrácení položky @Html.Raw(Html.Encode(item.InventoryNumber))?')">
+                                    <i class="fa-solid fa-rotate-left fa-fw"></i> Potvrdit vrácení
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-arrow-left fa-fw"></i> Zpět
+        </a>
+    </p>
+}

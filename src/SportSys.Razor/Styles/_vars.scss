@@ -25,10 +25,10 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --color-surface-inverse:  #101234;
 
   // Primární červená
-  --color-brand-primary:         #D6232A;
+  --color-brand-primary:         #d8232a;
   --color-brand-primary-hover:   #b61f26;
   --color-brand-primary-active:  #92181e;
-  --color-brand-primary-subtle:  rgba(214, 35, 42, .10);
+  --color-brand-primary-subtle:  rgba(216, 35, 42, .10);
   --color-on-brand-primary:      #ffffff;
 
   // Sekundární námořní
@@ -55,13 +55,13 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --color-border-subtle:     #e9ecef;
   --color-border-default:    #dee2e6;
   --color-border-strong:     #ced4da;
-  --color-border-focus:      #D6232A;
+  --color-border-focus:      #d8232a;
   --color-border-brand:      #292d78;
 
   // Interaktivní stavy
   --color-interactive-hover:    #f1f3f5;
   --color-interactive-active:   #e9ecef;
-  --color-interactive-selected: rgba(214, 35, 42, .10);
+  --color-interactive-selected: rgba(216, 35, 42, .10);
 
   // Stavové barvy
   --color-success:        #22c55e;
@@ -70,9 +70,9 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --color-warning:        #eab308;
   --color-warning-text:   #ca8a04;
   --color-warning-subtle: rgba(234, 179, 8, .12);
-  --color-error:          #D6232A;
+  --color-error:          #d8232a;
   --color-error-text:     #b61f26;
-  --color-error-subtle:   rgba(214, 35, 42, .10);
+  --color-error-subtle:   rgba(216, 35, 42, .10);
   --color-info:           #3b82f6;
   --color-info-text:      #2563eb;
   --color-info-subtle:    rgba(59, 130, 246, .12);
@@ -81,7 +81,7 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --shadow-sm:    0 1px 2px rgba(0, 0, 0, .06);
   --shadow-md:    0 4px 6px -1px rgba(0, 0, 0, .08), 0 2px 4px -2px rgba(0, 0, 0, .05);
   --shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, .10), 0 4px 6px -4px rgba(0, 0, 0, .06);
-  --shadow-brand: 0 4px 14px rgba(214, 35, 42, .25);
+  --shadow-brand: 0 4px 14px rgba(216, 35, 42, .25);
 
   // Překryvy
   --color-overlay: rgba(8, 9, 32, .50);
@@ -99,10 +99,10 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --color-surface-3:        #1e2740;
   --color-surface-inverse:  #f1f3f5;
 
-  --color-brand-primary:         #D6232A;
+  --color-brand-primary:         #d8232a;
   --color-brand-primary-hover:   #ff2d42;
   --color-brand-primary-active:  #b61f26;
-  --color-brand-primary-subtle:  rgba(214, 35, 42, .15);
+  --color-brand-primary-subtle:  rgba(216, 35, 42, .15);
   --color-on-brand-primary:      #ffffff;
 
   --color-brand-secondary:        #4a7cc7;
@@ -125,12 +125,12 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --color-border-subtle:     #1e2740;
   --color-border-default:    #2a3450;
   --color-border-strong:     #3d4e6e;
-  --color-border-focus:      #D6232A;
+  --color-border-focus:      #d8232a;
   --color-border-brand:      rgba(74, 124, 199, .40);
 
   --color-interactive-hover:    rgba(255, 255, 255, .06);
   --color-interactive-active:   rgba(255, 255, 255, .10);
-  --color-interactive-selected: rgba(214, 35, 42, .15);
+  --color-interactive-selected: rgba(216, 35, 42, .15);
 
   --color-success:        #22c55e;
   --color-success-text:   #4ade80;
@@ -138,9 +138,9 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --color-warning:        #eab308;
   --color-warning-text:   #facc15;
   --color-warning-subtle: rgba(234, 179, 8, .12);
-  --color-error:          #D6232A;
+  --color-error:          #d8232a;
   --color-error-text:     #FF4D55;
-  --color-error-subtle:   rgba(214, 35, 42, .12);
+  --color-error-subtle:   rgba(216, 35, 42, .12);
   --color-info:           #3b82f6;
   --color-info-text:      #60a5fa;
   --color-info-subtle:    rgba(59, 130, 246, .12);
@@ -148,7 +148,7 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
   --shadow-sm:    0 1px 3px rgba(0, 0, 0, .40);
   --shadow-md:    0 4px 8px rgba(0, 0, 0, .40), 0 2px 4px rgba(0, 0, 0, .30);
   --shadow-lg:    0 10px 20px rgba(0, 0, 0, .50), 0 4px 8px rgba(0, 0, 0, .30);
-  --shadow-brand: 0 4px 20px rgba(214, 35, 42, .35);
+  --shadow-brand: 0 4px 20px rgba(216, 35, 42, .35);
   --color-overlay: rgba(0, 0, 0, .70);
 }
 
@@ -161,10 +161,10 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
     --color-surface-2:        #171e2e;
     --color-surface-3:        #1e2740;
     --color-surface-inverse:  #f1f3f5;
-    --color-brand-primary:         #D6232A;
+    --color-brand-primary:         #d8232a;
     --color-brand-primary-hover:   #ff2d42;
     --color-brand-primary-active:  #b61f26;
-    --color-brand-primary-subtle:  rgba(214, 35, 42, .15);
+    --color-brand-primary-subtle:  rgba(216, 35, 42, .15);
     --color-on-brand-primary:      #ffffff;
     --color-brand-secondary:        #4a7cc7;
     --color-brand-secondary-hover:  #5e8fd8;
@@ -183,20 +183,20 @@ $FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
     --color-border-subtle:     #1e2740;
     --color-border-default:    #2a3450;
     --color-border-strong:     #3d4e6e;
-    --color-border-focus:      #D6232A;
+    --color-border-focus:      #d8232a;
     --color-border-brand:      rgba(74, 124, 199, .40);
     --color-interactive-hover:    rgba(255, 255, 255, .06);
     --color-interactive-active:   rgba(255, 255, 255, .10);
-    --color-interactive-selected: rgba(214, 35, 42, .15);
+    --color-interactive-selected: rgba(216, 35, 42, .15);
     --color-success-text:   #4ade80;
     --color-warning-text:   #facc15;
-    --color-error:          #D6232A;
+    --color-error:          #d8232a;
     --color-error-text:     #FF4D55;
-    --color-error-subtle:   rgba(214, 35, 42, .12);
+    --color-error-subtle:   rgba(216, 35, 42, .12);
     --color-info-text:      #60a5fa;
     --shadow-sm:    0 1px 3px rgba(0, 0, 0, .40);
     --shadow-md:    0 4px 8px rgba(0, 0, 0, .40), 0 2px 4px rgba(0, 0, 0, .30);
-    --shadow-brand: 0 4px 20px rgba(214, 35, 42, .35);
+    --shadow-brand: 0 4px 20px rgba(216, 35, 42, .35);
     --color-overlay: rgba(0, 0, 0, .70);
   }
 }

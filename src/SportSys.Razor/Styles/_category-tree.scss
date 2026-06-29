@@ -1,0 +1,108 @@
+@use 'vars' as *;
+
+// ============================================================
+// Stromový pohled kategorií
+// Realizováno čistým HTML: <ul> + <details>/<summary>
+// Bez JavaScriptových závislostí.
+// ============================================================
+
+.category-tree {
+  list-style: none;
+  margin:     0;
+  padding:    0;
+
+  // Rekurzivní odsazení pro podúrovně
+  .category-tree__children {
+    list-style: none;
+    margin:     0;
+    padding:    0 0 0 1.5rem;
+    border-left: 2px solid var(--color-border-default);
+    margin-left: .75rem;
+  }
+}
+
+.category-tree__node {
+  margin: .15rem 0;
+
+  &--inactive {
+    opacity: .55;
+  }
+}
+
+// <details> – rozbalitelný uzel s dětmi
+.category-tree__node > details > summary,
+.category-tree__node > .category-tree__summary {
+  // Potlačit výchozí šipku prohlížeče – použijeme vlastní ikonu
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+}
+
+// Jeden řádek uzlu (summary nebo prostý div pro listy)
+.category-tree__summary,
+.category-tree__node > span.category-tree__label {
+  display:     flex;
+  align-items: center;
+  gap:         .5rem;
+  padding:     .3rem .5rem;
+  border-radius: 4px;
+  cursor:      default;
+
+  &:hover {
+    background-color: var(--color-surface-3);
+  }
+}
+
+details > summary.category-tree__summary {
+  cursor: pointer;
+
+  // Vlastní trojúhelníková šipka
+  &::before {
+    content:     '▶';
+    font-size:   .65rem;
+    color:       var(--color-text-subtle);
+    transition:  transform .15s;
+    flex-shrink: 0;
+  }
+}
+
+details[open] > summary.category-tree__summary::before {
+  transform: rotate(90deg);
+}
+
+// Název uzlu
+.category-tree__label {
+  display:     flex;
+  align-items: center;
+  gap:         .4rem;
+  flex:        1;
+  font-weight: 500;
+}
+
+// Ikona neaktivní položky
+.category-tree__inactive-icon {
+  color:     var(--color-text-subtle);
+  font-size: .85em;
+}
+
+// Ikona "má velikosti"
+.category-tree__sizes-icon {
+  color:     var(--color-text-subtle);
+  font-size: .85em;
+}
+
+// Akční tlačítka vpravo – zobrazená vždy (bez hover skrývání pro přístupnost)
+.category-tree__actions {
+  display:    flex;
+  gap:        .25rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+// Kompaktní varianta tlačítka (pro ikonu v řádku stromu)
+.button.compact {
+  min-width:  unset;
+  padding:    .2rem .45rem;
+  font-size:  .8rem;
+  line-height: 1.2;
+}

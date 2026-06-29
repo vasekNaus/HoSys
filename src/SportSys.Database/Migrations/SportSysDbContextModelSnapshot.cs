@@ -23,6 +23,8 @@ namespace SportSys.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.HasSequence<int>("InventoryItemSeq", "inventory");
+
             modelBuilder.HasSequence<int>("SportEventSeq", "sport");
 
             modelBuilder.Entity("SportSys.Database.Models.dbo.Coach", b =>
@@ -53,6 +55,63 @@ namespace SportSys.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Coach", "dbo");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.dbo.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("ParentLocationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Location", "dbo", t =>
+                        {
+                            t.Property("ParentLocationId")
+                                .HasColumnName("ParentLocation_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.dbo.Manufacturer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Website")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Manufacturer", "dbo");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.dboSchema.CoachRole", b =>
@@ -330,6 +389,440 @@ namespace SportSys.Database.Migrations
                         {
                             t.Property("UserId")
                                 .HasColumnName("User_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AvailableSizesJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category", "inventory", t =>
+                        {
+                            t.Property("ParentCategoryId")
+                                .HasColumnName("ParentCategory_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryCheck", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ActualLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CheckedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CheckedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Found")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("InventoryItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InventorySessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "InventorySessionId", "InventoryItemId" }, "UX_InventoryCheck_SessionItem")
+                        .IsUnique();
+
+                    b.ToTable("InventoryCheck", "inventory", t =>
+                        {
+                            t.Property("ActualLocationId")
+                                .HasColumnName("ActualLocation_Id");
+
+                            t.Property("CheckedByUserId")
+                                .HasColumnName("CheckedByUser_Id");
+
+                            t.Property("InventorySessionId")
+                                .HasColumnName("InventorySession_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("(NEXT VALUE FOR [inventory].[InventoryItemSeq])");
+
+                    b.Property<DateOnly?>("AcquisitionDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal?>("AcquisitionPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int?>("AssignedLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CurrentLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InventoryNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ManufacturerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("QRCodeValue")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryItemPurchase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("InventoryItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseDocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PurchasePrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId");
+
+                    b.HasIndex("PurchaseDocumentId");
+
+                    b.ToTable("InventoryItemPurchase", "inventory", t =>
+                        {
+                            t.Property("PurchaseDocumentId")
+                                .HasColumnName("PurchaseDocument_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventorySession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("FinishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventorySession", "inventory");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("InventoryItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TransactionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "InventoryItemId", "TransactionDate" }, "IX_InventoryTransaction_ItemDate");
+
+                    b.ToTable("InventoryTransaction", "inventory", t =>
+                        {
+                            t.Property("TransactionTypeId")
+                                .HasColumnName("TransactionType_Id");
+
+                            t.Property("UserId")
+                                .HasColumnName("User_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.ItemLocationHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ChangedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InventoryItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NewLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("PreviousLocationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "InventoryItemId", "ChangedAt" }, "IX_ItemLocationHistory_ItemDate");
+
+                    b.ToTable("ItemLocationHistory", "inventory", t =>
+                        {
+                            t.Property("ChangedByUserId")
+                                .HasColumnName("ChangedByUser_Id");
+
+                            t.Property("NewLocationId")
+                                .HasColumnName("NewLocation_Id");
+
+                            t.Property("PreviousLocationId")
+                                .HasColumnName("PreviousLocation_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Loan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly?>("ExpectedReturnDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("InventoryItemId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly>("LoanDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly?>("ReturnedDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("Loan", "inventory", t =>
+                        {
+                            t.Property("MemberId")
+                                .HasColumnName("Member_Id");
+                        });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.PurchaseDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly>("PurchaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchaseDocument", "inventory");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.TransactionType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TransactionType", "inventory");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Nákup"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Zapůjčení"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Vrácení"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Přesun"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Zahájení opravy"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Ukončení opravy"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Inventura"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Ztráta"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Vyřazení"
                         });
                 });
 
@@ -933,6 +1426,35 @@ namespace SportSys.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Asset", b =>
+                {
+                    b.HasBaseType("SportSys.Database.Models.inventory.InventoryItem");
+
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SerialNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateOnly?>("WarrantyUntil")
+                        .HasColumnType("date");
+
+                    b.ToTable("Asset", "inventory");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Equipment", b =>
+                {
+                    b.HasBaseType("SportSys.Database.Models.inventory.InventoryItem");
+
+                    b.Property<string>("Size")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.ToTable("Equipment", "inventory");
+                });
+
             modelBuilder.Entity("SportSys.Database.Models.sport.Match", b =>
                 {
                     b.HasBaseType("SportSys.Database.Models.sport.SportEvent");
@@ -1033,6 +1555,15 @@ namespace SportSys.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SportSys.Database.Models.dbo.Location", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.dbo.Location", "ParentLocation")
+                        .WithMany("ChildLocations")
+                        .HasForeignKey("ParentLocationId");
+
+                    b.Navigation("ParentLocation");
+                });
+
             modelBuilder.Entity("SportSys.Database.Models.identity.RoleClaim", b =>
                 {
                     b.HasOne("SportSys.Database.Models.identity.Role", null)
@@ -1082,6 +1613,125 @@ namespace SportSys.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Category", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.inventory.Category", "ParentCategory")
+                        .WithMany("ChildCategories")
+                        .HasForeignKey("ParentCategoryId");
+
+                    b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryCheck", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.dbo.Location", "ActualLocation")
+                        .WithMany()
+                        .HasForeignKey("ActualLocationId");
+
+                    b.HasOne("SportSys.Database.Models.identity.User", "CheckedByUser")
+                        .WithMany()
+                        .HasForeignKey("CheckedByUserId");
+
+                    b.HasOne("SportSys.Database.Models.inventory.InventorySession", "InventorySession")
+                        .WithMany("InventoryChecks")
+                        .HasForeignKey("InventorySessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ActualLocation");
+
+                    b.Navigation("CheckedByUser");
+
+                    b.Navigation("InventorySession");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryItem", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.dbo.Location", "AssignedLocation")
+                        .WithMany("AssignedInventoryItems")
+                        .HasForeignKey("AssignedLocationId");
+
+                    b.HasOne("SportSys.Database.Models.inventory.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .IsRequired();
+
+                    b.HasOne("SportSys.Database.Models.dbo.Location", "CurrentLocation")
+                        .WithMany("CurrentInventoryItems")
+                        .HasForeignKey("CurrentLocationId");
+
+                    b.HasOne("SportSys.Database.Models.dbo.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
+
+                    b.Navigation("AssignedLocation");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CurrentLocation");
+
+                    b.Navigation("Manufacturer");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryItemPurchase", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.inventory.PurchaseDocument", "PurchaseDocument")
+                        .WithMany("InventoryItemPurchases")
+                        .HasForeignKey("PurchaseDocumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PurchaseDocument");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryTransaction", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.inventory.TransactionType", "TransactionType")
+                        .WithMany()
+                        .HasForeignKey("TransactionTypeId")
+                        .IsRequired();
+
+                    b.HasOne("SportSys.Database.Models.identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("TransactionType");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.ItemLocationHistory", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.identity.User", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId");
+
+                    b.HasOne("SportSys.Database.Models.dbo.Location", "NewLocation")
+                        .WithMany()
+                        .HasForeignKey("NewLocationId")
+                        .IsRequired();
+
+                    b.HasOne("SportSys.Database.Models.dbo.Location", "PreviousLocation")
+                        .WithMany()
+                        .HasForeignKey("PreviousLocationId");
+
+                    b.Navigation("ChangedByUser");
+
+                    b.Navigation("NewLocation");
+
+                    b.Navigation("PreviousLocation");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Loan", b =>
+                {
+                    b.HasOne("SportSys.Database.Models.identity.User", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sport.CoachTraining", b =>
@@ -1315,9 +1965,33 @@ namespace SportSys.Database.Migrations
                     b.Navigation("CoachTrainings");
                 });
 
+            modelBuilder.Entity("SportSys.Database.Models.dbo.Location", b =>
+                {
+                    b.Navigation("AssignedInventoryItems");
+
+                    b.Navigation("ChildLocations");
+
+                    b.Navigation("CurrentInventoryItems");
+                });
+
             modelBuilder.Entity("SportSys.Database.Models.dboSchema.CoachRole", b =>
                 {
                     b.Navigation("CoachTrainingEntitlementCoachRoles");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Category", b =>
+                {
+                    b.Navigation("ChildCategories");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.InventorySession", b =>
+                {
+                    b.Navigation("InventoryChecks");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.PurchaseDocument", b =>
+                {
+                    b.Navigation("InventoryItemPurchases");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.sport.IceRink", b =>

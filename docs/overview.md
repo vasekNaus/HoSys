@@ -28,6 +28,7 @@ Systém je určen primárně pro interní použití **výboru sportovní organiz
 - **Evidence sportovních událostí** – tréninky a zápasy evidované v centrální databázi SportSys, oddělené od rezervačního systému.
 - **Import dat** – načítání výkazů trenérů z Excelu do databáze.
 - **Správa smluv a plateb** – evidence smluv s trenéry, generování platebních příkazů a export pro internetové bankovnictví.
+- **Skladové hospodářství** – evidence výstroje a majetku, zápůjčky členům klubu, podpora inventur, sledování pohybů položek.
 
 ## Rozsah projektu
 
@@ -38,3 +39,4 @@ SportSys **nepřebírá** funkce existujících systémů (rezervace, účetnict
 - [architecture.md](architecture.md) – technická architektura
 - [features.md](features.md) – přehled funkcí
 - [use-cases.md](use-cases.md) – scénáře použití
+- [inventory.md](inventory.md) – modul skladového hospodářství

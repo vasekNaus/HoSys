@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using SportSys.Database.Models;
 using SportSys.Database.Models.dbo;
 using SportSys.Database.Models.sport;
+using SportSys.Database.Models.inventory;
 
 namespace SportSys.Database.Context;
 
@@ -64,6 +65,36 @@ public class SportSysDbContext : IdentityDbContext<User, Role, int, UserClaim, U
 
   //public virtual DbSet<UserBusinessRole> UserBusinessRoles { get; set; }
 
+  // dbo – sdílené entity
+  public virtual DbSet<Manufacturer> Manufacturers { get; set; }
+
+  public virtual DbSet<Location> Locations { get; set; }
+
+  // inventory – lookup
+  public virtual DbSet<Category> InventoryCategories { get; set; }
+
+  public virtual DbSet<TransactionType> InventoryTransactionTypes { get; set; }
+
+  // inventory – TPC hierarchie
+  public virtual DbSet<Equipment> Equipment { get; set; }
+
+  public virtual DbSet<Asset> Assets { get; set; }
+
+  // inventory – transakční
+  public virtual DbSet<Loan> Loans { get; set; }
+
+  public virtual DbSet<InventoryTransaction> InventoryTransactions { get; set; }
+
+  public virtual DbSet<PurchaseDocument> PurchaseDocuments { get; set; }
+
+  public virtual DbSet<InventoryItemPurchase> InventoryItemPurchases { get; set; }
+
+  public virtual DbSet<ItemLocationHistory> ItemLocationHistories { get; set; }
+
+  public virtual DbSet<InventorySession> InventorySessions { get; set; }
+
+  public virtual DbSet<InventoryCheck> InventoryChecks { get; set; }
+
   protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
   {
     //nechceme automaticky indexy na FK
@@ -92,27 +123,13 @@ public class SportSysDbContext : IdentityDbContext<User, Role, int, UserClaim, U
       role.Property(r => r.Id).ValueGeneratedNever();
     });
 
-    ////userRole bude mít PK id Identity
-    //modelBuilder.Entity<UserRole>(userRole =>
-    //{
-    //  userRole.HasOne(ur => ur.Role)
-    //      .WithMany(r => r.UserRoles)
-    //      .HasForeignKey(ur => ur.RoleId);
-
-    //  userRole.HasOne(ur => ur.User)
-    //      .WithMany(r => r.UserRoles)
-    //      .HasForeignKey(ur => ur.UserId);
-    //});
-
-//    modelBuilder.Entity<UserToken>(entity =>
-//    {
-//      entity.HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
-////      entity.Property(e => e.IssueDateTime).HasDefaultValueSql("(getdate())");
-//    });
-
-
     // Sdílená sekvence pro Training.Id a Match.Id (TPC vzor na úrovni DB)
     modelBuilder.HasSequence<int>("SportEventSeq", Schemas.Sport)
+      .StartsAt(1)
+      .IncrementsBy(1);
+
+    // Sdílená sekvence pro Equipment.Id a Asset.Id (TPC vzor na úrovni DB)
+    modelBuilder.HasSequence<int>("InventoryItemSeq", Schemas.Inventory)
       .StartsAt(1)
       .IncrementsBy(1);
 
@@ -121,8 +138,5 @@ public class SportSysDbContext : IdentityDbContext<User, Role, int, UserClaim, U
 
     modelBuilder.IdConvention();
     modelBuilder.InitDatetime2();
-
-    //modelBuilder.AddIsValidDateTime();
-
   }
 }

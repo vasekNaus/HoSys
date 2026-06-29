@@ -35,6 +35,38 @@
         <label for="nav-toggle" aria-label="Otevřít navigaci">☰</label>
         <ul>
             <li><a asp-area="" asp-page="/Index"><i class="fa-solid fa-house fa-fw"></i> Úvod</a></li>
+            <li>
+                <a asp-area="Inventory" asp-page="/Manufacturers/Index">
+                    <i class="fa-solid fa-box-open fa-fw"></i> Sklad
+                </a>
+                <ul>
+                    <li>
+                        <a asp-area="Inventory" asp-page="/Items/Index">
+                            <i class="fa-solid fa-shirt fa-fw"></i> Položky
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="Inventory" asp-page="/Manufacturers/Index">
+                            <i class="fa-solid fa-industry fa-fw"></i> Výrobci
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="Inventory" asp-page="/Locations/Index">
+                            <i class="fa-solid fa-location-dot fa-fw"></i> Umístění
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="Inventory" asp-page="/Categories/Index">
+                            <i class="fa-solid fa-tags fa-fw"></i> Kategorie
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="Inventory" asp-page="/Loans/Index">
+                            <i class="fa-solid fa-hand-holding-box fa-fw"></i> Výpůjčky
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li><a asp-area="" asp-page="/Privacy"><i class="fa-solid fa-shield fa-fw"></i> Ochrana soukromí</a></li>
         </ul>
     </nav>
