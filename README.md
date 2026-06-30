@@ -33,7 +33,7 @@ git clone <url>
 dotnet ef database update --project src/SportSys.Database
 
 # 4. Spustit aplikaci
-dotnet run --project src/SportSys.Web
+dotnet run --project src/SportSys.Razor
 ```
 
 > Migrace automaticky vytvoří schéma včetně sekvence `SportEventSeq` sdílené mezi `Training` a `Match` (TPC vzor).
@@ -58,9 +58,14 @@ docs/                     # Projektová dokumentace
 | Dokument | Obsah |
 |---|---|
 | [docs/overview.md](docs/overview.md) | Účel systému, kontext, integrace |
-| [docs/architecture.md](docs/architecture.md) | Technická architektura, DB design, vrstvy |
+| [docs/architecture.md](docs/architecture.md) | Technická architektura, DB schémata, vrstvy |
+| [docs/conventions.md](docs/conventions.md) | EF Core konvence, SCSS, ikony |
 | [docs/features.md](docs/features.md) | Přehled funkcí dle modulů |
 | [docs/use-cases.md](docs/use-cases.md) | Scénáře použití |
+| [docs/inventory.md](docs/inventory.md) | Modul skladového hospodářství |
+| [docs/modules/auth.md](docs/modules/auth.md) | Autentizace a autorizace |
+| [docs/modules/frontend.md](docs/modules/frontend.md) | Frontend, SCSS, ikony |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md) | Instrukce pro AI agenty |
 
 ## Licence
 

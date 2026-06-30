@@ -1,0 +1,161 @@
+---
+name: new-ef-entity
+description: >
+  Přidá novou EF Core entitu do SportSys — model, datové atributy,
+  konfiguraci Fluent API (pokud je potřeba) a databázovou migraci.
+  Použij tento skill když přidáváš novou tabulku nebo rozšiřuješ
+  existující databázové schéma.
+user-invocable: true
+---
+
+# Přidání nové EF Core entity
+
+## Kdy použít
+
+- Přidáváš novou databázovou tabulku
+- Přidáváš entitu do existující TPC hierarchie
+- Přidáváš novou relaci mezi existujícími entitami
+
+## Předpoklady
+
+- Znáš DB schéma (viz `Models/Schemas.cs`: `dbo`, `sport`, `identity`, `inventory`)
+- Víš, zda entita potřebuje Fluent API (computed columns, TPC, sekvence, seed data)
+- Znáš vztahy s existujícími entitami
+
+## Postup
+
+### 1. Vytvořit model
+
+Vytvoř `src/SportSys.Database/Models/{schema}/{Entity}.cs`.
+
+**Klíčová pravidla:**
+- `[Table(nameof(Entity), Schema = Schemas.X)]` — **povinné**, bez atributu EF Core tabulku nenajde
+- `nameof` všude místo string literálů
+- Nullable vlastnosti označit `?`
+- FK pojmenovat `{Navigace}_Id` (konvence Apollo `IdConvention()`)
+
+```csharp
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using SportSys.Database.Models;
+
+namespace SportSys.Database.Models.sportSchema;
+
+[Table(nameof(IceRink), Schema = Schemas.Sport)]
+[Index(nameof(Name), IsUnique = true, Name = "UX_IceRink_Name")]
+public class IceRink
+{
+    [Key]
+    public int Id { get; set; }
+
+    [StringLength(200)]
+    public required string Name { get; set; }
+
+    [StringLength(100)]
+    [Unicode(false)]
+    public string? City { get; set; }
+
+    // FK — použít atribut [ForeignKey] pouze pro složené FK nebo sdílené sloupce
+    public int? Season_Id { get; set; }
+
+    [ForeignKey(nameof(Season_Id))]     // ← jen pokud konvence nestačí
+    public virtual Season? Season { get; set; }
+
+    // Navigační kolekce
+    public virtual ICollection<Training> Trainings { get; set; } = [];
+}
+```
+
+### 2. Přidat `DbSet<T>` do DbContext
+
+V `src/SportSys.Database/SportSysDbContext.cs` přidat:
+
+```csharp
+public DbSet<IceRink> IceRinks => Set<IceRink>();
+```
+
+### 3. Vytvořit konfiguraci Fluent API (jen pokud potřeba)
+
+Konfigurace **NENÍ potřeba** pro entity bez:
+- computed columns
+- pojmenovaných default constraints
+- TPC hierarchie
+- value convertorů
+- seed dat (mimo lookup tabulky)
+
+Pokud potřeba, vytvoř `src/SportSys.Database/Configurations/{schema}/{Entity}Configuration.cs`:
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SportSys.Database.Models.sportSchema;
+
+namespace SportSys.Database.Configurations.sport;
+
+public class TrainingConfiguration : IEntityTypeConfiguration<Training>
+{
+    public void Configure(EntityTypeBuilder<Training> builder)
+    {
+        // Computed column — NELZE přes atribut
+        builder.Property(e => e.DurationMinutes)
+               .HasComputedColumnSql("DATEDIFF(minute, TimeFrom, TimeTo)", stored: true);
+
+        // Default constraint s pojmenováním — NELZE přes atribut
+        builder.Property(e => e.CreatedAt)
+               .HasDefaultValueSql("GETUTCDATE()", "DF_Training_CreatedAt");
+    }
+}
+```
+
+> Konfigurace se registruje automaticky přes `ApplyConfigurationsFromAssembly()` — není třeba nic přidávat do DbContext.
+
+### 4. Přidat migraci
+
+```bash
+dotnet ef migrations add Add{Entity} --project src/SportSys.Database
+```
+
+Ověřit vygenerovanou migraci:
+- Tabulka má správné schéma
+- FK sloupce pojmenovány `{Entita}Id` (Apollo `IdConvention()`)
+- Computed columns jsou `PERSISTED` (stored: true → `computedColumnSql` + `stored`)
+- Default constraints mají explicitní název (ne hash)
+
+### 5. Aplikovat migraci
+
+```bash
+dotnet ef database update --project src/SportSys.Database
+```
+
+### 6. Sestavit solution
+
+```bash
+dotnet build SportSys.slnx
+```
+
+## Omezení
+
+- ❌ Nepřidávat `HasColumnName` pro běžné FK sloupce — Apollo `IdConvention()` je pojmenuje automaticky
+- ❌ Nepřidávat automatické indexy na FK — `ForeignKeyIndexConvention` je odstraněna, přidávej indexy explicitně
+- ❌ Každý model musí mít `[Table]` atribut — bez něj EF Core tabulku nenajde (`TableNameFromDbSetConvention` je odstraněna)
+- ❌ Nikdy nepoužívat string literály v atributech — vždy `nameof` a `Schemas.X`
+
+## Checklist
+
+- [ ] Model vytvořen v `Models/{schema}/`
+- [ ] `[Table(nameof(X), Schema = Schemas.Y)]` přítomno
+- [ ] `nameof` použito ve všech atributech
+- [ ] Nullable vlastnosti označeny `?`
+- [ ] FK pojmenovány dle konvence `{Navigace}_Id`
+- [ ] `DbSet<T>` přidáno do DbContext
+- [ ] Konfigurace Fluent API vytvořena pouze pokud je potřeba
+- [ ] Migrace přidána a ověřena
+- [ ] `dotnet build` proběhne bez chyb
+
+## Reference
+
+- `docs/conventions.md` — kompletní EF Core konvence
+- `docs/architecture.md` — architektura vrstev, schémata
+- `src/SportSys.Database/Models/Schemas.cs` — konstanty schémat
+- `src/SportSys.Database/Models/sport/Training.cs` — vzorový model

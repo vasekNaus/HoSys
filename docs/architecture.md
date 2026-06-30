@@ -1,190 +1,123 @@
-# Architektura systému
+﻿# Architektura systému
 
-## Přehled
-
-SportSys je vícevrstvá webová aplikace postavená na .NET 10. Skládá se z několika projektů se striktně oddělenými odpovědnostmi.
+## Vrstvová architektura
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  SportSys.Razor  (Razor Pages / Blazor Server)      │
-│  – UI, API endpointy                                │
-│  – závisí VÝHRADNĚ na SportSys.Contract             │
+│  SportSys.Razor  (Razor Pages)                      │
+│  – UI, závisí VÝHRADNĚ na SportSys.Contract         │
 └──────────────────────┬──────────────────────────────┘
                        │ závisí na
 ┌──────────────────────▼──────────────────────────────┐
 │  SportSys.Contract                                  │
-│  – business logika, aplikační servisy               │
-│  – mapování DB entit na SportSys.Model objekty      │
+│  – aplikační servisy, business logika               │
+│  – mapování DB entit → SportSys.Model               │
 └──────────┬───────────────────────────┬──────────────┘
            │ závisí na                 │ vrací
 ┌──────────▼──────────┐   ┌───────────▼──────────────┐
 │  SportSys.Database  │   │  SportSys.Model           │
 │  – EF Core modely   │   │  – doménové objekty / DTO │
-│  – DbContext        │   │  – sdílené napříč vrstvami│
+│  – SportSysDbContext│   │  – sdílené napříč vrstvami│
 │  – migrace          │   └──────────────────────────┘
-│  – Models.Emr       │
 └──────────┬──────────┘
            │ MSSQL
 ┌──────────▼──────────────────────────────────────────┐
 │  SQL Server                                         │
-│  – databáze SportSys  (vlastní schéma dbo)          │
-│  – databáze externího systému  (schéma plan)        │
+│  – databáze SportSys                                │
+│  – databáze externího rezervačního systému          │
 └─────────────────────────────────────────────────────┘
 ```
 
-> **Klíčové pravidlo:** `SportSys.Razor` nesmí přímo referencovat `SportSys.Database`. Veškerý přístup k databázi jde výhradně přes servisy v `SportSys.Contract`.
+> ❌ `SportSys.Razor` nesmí referencovat `SportSys.Database` — vše přes servisy v Contract.
 
 ## Projekty
 
-| Projekt | Typ | Popis |
+| Projekt | Typ | Role |
 |---|---|---|
 | `SportSys.Database` | Class Library | EF Core modely, `SportSysDbContext`, migrace |
-| `SportSys.Model` | Class Library | Sdílené doménové objekty a DTO (vrácené servisy) |
-| `SportSys.Contract` | Class Library | Aplikační servisy; závisí na Database, vrací Model objekty |
-| `SportSys.Razor` | ASP.NET Core Web App | Razor Pages / Blazor Server; závisí **výhradně** na Contract |
-| `SportSys.ConsoleApp` | Console App | Pomocné CLI nástroje – import dat z Excelu |
+| `SportSys.Model` | Class Library | Doménové objekty a DTO (vrácené servisy) |
+| `SportSys.Contract` | Class Library | Aplikační servisy; závisí na Database, vrací Model |
+| `SportSys.Razor` | ASP.NET Core Web App | Razor Pages; závisí výhradně na Contract |
+| `SportSys.ConsoleApp` | Console App | Import dat z Excelu do DB |
+| `src/Apollo/` | Git submodul | Sdílená knihovna (IdConvention, InitDatetime2, HttpService) |
 
-## Databázový model
+## DB schémata
 
-### Vlastní schéma (`dbo`)
+| Schéma | Obsah |
+|---|---|
+| `dbo` | Sdílené entity (IceRink, Opponent, Manufacturer, Location, Coach, Season…) |
+| `sport` | Tréninky, zápasy, SportEvent sekvence, lookup tabulky sport modulu |
+| `identity` | ASP.NET Core Identity (User, Role, UserRole…) bez AspNet prefixu |
+| `inventory` | Skladové hospodářství (Equipment, Asset, Loan, InventorySession…) |
+| `plan` | **Read-only** — modely externího rezervačního systému (Block, Task) |
 
-Systém používá vzor **TPC (Table Per Concrete type)** pro abstraktní entitu `SportEvent`. Fyzická tabulka `SportEvent` neexistuje; místo ní jsou konkrétní tabulky `Training` a `Match`, jejichž identifikátory sdílejí **společnou sekvenci** `dbo.SportEventSeq`. Výsledkem jsou ID jedinečná napříč oběma entitami.
+## Datový model — SportEvent (TPC)
 
-V EF Core se TPC mapování konfiguruje metodou `UseTpcMappingStrategy()`. Sdílená sekvence je automaticky použita jako výchozí hodnota primárního klíče v DDL:
-
-```csharp
-// SportSysDbContext – OnModelCreating
-modelBuilder.Entity<SportEvent>().UseTpcMappingStrategy();
-```
-
-Generované DDL odpovídá vzoru:
-
-```sql
-CREATE TABLE [Training] (
-    [Id] int NOT NULL DEFAULT (NEXT VALUE FOR [SportEventSeq]),
-    -- ... ostatní sloupce ...
-    CONSTRAINT [PK_Training] PRIMARY KEY ([Id])
-);
-
-CREATE TABLE [Match] (
-    [Id] int NOT NULL DEFAULT (NEXT VALUE FOR [SportEventSeq]),
-    -- ... ostatní sloupce ...
-    CONSTRAINT [PK_Match] PRIMARY KEY ([Id])
-);
-```
+`Training` a `Match` jsou konkrétní tabulky sdílející sekvenci `sport.SportEventSeq` — ID jsou unikátní napříč oběma entitami.
 
 ```
-SportEventSeq  (SEQUENCE – sdílené ID pro Training i Match)
-       │
-       ├── Training
-       │     Season_Id, SeasonCategory_Name
-       │     TrainingType_Id, TrainingPhase_Id, TrainingState_Id
-       │     IceRink_Id, Date, TimeFrom, TimeTo, DurationMinutes (persisted)
-       │
-       └── Match
-             Season_Id, SeasonCategory_Name
-             IceRink_Id, Opponent_Id, MatchState_Id
-             Date, TimeFrom, TimeTo, DurationMinutes (persisted)
-             IsHome, GoalsScored, GoalsConceded, MatchCode
+sport.SportEventSeq (SEQUENCE)
+       ├── sport.Training  (Season_Id, IceRink_Id, TrainingType_Id, …, DurationMinutes*)
+       └── sport.Match     (Season_Id, IceRink_Id, Opponent_Id, …, DurationMinutes*)
 
-VIEW dbo.SportEvent  →  UNION ALL Training + Match  (EventType: 'Training' / 'Match')
+VIEW sport.SportEvent → UNION ALL Training + Match (sloupec EventType)
 
-IceRink      (zimní stadiony / sportoviště)
-Opponent     (soupeři; HomeIceRink_Id → IceRink)
+* DurationMinutes = persisted computed column DATEDIFF(minute, TimeFrom, TimeTo)
+  → nikdy nepočítat v C# kódu
 ```
 
-`DurationMinutes` je **persisted computed column** (`DATEDIFF(minute, TimeFrom, TimeTo)`), není třeba jej počítat v aplikační vrstvě.
+## Datový model — Inventory (TPC)
 
-### Integrační modely – ext. rezervační systém (namespace `Emr`)
+```
+inventory.InventoryItemSeq (SEQUENCE)
+       ├── inventory.Equipment  (výstroj: Size, …)
+       └── inventory.Asset      (majetek: SerialNumber, WarrantyUntil, …)
 
-Modely v `SportSys.Database/Models/Emr/` jsou mapovány na schéma `plan` externího systému. Jde o **read-only** přístup – SportSys do těchto tabulek nezapisuje.
+Sdílené entity v dbo: Manufacturer, Location (AssignedLocation + CurrentLocation)
+TPC omezení: Loan, InventoryTransaction, InventoryItemPurchase, ItemLocationHistory,
+             InventoryCheck nemají DB-level FK constraint na InventoryItemId
+             → integrita vynucována v Contract servisech
+```
+
+Podrobnosti: `docs/inventory.md`
+
+## Integrační modely — ext. rezervační systém
+
+Modely v `SportSys.Database/Models/Emr/`, namespace `Emr`, schéma `plan`:
 
 | Model | Tabulka | Popis |
 |---|---|---|
-| `Block` | `plan.Block` | Blok rezervovaného ledového času (místnost, čas, omezení rezervací) |
-| `Task` | `plan.Task` | Konkrétní rezervace/obsazení v rámci bloku |
+| `Block` | `plan.Block` | Blok rezervovaného ledového času |
+| `Task` | `plan.Task` | Konkrétní rezervace v rámci bloku |
 
-## Frontendová vrstva
+> ❌ Do tabulek `plan.*` se nikdy nezapisuje.
 
-- **Razor Pages / Blazor Server** – serverem renderované stránky, žádný SPA framework. Blazor Server udržuje stav komponent na serveru přes SignalR spojení; klient dostává pouze HTML diff.
-- **CSS** – vlastní styly, bez Bootstrapu ani jiných CSS frameworků. Využívány CSS custom properties a flexbox/grid.
-- **JavaScript** – vanilla JS (bez jQuery). Interaktivita tam, kde ji nelze vyřešit na serveru; jinak preferovat Blazor komponenty nebo server-side logiku.
+## Klíčové soubory
 
-### Registrace služeb (`Program.cs`)
+| Logický celek | Cesta |
+|---|---|
+| Registrace servisů | `src/SportSys.Contract/ServiceCollectionExtensions.cs` |
+| DbContext | `src/SportSys.Database/SportSysDbContext.cs` |
+| DB schémata (konstanty) | `src/SportSys.Database/Models/Schemas.cs` |
+| EF Core modely | `src/SportSys.Database/Models/{dbo\|sport\|identity\|inventory}/` |
+| EF Core konfigurace | `src/SportSys.Database/Configurations/{schema}/` |
+| Migrace | `src/SportSys.Database/Migrations/` |
+| Razor Pages | `src/SportSys.Razor/Pages/` |
+| SCSS styly | `src/SportSys.Razor/Styles/` |
 
-Standardní konfigurace pro kombinaci Razor Pages a Blazor Server. Přístup k databázi jde výhradně přes extension metodu `AddSportSysServices` z `SportSys.Contract` – Razor projekt nevolá `AddDbContext` přímo:
+## Architektonická omezení
 
-```csharp
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+| Pravidlo | Důvod |
+|---|---|
+| Razor → Contract (nikoli Database) | Izolace vrstev, testovatelnost |
+| Registrace jen v `AddSportSysServices()` | Zabrání duplikacím a kolizím schémat |
+| `AddIdentityCore` (ne `AddIdentity`) | `AddIdentity` přebije OIDC schéma → Entra ID login selže |
+| Žádné automatické FK indexy | `ForeignKeyIndexConvention` odstraněna — indexy přidávat explicitně |
+| `[Table]` na každém modelu | `TableNameFromDbSetConvention` odstraněna — bez atributu EF tabulku nenajde |
 
-// Registrace všech Contract servisů + SportSysDbContext
-builder.Services.AddSportSysServices(builder.Configuration);
+## Reference
 
-var app = builder.Build();
-app.MapRazorPages();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
-```
-
-`AddSportSysServices` je extension metoda definovaná v `SportSys.Contract/ServiceCollectionExtensions.cs`. Registruje `SportSysDbContext` pomocí connection stringu `ConnectionStrings:DefaultConnection` z konfigurace a všechny Contract servisy.
-
-Blazor komponenty lze integrovat přímo do Razor Pages pomocí tag helperu:
-
-```cshtml
-<component type="typeof(SportEventList)" render-mode="ServerPrerendered" />
-```
-
-`ServerPrerendered` – komponenta se nejprve vykreslí staticky (SSR) a po navázání SignalR se stane interaktivní.
-
-## API vrstva
-
-REST API se implementuje selektivně – pouze tam, kde je to odůvodněné (např. asynchronní operace v UI, budoucí integrace). Používá **ASP.NET Core Minimal API** nebo Controller-based API dle složitosti endpointu.
-
-Konvence:
-- Endpointy v cestě `/api/v1/...`
-- JSON request/response
-- HTTP status kódy dle sémantiky (200, 201, 400, 404, 409...)
-- Autentizace řešena na úrovni ASP.NET Core middleware (cookie auth / JWT – TBD)
-- Endpointy **nesmí** volat `SportSysDbContext` přímo – používají injektované Contract servisy
-
-Příklad registrace Minimal API endpointu (přes Contract servis):
-
-```csharp
-app.MapGet("/api/v1/trainings", async (ITrainingService svc) =>
-    await svc.GetAllAsync())
-    .RequireAuthorization();
-```
-
-## Konfigurace
-
-Connection stringy a citlivé hodnoty jsou uloženy v `appsettings.json` (lokálně) a nesmí být commitovány do repozitáře. Pro produkci se použijí environment variables nebo Azure Key Vault.
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=.;Database=SportSys;Trusted_Connection=True;",
-    "ExternalSystem":    "Server=.;Database=ExternalDb;Trusted_Connection=True;"
-  }
-}
-```
-
-## Databázové migrace
-
-Migrace jsou spravovány přes EF Core CLI (`dotnet ef`). DDL skripty ve složce `src/DB Model/` slouží jako záloha a referenční zdroj pro přehled schématu.
-
-```bash
-# Přidat novou migraci
-dotnet ef migrations add <NazevMigrace> --project src/SportSys.Database
-
-# Aplikovat migrace na databázi
-dotnet ef database update --project src/SportSys.Database
-
-# Zobrazit seznam migrací a jejich stav
-dotnet ef migrations list --project src/SportSys.Database
-
-# Vrátit posledně aplikovanou migraci (vygeneruje DOWN SQL)
-dotnet ef database update <PredchoziMigrace> --project src/SportSys.Database
-```
-
-> **Poznámka:** EF Core Tools (`dotnet ef`) vyžadují balíček `Microsoft.EntityFrameworkCore.Design` v cílovém projektu. Při použití TPC mapování EF Core automaticky generuje databázovou sekvenci pro sdílené ID.
+- `docs/conventions.md` — EF Core konvence, SCSS, ikony
+- `docs/modules/auth.md` — autentizace a autorizace
+- `docs/modules/frontend.md` — SCSS struktura, barevné schéma
+- `docs/inventory.md` — modul skladového hospodářství
