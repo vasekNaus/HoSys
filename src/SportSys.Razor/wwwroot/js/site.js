@@ -12,6 +12,28 @@
     });
 })();
 
+// ── Layout wide toggle ────────────────────────────────────────────────────────
+
+(function () {
+    var btn = document.getElementById('layoutToggle');
+    if (!btn) return;
+
+    function syncIcon() {
+        var icon = btn.querySelector('i');
+        if (!icon) return;
+        var isWide = document.documentElement.classList.contains('layout-wide');
+        icon.className = isWide ? 'fa-solid fa-compress fa-fw' : 'fa-solid fa-expand fa-fw';
+    }
+
+    syncIcon();
+
+    btn.addEventListener('click', function () {
+        var isWide = document.documentElement.classList.toggle('layout-wide');
+        localStorage.setItem('layout', isWide ? 'wide' : 'default');
+        syncIcon();
+    });
+})();
+
 // ── GET → POST helper ─────────────────────────────────────────────────────────
 // Používání: <a href="/url" data-convert-to-post="true" data-post-confirm="Opravdu?">Smazat</a>
 

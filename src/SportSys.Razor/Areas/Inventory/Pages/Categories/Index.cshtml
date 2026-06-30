@@ -11,21 +11,12 @@
     </div>
 }
 
-<p>
-    <a class="button" asp-page="Edit">
-        <i class="fa-solid fa-plus fa-fw"></i> Nová kořenová kategorie
-    </a>
-</p>
-
-@* ── STROMOVÝ POHLED ────────────────────────────────────────────────────────
-   Realizován pomocí nativního HTML <details>/<summary> – bez JS závislosti.
-   Uzel se stromem dětí je rozbalitelný kliknutím na <summary>.
-   Každý uzel obsahuje tlačítko Upravit a tlačítko Přidat podkategorii (+).
-   ────────────────────────────────────────────────────────────────────────── *@
-
 @if (Model.Tree.Count == 0)
 {
-    <p class="text-muted">Žádné kategorie nejsou zadány.</p>
+    <p class="text-muted">
+        Žádné kategorie nejsou zadány.
+        <a asp-page="Edit"><i class="fa-solid fa-folder-plus fa-fw"></i> Přidat první kategorii</a>
+    </p>
 }
 else
 {

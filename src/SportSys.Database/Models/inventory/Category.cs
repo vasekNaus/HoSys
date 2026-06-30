@@ -16,8 +16,12 @@ public partial class Category
     [StringLength(100)]
     public required string Name { get; set; }
 
-    /// <summary>JSON pole povolených velikostí pro tuto kategorii, např. ["XS","S","M","L","XL"].</summary>
-    public string? AvailableSizesJson { get; set; }
+    /// <summary>
+    /// Definice druhů a jejich povolených velikostí pro tuto kategorii.
+    /// Serializováno jako JSON do sloupce CategoryKindJson pomocí value converteru.
+    /// Null = kategorie nemá velikosti ani druhy.
+    /// </summary>
+    public CategoryKind[]? CategoryKinds { get; set; }
 
     public int SortOrder { get; set; }
 

@@ -8,18 +8,26 @@
         <i class="fa-solid fa-eye-slash fa-fw category-tree__inactive-icon" title="Neaktivní"></i>
     }
     @Model.Name
-    @if (Model.HasSizes)
+    @if (Model.HasKinds)
     {
-        <i class="fa-solid fa-ruler fa-fw category-tree__sizes-icon" title="Má velikosti"></i>
+        <i class="fa-solid fa-ruler fa-fw category-tree__sizes-icon" title="Má druhy a velikosti"></i>
     }
 </span>
 <span class="category-tree__actions">
-    <a class="button secondary compact"
+   @*  @if (Model.ParentCategoryId == null)
+    {
+        <a class="button secondary icon-btn"
+           asp-area="Inventory" asp-page="/Categories/Edit"
+           title="Přidat kořenovou kategorii">
+            <i class="fa-solid fa-folder-plus fa-fw"></i>
+        </a>
+    } *@
+    <a class="button secondary icon-btn"
        asp-area="Inventory" asp-page="/Categories/Edit" asp-route-id="@Model.Id"
        title="Upravit">
         <i class="fa-solid fa-pen fa-fw"></i>
     </a>
-    <a class="button secondary compact"
+    <a class="button secondary icon-btn"
        asp-area="Inventory" asp-page="/Categories/Edit" asp-route-parentCategoryId="@Model.Id"
        title="Přidat podkategorii">
         <i class="fa-solid fa-plus fa-fw"></i>

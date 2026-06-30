@@ -3,11 +3,12 @@
 // Barvy NEJSOU zde — jsou jako CSS Custom Properties níže (dark mode)
 // =================================================================
 
-$Padding:    20px;
-$StopMin:    900px;
-$MaxWidth:   1000px;
-$NavHeight:  56px;
-$FontFamily: 'Segoe UI', Arial, Helvetica, sans-serif;
+$Padding:       20px;
+$StopMin:       900px;
+$MaxWidth:      1400px;
+$BreakWide:     1600px;
+$NavHeight:     56px;
+$FontFamily:    'Segoe UI', Arial, Helvetica, sans-serif;
 
 // =================================================================
 // CSS CUSTOM PROPERTIES — HC Klatovy barevné schéma (LIGHT MODE)

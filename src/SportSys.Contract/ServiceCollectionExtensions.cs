@@ -68,6 +68,7 @@ public static class ServiceCollectionExtensions
     services.AddScoped<LocationService>();
     services.AddScoped<LoanService>();
     services.AddScoped<CategoryService>();
+    services.AddScoped<ItemKindService>();
     services.AddScoped<InventoryItemService>();
 
     return services;

@@ -1,7 +1,7 @@
 @page
-@model IndexModel
+@model EquipmentModel
 @{
-    ViewData["Title"] = "Položky skladu";
+    ViewData["Title"] = "Výstroj";
 }
 
 @if (Model.StatusMessage is not null)
@@ -18,12 +18,12 @@
             <input type="text" asp-for="Filter.NameFilter" class="textbox" placeholder="Název nebo inventární číslo…" />
         </div>
         <div class="field">
-            <label asp-for="Filter.ItemType"></label>
-            <select asp-for="Filter.ItemType" asp-items="Model.ItemTypeSelectList"></select>
-        </div>
-        <div class="field">
             <label asp-for="Filter.CategoryId"></label>
             <select asp-for="Filter.CategoryId" asp-items="Model.CategorySelectList"></select>
+        </div>
+        <div class="field">
+            <label asp-for="Filter.ItemKindId"></label>
+            <select asp-for="Filter.ItemKindId" asp-items="Model.ItemKindSelectList"></select>
         </div>
         <div class="field">
             <label asp-for="Filter.StatusFilter"></label>
@@ -39,7 +39,7 @@
             <button type="submit" class="button">
                 <i class="fa-solid fa-magnifying-glass fa-fw"></i> Hledat
             </button>
-            <a class="button secondary" asp-page="Index">
+            <a class="button secondary" asp-page="Equipment">
                 <i class="fa-solid fa-filter-circle-xmark fa-fw"></i> Vymazat filtr
             </a>
         </div>
@@ -50,14 +50,11 @@
     <a class="button" asp-page="Edit" asp-route-itemType="Equipment">
         <i class="fa-solid fa-plus fa-fw"></i> Nová výstroj
     </a>
-    <a class="button secondary" asp-page="Edit" asp-route-itemType="Asset">
-        <i class="fa-solid fa-plus fa-fw"></i> Nový majetek
-    </a>
 </p>
 
 @if (Model.Items.Count == 0)
 {
-    <p class="text-muted">Žádné položky nebyly nalezeny.</p>
+    <p class="text-muted">Žádná výstroj nebyla nalezena.</p>
 }
 else
 {
@@ -66,10 +63,10 @@ else
             <tr>
                 <th>Inv. číslo</th>
                 <th>Název</th>
-                <th>Typ</th>
                 <th>Kategorie</th>
                 <th>Výrobce</th>
                 <th>Druh</th>
+                <th>Velikost</th>
                 <th>Stav</th>
                 <th>Aktivní</th>
                 <th></th>
@@ -81,10 +78,10 @@ else
                 <tr>
                     <td><code>@item.InventoryNumber</code></td>
                     <td>@item.Name</td>
-                    <td>@item.ItemTypeName</td>
                     <td>@item.CategoryName</td>
                     <td>@(item.ManufacturerName ?? "—")</td>
                     <td>@(item.ItemKindName ?? "—")</td>
+                    <td>@(item.Size ?? "—")</td>
                     <td>@item.StatusName</td>
                     <td>
                         @if (item.IsActive)
@@ -97,7 +94,7 @@ else
                         }
                     </td>
                     <td class="buttons">
-                        <a class="button secondary icon-btn" asp-page="Edit" asp-route-id="@item.Id" asp-route-itemType="@item.ItemType"
+                        <a class="button secondary icon-btn" asp-page="Edit" asp-route-id="@item.Id" asp-route-itemType="Equipment"
                            title="Upravit">
                             <i class="fa-solid fa-pen fa-fw"></i>
                         </a>

@@ -73,6 +73,8 @@ public class SportSysDbContext : IdentityDbContext<User, Role, int, UserClaim, U
   // inventory – lookup
   public virtual DbSet<Category> InventoryCategories { get; set; }
 
+  public virtual DbSet<ItemKind> InventoryItemKinds { get; set; }
+
   public virtual DbSet<TransactionType> InventoryTransactionTypes { get; set; }
 
   // inventory – TPC hierarchie

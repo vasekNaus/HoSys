@@ -1,8 +1,9 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Contract.Models.inventory;
 using SportSys.Database.Context;
 using SportSys.Database.Models.inventory;
+using DbCategoryKind = SportSys.Database.Models.inventory.CategoryKind;
+using ContractCategoryKind = SportSys.Contract.Models.inventory.CategoryKind;
 
 namespace SportSys.Contract.Services;
 
@@ -22,47 +23,53 @@ public class CategoryService
         if (!string.IsNullOrWhiteSpace(nameFilter))
             query = query.Where(c => c.Name.Contains(nameFilter));
 
-        return await query
+        var rows = await query
             .OrderBy(c => c.ParentCategory == null ? "" : c.ParentCategory.Name)
             .ThenBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
-            .Select(c => new CategoryListItem
+            .Select(c => new
             {
-                Id = c.Id,
-                Name = c.Name,
-                ParentCategoryId = c.ParentCategoryId,
+                c.Id, c.Name, c.ParentCategoryId,
                 ParentCategoryName = c.ParentCategory != null ? c.ParentCategory.Name : null,
-                SortOrder = c.SortOrder,
-                IsActive = c.IsActive,
-                HasSizes = c.AvailableSizesJson != null && c.AvailableSizesJson != "[]",
+                c.SortOrder, c.IsActive, c.CategoryKinds,
             })
             .ToListAsync(ct);
+
+        return rows.Select(c => new CategoryListItem
+        {
+            Id = c.Id,
+            Name = c.Name,
+            ParentCategoryId = c.ParentCategoryId,
+            ParentCategoryName = c.ParentCategoryName,
+            SortOrder = c.SortOrder,
+            IsActive = c.IsActive,
+            HasKinds = c.CategoryKinds is { Length: > 0 },
+        }).ToList();
     }
 
-    /// <summary>
-    /// Vrátí všechny kategorie jako strom. Kořenové uzly (bez rodiče) jsou seřazeny dle SortOrder.
-    /// </summary>
+    /// <summary>Vrátí všechny kategorie jako strom. Kořenové uzly jsou seřazeny dle SortOrder.</summary>
     public async Task<List<CategoryTreeNode>> GetTreeAsync(CancellationToken ct = default)
     {
-        var all = await _db.InventoryCategories
+        var rows = await _db.InventoryCategories
             .OrderBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
-            .Select(c => new CategoryTreeNode
-            {
-                Id = c.Id,
-                Name = c.Name,
-                ParentCategoryId = c.ParentCategoryId,
-                SortOrder = c.SortOrder,
-                IsActive = c.IsActive,
-                HasSizes = c.AvailableSizesJson != null && c.AvailableSizesJson != "[]",
-            })
+            .Select(c => new { c.Id, c.Name, c.ParentCategoryId, c.SortOrder, c.IsActive, c.CategoryKinds })
             .ToListAsync(ct);
 
-        // Sestavení stromu in-memory
-        var lookup = all.ToDictionary(n => n.Id);
+        var nodes = rows.Select(c => new CategoryTreeNode
+        {
+            Id = c.Id,
+            Name = c.Name,
+            ParentCategoryId = c.ParentCategoryId,
+            SortOrder = c.SortOrder,
+            IsActive = c.IsActive,
+            HasKinds = c.CategoryKinds is { Length: > 0 },
+        }).ToList();
+
+        var lookup = nodes.ToDictionary(n => n.Id);
         var roots = new List<CategoryTreeNode>();
 
-        foreach (var node in all)
+        foreach (var node in nodes)
         {
             if (node.ParentCategoryId is null)
                 roots.Add(node);
@@ -77,7 +84,7 @@ public class CategoryService
     {
         var cat = await _db.InventoryCategories
             .Where(c => c.Id == id)
-            .Select(c => new { c.Id, c.Name, c.ParentCategoryId, c.SortOrder, c.IsActive, c.AvailableSizesJson })
+            .Select(c => new { c.Id, c.Name, c.ParentCategoryId, c.SortOrder, c.IsActive, c.CategoryKinds })
             .FirstOrDefaultAsync(ct);
 
         if (cat is null) return null;
@@ -89,25 +96,33 @@ public class CategoryService
             ParentCategoryId = cat.ParentCategoryId,
             SortOrder = cat.SortOrder,
             IsActive = cat.IsActive,
-            AvailableSizesText = JsonToText(cat.AvailableSizesJson),
+            CategoryKindInputs = cat.CategoryKinds?
+                .Select(k => new CategoryKindInput
+                {
+                    ItemKind = k.ItemKind,
+                    SizesText = k.Sizes.Length > 0 ? string.Join("\n", k.Sizes) : null,
+                })
+                .ToList() ?? [],
         };
     }
 
     public async Task<List<CategorySelectItem>> GetSelectListAsync(int? excludeId = null, CancellationToken ct = default)
     {
-        return await _db.InventoryCategories
+        var rows = await _db.InventoryCategories
             .Where(c => c.IsActive && (excludeId == null || c.Id != excludeId))
             .OrderBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
-            .Select(c => new CategorySelectItem
-            {
-                Id = c.Id,
-                Name = c.Name,
-                AvailableSizes = c.AvailableSizesJson != null
-                    ? JsonSerializer.Deserialize<string[]>(c.AvailableSizesJson)!
-                    : Array.Empty<string>(),
-            })
+            .Select(c => new { c.Id, c.Name, c.CategoryKinds })
             .ToListAsync(ct);
+
+        return rows.Select(c => new CategorySelectItem
+        {
+            Id = c.Id,
+            Name = c.Name,
+            CategoryKinds = c.CategoryKinds?
+                .Select(k => new ContractCategoryKind { ItemKind = k.ItemKind, Sizes = k.Sizes })
+                .ToArray(),
+        }).ToList();
     }
 
     public async Task<CategoryModel> CreateAsync(CategoryModel model, CancellationToken ct = default)
@@ -118,7 +133,7 @@ public class CategoryService
             ParentCategoryId = model.ParentCategoryId,
             SortOrder = model.SortOrder,
             IsActive = model.IsActive,
-            AvailableSizesJson = TextToJson(model.AvailableSizesText),
+            CategoryKinds = MapToDbKinds(model.CategoryKindInputs),
         };
         _db.InventoryCategories.Add(entity);
         await _db.SaveChangesAsync(ct);
@@ -135,36 +150,33 @@ public class CategoryService
         entity.ParentCategoryId = model.ParentCategoryId;
         entity.SortOrder = model.SortOrder;
         entity.IsActive = model.IsActive;
-        entity.AvailableSizesJson = TextToJson(model.AvailableSizesText);
+        entity.CategoryKinds = MapToDbKinds(model.CategoryKindInputs);
 
         await _db.SaveChangesAsync(ct);
     }
 
-    /// <summary>Převede víceřádkový text (jeden řádek = jedna velikost) na JSON pole.</summary>
-    private static string? TextToJson(string? text)
+    private static DbCategoryKind[]? MapToDbKinds(List<CategoryKindInput> inputs)
     {
-        if (string.IsNullOrWhiteSpace(text)) return null;
+        if (inputs.Count == 0) return null;
 
-        var sizes = text
+        var result = inputs
+            .Select(k => new DbCategoryKind
+            {
+                ItemKind = k.ItemKind,
+                Sizes = ParseSizesText(k.SizesText),
+            })
+            .ToArray();
+
+        return result.Length == 0 ? null : result;
+    }
+
+    private static string[] ParseSizesText(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return [];
+        return text
             .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .ToArray();
-
-        return sizes.Length == 0 ? null : JsonSerializer.Serialize(sizes);
-    }
-
-    /// <summary>Převede JSON pole velikostí na víceřádkový text pro editaci.</summary>
-    private static string? JsonToText(string? json)
-    {
-        if (string.IsNullOrWhiteSpace(json)) return null;
-        try
-        {
-            var sizes = JsonSerializer.Deserialize<string[]>(json);
-            return sizes is { Length: > 0 } ? string.Join("\n", sizes) : null;
-        }
-        catch
-        {
-            return null;
-        }
     }
 }
+

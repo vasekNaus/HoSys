@@ -1,0 +1,79 @@
+@use 'vars' as *;
+
+// =================================================================
+// ZÁLOŽKY (.tabs)
+//
+// Použití:
+//   <div class="tabs">
+//     <nav class="tab-nav" role="tablist">
+//       <button type="button" class="tab-btn active" data-tab="id1" role="tab">…</button>
+//       <button type="button" class="tab-btn" data-tab="id2" role="tab">…</button>
+//     </nav>
+//     <div class="tab-panel active" id="id1" role="tabpanel">…</div>
+//     <div class="tab-panel"        id="id2" role="tabpanel">…</div>
+//   </div>
+//
+// Stav .has-error na .tab-btn se přidává JS pokud panel obsahuje chyby validace.
+// =================================================================
+
+.tabs {
+  .tab-nav {
+    display:       flex;
+    flex-wrap:     wrap;
+    gap:           0;
+    border-bottom: 2px solid var(--color-border-default);
+    margin-bottom: 1.5rem;
+  }
+
+  .tab-btn {
+    font-family:    $FontFamily;
+    font-size:      .9375rem;
+    font-weight:    600;
+    padding:        .625rem 1.25rem;
+    background:     none;
+    border:         none;
+    border-bottom:  3px solid transparent;
+    margin-bottom:  -2px;          // překryje spodní okraj .tab-nav
+    cursor:         pointer;
+    color:          var(--color-text-secondary);
+    min-width:      unset;
+    box-shadow:     none;
+    border-radius:  0;
+    transition:     color .15s, border-bottom-color .15s;
+    line-height:    1.5;
+
+    &:hover {
+      color:              var(--color-text-primary);
+      border-bottom-color: var(--color-border-strong);
+      background:         var(--color-interactive-hover);
+    }
+
+    &.active {
+      color:              var(--color-brand-primary);
+      border-bottom-color: var(--color-brand-primary);
+    }
+
+    // Záložka s chybou validace
+    &.has-error {
+      color: var(--color-error-text);
+
+      &::after {
+        content:     ' ●';
+        font-size:   .6rem;
+        vertical-align: super;
+      }
+
+      &.active {
+        border-bottom-color: var(--color-error);
+      }
+    }
+  }
+
+  .tab-panel {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+}

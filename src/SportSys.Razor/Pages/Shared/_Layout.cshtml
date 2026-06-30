@@ -4,8 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SportSys</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeyd+qKJxOIsITedCe7YEvpS6p5VTBL6RcfPi+dw/HaW9GfcS9hnZLJTKQ=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
           crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SportSys.Razor.styles.css" asp-append-version="true" />
@@ -14,6 +13,10 @@
         (function () {
             var t = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', t);
+            // Aplikuj uložené rozložení (wide/default)
+            if (localStorage.getItem('layout') === 'wide') {
+                document.documentElement.classList.add('layout-wide');
+            }
         })();
     </script>
 </head>
@@ -24,6 +27,9 @@
         </a>
         <div class="header-actions">
             <partial name="_LoginPartial" />
+            <button class="btn-layout-toggle" id="layoutToggle" aria-label="Přepnout celou šířku / standardní" title="Celá šířka / standardní">
+                <i class="fa-solid fa-expand fa-fw"></i>
+            </button>
             <button class="btn-theme-toggle" id="themeToggle" aria-label="Přepnout světlý/tmavý režim" title="Přepnout světlý/tmavý režim">
                 <i class="fa-solid fa-circle-half-stroke"></i>
             </button>
@@ -85,11 +91,10 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-client-validation/0.11.0/aspnet-client-validation.min.js"
-            integrity="sha512-KBPXBsXJEk5lLPFGq3UCSwGMKmGaYf4WnfpXMiLOA7/R/z0DJG3x5MOqaJjnFcmTEyBe7dF0YlhPWsVNH9Fg=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
+   @*  <script>
         new aspnetValidation.ValidationService().bootstrap();
-    </script>
+    </script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

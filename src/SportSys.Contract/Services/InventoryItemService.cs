@@ -36,6 +36,7 @@ public class InventoryItemService
                     Name = e.Name,
                     CategoryName = e.Category.Name,
                     ManufacturerName = e.Manufacturer != null ? e.Manufacturer.Name : null,
+                    ItemKindName = e.ItemKind != null ? e.ItemKind.Name : null,
                     ItemStatus = e.ItemStatus,
                     IsActive = e.IsActive,
                 })
@@ -101,6 +102,7 @@ public class InventoryItemService
                 IsActive = form.IsActive,
                 CreatedAt = DateTime.UtcNow,
                 Size = form.Size,
+                ItemKindId = form.ItemKindId,
             };
             _db.Equipment.Add(entity);
             await _db.SaveChangesAsync(ct);
@@ -143,6 +145,7 @@ public class InventoryItemService
 
             MapCommon(form, entity);
             entity.Size = form.Size;
+            entity.ItemKindId = form.ItemKindId;
             entity.ModifiedAt = DateTime.UtcNow;
         }
         else
@@ -160,7 +163,75 @@ public class InventoryItemService
         await _db.SaveChangesAsync(ct);
     }
 
+    public async Task<List<EquipmentListItem>> GetEquipmentListAsync(InventoryTypeFilter filter, CancellationToken ct = default)
+    {
+        var query = ApplyTypeFilter(_db.Equipment.AsQueryable(), filter);
+
+        if (filter.ItemKindId.HasValue)
+            query = query.Where(e => e.ItemKindId == filter.ItemKindId.Value);
+
+        var items = await query
+            .Select(e => new EquipmentListItem
+            {
+                Id = e.Id,
+                InventoryNumber = e.InventoryNumber,
+                Name = e.Name,
+                CategoryName = e.Category.Name,
+                ManufacturerName = e.Manufacturer != null ? e.Manufacturer.Name : null,
+                ItemKindName = e.ItemKind != null ? e.ItemKind.Name : null,
+                Size = e.Size,
+                ItemStatus = e.ItemStatus,
+                IsActive = e.IsActive,
+            })
+            .OrderBy(e => e.Name).ThenBy(e => e.InventoryNumber)
+            .ToListAsync(ct);
+
+        foreach (var item in items)
+            item.StatusName = ((EItemStatus)item.ItemStatus).GetDisplayName();
+
+        return items;
+    }
+
+    public async Task<List<AssetListItem>> GetAssetListAsync(InventoryTypeFilter filter, CancellationToken ct = default)
+    {
+        var items = await ApplyTypeFilter(_db.Assets.AsQueryable(), filter)
+            .Select(a => new AssetListItem
+            {
+                Id = a.Id,
+                InventoryNumber = a.InventoryNumber,
+                Name = a.Name,
+                CategoryName = a.Category.Name,
+                ManufacturerName = a.Manufacturer != null ? a.Manufacturer.Name : null,
+                SerialNumber = a.SerialNumber,
+                WarrantyUntil = a.WarrantyUntil,
+                ExternalId = a.ExternalId,
+                ItemStatus = a.ItemStatus,
+                IsActive = a.IsActive,
+            })
+            .OrderBy(a => a.Name).ThenBy(a => a.InventoryNumber)
+            .ToListAsync(ct);
+
+        foreach (var item in items)
+            item.StatusName = ((EItemStatus)item.ItemStatus).GetDisplayName();
+
+        return items;
+    }
+
     // ── Privátní pomocné metody ──────────────────────────────────────────────────
+
+    private static IQueryable<T> ApplyTypeFilter<T>(IQueryable<T> query, InventoryTypeFilter filter)
+        where T : InventoryItem
+    {
+        if (!string.IsNullOrWhiteSpace(filter.NameFilter))
+            query = query.Where(x => x.Name.Contains(filter.NameFilter!) || x.InventoryNumber.Contains(filter.NameFilter!));
+        if (filter.CategoryId.HasValue)
+            query = query.Where(x => x.CategoryId == filter.CategoryId.Value);
+        if (filter.StatusFilter.HasValue)
+            query = query.Where(x => x.ItemStatus == filter.StatusFilter.Value);
+        if (filter.ActiveOnly)
+            query = query.Where(x => x.IsActive);
+        return query;
+    }
 
     private static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, InventoryItemFilter filter)
         where T : InventoryItem
@@ -192,6 +263,7 @@ public class InventoryItemService
         AcquisitionPrice = e.AcquisitionPrice,
         IsActive = e.IsActive,
         Size = e.Size,
+        ItemKindId = e.ItemKindId,
     };
 
     private static InventoryItemForm MapToForm(DbAsset a, string itemType) => new()

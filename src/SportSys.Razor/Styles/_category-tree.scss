@@ -39,14 +39,13 @@
 }
 
 // Jeden řádek uzlu (summary nebo prostý div pro listy)
-.category-tree__summary,
-.category-tree__node > span.category-tree__label {
-  display:     flex;
-  align-items: center;
-  gap:         .5rem;
-  padding:     .3rem .5rem;
+.category-tree__summary {
+  display:       flex;
+  align-items:   center;
+  gap:           .5rem;
+  padding:       .3rem .5rem;
   border-radius: 4px;
-  cursor:      default;
+  cursor:        default;
 
   &:hover {
     background-color: var(--color-surface-3);
@@ -75,7 +74,6 @@ details[open] > summary.category-tree__summary::before {
   display:     flex;
   align-items: center;
   gap:         .4rem;
-  flex:        1;
   font-weight: 500;
 }
 
@@ -91,11 +89,10 @@ details[open] > summary.category-tree__summary::before {
   font-size: .85em;
 }
 
-// Akční tlačítka vpravo – zobrazená vždy (bez hover skrývání pro přístupnost)
+// Akční tlačítka — bezprostředně za názvem
 .category-tree__actions {
   display:    flex;
   gap:        .25rem;
-  margin-left: auto;
   flex-shrink: 0;
 }
 

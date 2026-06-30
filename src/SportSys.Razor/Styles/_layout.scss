@@ -22,6 +22,20 @@ body {
   padding:          0 $Padding;
   transition:       background-color .2s, color .2s;
 
+  // Na velkých obrazovkách využij více plochy
+  @media (min-width: $BreakWide) {
+    max-width: calc($MaxWidth + 160px);
+  }
+
+  // Celošířkový režim — uloženo v localStorage, class na <html>
+  @at-root html.layout-wide & {
+    @media (min-width: #{$StopMin + 1px}) {
+      max-width:    none;
+      padding-left:  clamp(#{$Padding}, 2.5vw, 48px);
+      padding-right: clamp(#{$Padding}, 2.5vw, 48px);
+    }
+  }
+
   @media (max-width: $StopMin) {
     margin:  0 auto;
     padding: 0 12px;
@@ -90,7 +104,8 @@ body > header {
     gap:         .75rem;
   }
 
-  .btn-theme-toggle {
+  .btn-theme-toggle,
+  .btn-layout-toggle {
     background:    none;
     border:        1px solid rgba(255, 255, 255, .30);
     color:         var(--color-text-inverse);
@@ -104,6 +119,13 @@ body > header {
     &:hover {
       background:   rgba(255, 255, 255, .12);
       border-color: rgba(255, 255, 255, .60);
+    }
+  }
+
+  // Na mobilech skryjeme layout toggle — nemá smysl
+  .btn-layout-toggle {
+    @media (max-width: $StopMin) {
+      display: none;
     }
   }
 }
@@ -129,12 +151,54 @@ body > nav {
     user-select: none;
   }
 
-  ul {
+  // Vnější ul — horizontální lišta
+  > ul {
     list-style: none;
     margin:     0;
     padding:    0;
     display:    flex;
     flex-wrap:  wrap;
+
+    // Top-level li — relativní pozice jako kotva pro dropdown
+    > li {
+      position: relative;
+
+      // Položky 2. úrovně — dropdown panel
+      > ul {
+        display:          none;
+        position:         absolute;
+        top:              100%;
+        left:             0;
+        min-width:        14rem;
+        list-style:       none;
+        margin:           0;
+        padding:          0;
+        flex-direction:   column;
+        background-color: var(--color-surface-1);
+        border-top:       2px solid var(--color-brand-primary);
+        box-shadow:       var(--shadow-md);
+        z-index:          200;
+
+        li a {
+          border-bottom: 1px solid var(--color-border-subtle);
+
+          &:last-child { border-bottom: none; }
+        }
+      }
+
+      // Zobrazit dropdown při najetí myší
+      &:hover > ul {
+        display:        flex;
+        flex-direction: column;
+      }
+
+      // Indikátor rozbalitelné položky
+      &:has(> ul) > a::after {
+        content:      ' ▾';
+        font-size:    .75em;
+        opacity:      .7;
+      }
+    }
 
     li a {
       display:         block;
@@ -152,14 +216,31 @@ body > nav {
     }
   }
 
+  // Mobil — hamburger
   @media (max-width: $StopMin) {
     label[for="nav-toggle"] {
       display: block;
     }
 
-    ul {
+    > ul {
       display:        none;
       flex-direction: column;
+
+      // Dropdown panely: na mobilu vždy viditelné, odsazené
+      > li > ul {
+        display:        flex;
+        flex-direction: column;
+        position:       static;
+        box-shadow:     none;
+        border-top:     none;
+        padding-left:   $Padding;
+        border-left:    2px solid var(--color-border-default);
+
+        li a {
+          border-bottom: none;
+          font-size:     .95rem;
+        }
+      }
     }
 
     input[type="checkbox"]#nav-toggle:checked ~ ul {

@@ -261,6 +261,48 @@ SCSS soubory jsou v `src/SportSys.Razor/Styles/`:
 - Barevné schéma je definováno v `.github/barevna-schemata/hc-klatovy/` (HC Klatovy: červená + námořní modrá + zlatá)
 - Sémantické tokeny (`--color-*`) mají přednost před primitivními tokeny (`--sport-red-500`)
 
+### Ikony (Font Awesome)
+
+Celá aplikace používá Font Awesome 6. Pravidla:
+
+- Každá ikona musí mít třídu `fa-fw` (pevná šířka) pro zarovnání v textu i tlačítkách.
+- **Akční tlačítka v řádcích gridu** jsou vždy ikonová (bez textu), třída `button secondary icon-btn` s atributem `title` pro přístupnost:
+
+```html
+@* Editace *@
+<a class="button secondary icon-btn" asp-page="Edit" asp-route-id="@item.Id" title="Upravit">
+    <i class="fa-solid fa-pen fa-fw"></i>
+</a>
+
+@* Smazání *@
+<button type="submit" class="button tertiary icon-btn" title="Smazat">
+    <i class="fa-solid fa-trash fa-fw"></i>
+</button>
+
+@* Zobrazení detailu *@
+<a class="button secondary icon-btn" asp-page="Detail" asp-route-id="@item.Id" title="Detail">
+    <i class="fa-solid fa-eye fa-fw"></i>
+</a>
+```
+
+- **Standardní ikonový slovník** (používat konzistentně napříč celou aplikací):
+
+| Akce | Ikona |
+|---|---|
+| Přidat / Nový | `fa-solid fa-plus` |
+| Upravit | `fa-solid fa-pen` |
+| Smazat | `fa-solid fa-trash` |
+| Detail / Zobrazit | `fa-solid fa-eye` |
+| Hledat | `fa-solid fa-magnifying-glass` |
+| Vymazat filtr | `fa-solid fa-filter-circle-xmark` |
+| Uložit | `fa-solid fa-floppy-disk` |
+| Zpět | `fa-solid fa-arrow-left` |
+| Potvrdit / OK | `fa-solid fa-circle-check` |
+| Varování | `fa-solid fa-triangle-exclamation` |
+
+- Tlačítka mimo gridy (nadpisové akce, formulářová tlačítka) mohou mít i text vedle ikony.
+- Tlačítka v kategoriích stromu a podobných strukturách také používají `icon-btn`.
+
 ### Import z Excelu
 
 `ImportRun` (tréninky) a `MatchImportRun` (zápasy) sdílejí stejný vzor parsování:

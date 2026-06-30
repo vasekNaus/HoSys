@@ -2,6 +2,56 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SportSys.Contract.Models.inventory;
 
+/// <summary>Řádek v přehledu výstroje (Equipment).</summary>
+public class EquipmentListItem
+{
+    public int Id { get; set; }
+    public string InventoryNumber { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string CategoryName { get; set; } = "";
+    public string? ManufacturerName { get; set; }
+    public string? ItemKindName { get; set; }
+    public string? Size { get; set; }
+    public int ItemStatus { get; set; }
+    public string StatusName { get; set; } = "";
+    public bool IsActive { get; set; }
+}
+
+/// <summary>Řádek v přehledu majetku (Asset).</summary>
+public class AssetListItem
+{
+    public int Id { get; set; }
+    public string InventoryNumber { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string CategoryName { get; set; } = "";
+    public string? ManufacturerName { get; set; }
+    public string? SerialNumber { get; set; }
+    public DateOnly? WarrantyUntil { get; set; }
+    public string? ExternalId { get; set; }
+    public int ItemStatus { get; set; }
+    public string StatusName { get; set; } = "";
+    public bool IsActive { get; set; }
+}
+
+/// <summary>Filtr na přehledu jednoho konkrétního typu položky (bez výběru ItemType).</summary>
+public class InventoryTypeFilter
+{
+    [Display(Name = "Hledat")]
+    public string? NameFilter { get; set; }
+
+    [Display(Name = "Kategorie")]
+    public int? CategoryId { get; set; }
+
+    [Display(Name = "Druh")]
+    public int? ItemKindId { get; set; }
+
+    [Display(Name = "Stav")]
+    public int? StatusFilter { get; set; }
+
+    [Display(Name = "Pouze aktivní")]
+    public bool ActiveOnly { get; set; } = true;
+}
+
 /// <summary>Řádek v přehledu položek skladu.</summary>
 public class InventoryItemListItem
 {
@@ -13,6 +63,8 @@ public class InventoryItemListItem
     public string Name { get; set; } = "";
     public string CategoryName { get; set; } = "";
     public string? ManufacturerName { get; set; }
+    /// <summary>Druh výstroje (pouze pro Equipment; null pro Asset).</summary>
+    public string? ItemKindName { get; set; }
     public int ItemStatus { get; set; }
     public string StatusName { get; set; } = "";
     public bool IsActive { get; set; }
@@ -101,6 +153,9 @@ public class InventoryItemForm
     public string? ExternalId { get; set; }
 
     // ── Equipment — specifické pole ─────────────────────────────────────────────
+
+    [Display(Name = "Druh")]
+    public int? ItemKindId { get; set; }
 
     [StringLength(50, ErrorMessage = "Velikost nesmí přesáhnout 50 znaků.")]
     [Display(Name = "Velikost")]

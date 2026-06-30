@@ -27,106 +27,118 @@
         }
     </p>
 
-    @* ══ SPOLEČNÉ POLE ══ *@
-    <fieldset>
-        <legend>Základní údaje</legend>
+    <div class="tabs" id="edit-tabs">
+        <nav class="tab-nav" role="tablist">
+            <button type="button" class="tab-btn active" data-tab="tab-basic" role="tab" aria-selected="true" aria-controls="tab-basic">Základní údaje</button>
+            <button type="button" class="tab-btn" data-tab="tab-specific" role="tab" aria-selected="false" aria-controls="tab-specific">@itemTypeName</button>
+        </nav>
 
-        <p>
-            <label asp-for="Input.InventoryNumber"></label>
-            <input asp-for="Input.InventoryNumber" type="text" class="short" />
-            <span asp-validation-for="Input.InventoryNumber" class="field-validation-error"></span>
-        </p>
+        @* ══ ZÁLOŽKA 1: Základní údaje ══ *@
+        <div class="tab-panel active" id="tab-basic" role="tabpanel">
 
-        <p>
-            <label asp-for="Input.Name"></label>
-            <input asp-for="Input.Name" type="text" />
-            <span asp-validation-for="Input.Name" class="field-validation-error"></span>
-        </p>
+            <p>
+                <label asp-for="Input.InventoryNumber"></label>
+                <input asp-for="Input.InventoryNumber" type="text" class="short" />
+                <span asp-validation-for="Input.InventoryNumber" class="field-validation-error"></span>
+            </p>
 
-        <p>
-            <label asp-for="Input.Description"></label>
-            <textarea asp-for="Input.Description" rows="3"></textarea>
-        </p>
+            <p>
+                <label asp-for="Input.Name"></label>
+                <input asp-for="Input.Name" type="text" />
+                <span asp-validation-for="Input.Name" class="field-validation-error"></span>
+            </p>
 
-        <p>
-            <label asp-for="Input.CategoryId"></label>
-            <select asp-for="Input.CategoryId" asp-items="Model.CategorySelectList"></select>
-            <span asp-validation-for="Input.CategoryId" class="field-validation-error"></span>
-        </p>
+            <p>
+                <label asp-for="Input.Description"></label>
+                <textarea asp-for="Input.Description" rows="3"></textarea>
+            </p>
 
-        <p>
-            <label asp-for="Input.ManufacturerId"></label>
-            <select asp-for="Input.ManufacturerId" asp-items="Model.ManufacturerSelectList"></select>
-        </p>
+            <p>
+                <label asp-for="Input.CategoryId"></label>
+                <select asp-for="Input.CategoryId" asp-items="Model.CategorySelectList"></select>
+                <span asp-validation-for="Input.CategoryId" class="field-validation-error"></span>
+            </p>
 
-        <p>
-            <label asp-for="Input.ItemStatus"></label>
-            <select asp-for="Input.ItemStatus" asp-items="Model.StatusSelectList"></select>
-        </p>
+            <p>
+                <label asp-for="Input.ManufacturerId"></label>
+                <select asp-for="Input.ManufacturerId" asp-items="Model.ManufacturerSelectList"></select>
+            </p>
 
-        <p>
-            <label asp-for="Input.AcquisitionDate"></label>
-            <input asp-for="Input.AcquisitionDate" type="date" />
-        </p>
+            <p>
+                <label asp-for="Input.ItemStatus"></label>
+                <select asp-for="Input.ItemStatus" asp-items="Model.StatusSelectList"></select>
+            </p>
 
-        <p>
-            <label asp-for="Input.AcquisitionPrice"></label>
-            <input asp-for="Input.AcquisitionPrice" type="number" step="0.01" min="0" class="short" />
-            <span asp-validation-for="Input.AcquisitionPrice" class="field-validation-error"></span>
-        </p>
+            <p>
+                <label asp-for="Input.AcquisitionDate"></label>
+                <input asp-for="Input.AcquisitionDate" type="date" />
+            </p>
 
-        <p>
-            <label asp-for="Input.AssignedLocationId"></label>
-            <select asp-for="Input.AssignedLocationId" asp-items="Model.LocationSelectList"></select>
-        </p>
+            <p>
+                <label asp-for="Input.AcquisitionPrice"></label>
+                <input asp-for="Input.AcquisitionPrice" type="number" step="0.01" min="0" class="short" />
+                <span asp-validation-for="Input.AcquisitionPrice" class="field-validation-error"></span>
+            </p>
 
-        <p>
-            <label asp-for="Input.CurrentLocationId"></label>
-            <select asp-for="Input.CurrentLocationId" asp-items="Model.LocationSelectList"></select>
-        </p>
+            <p>
+                <label asp-for="Input.AssignedLocationId"></label>
+                <select asp-for="Input.AssignedLocationId" asp-items="Model.LocationSelectList"></select>
+            </p>
 
-        <p>
-            <label class="checkbox-label">
-                <input asp-for="Input.IsActive" type="checkbox" />
-                @Html.DisplayNameFor(m => m.Input.IsActive)
-            </label>
-        </p>
-    </fieldset>
+            <p>
+                <label asp-for="Input.CurrentLocationId"></label>
+                <select asp-for="Input.CurrentLocationId" asp-items="Model.LocationSelectList"></select>
+            </p>
 
-    @* ══ VÝSTROJ — specifické pole ══ *@
-    <fieldset id="section-equipment" style="display: @(Model.Input.ItemType == "Equipment" ? "block" : "none")">
-        <legend>Výstroj</legend>
+            <p>
+                <label class="checkbox-label">
+                    <input asp-for="Input.IsActive" type="checkbox" />
+                    @Html.DisplayNameFor(m => m.Input.IsActive)
+                </label>
+            </p>
 
-        <p>
-            <label asp-for="Input.Size"></label>
-            <input asp-for="Input.Size" type="text" class="short" />
-            <span asp-validation-for="Input.Size" class="field-validation-error"></span>
-            <span class="description">Např. M, L, XL nebo 42.</span>
-        </p>
-    </fieldset>
+        </div>
 
-    @* ══ MAJETEK — specifické pole ══ *@
-    <fieldset id="section-asset" style="display: @(Model.Input.ItemType == "Asset" ? "block" : "none")">
-        <legend>Majetek</legend>
+        @* ══ ZÁLOŽKA 2: Výstroj nebo Majetek ══ *@
+        <div class="tab-panel" id="tab-specific" role="tabpanel">
 
-        <p>
-            <label asp-for="Input.SerialNumber"></label>
-            <input asp-for="Input.SerialNumber" type="text" />
-            <span asp-validation-for="Input.SerialNumber" class="field-validation-error"></span>
-        </p>
+            @if (Model.Input.ItemType == "Equipment")
+            {
+                <p>
+                    <label asp-for="Input.ItemKindId"></label>
+                    <select asp-for="Input.ItemKindId" asp-items="Model.ItemKindSelectList" id="item-kind-select"></select>
+                </p>
 
-        <p>
-            <label asp-for="Input.WarrantyUntil"></label>
-            <input asp-for="Input.WarrantyUntil" type="date" />
-        </p>
+                <p id="size-field">
+                    <label asp-for="Input.Size"></label>
+                    <select id="size-select" style="display:none"></select>
+                    <input asp-for="Input.Size" type="text" class="short" id="size-input" />
+                    <span asp-validation-for="Input.Size" class="field-validation-error"></span>
+                </p>
+            }
+            else
+            {
+                <p>
+                    <label asp-for="Input.SerialNumber"></label>
+                    <input asp-for="Input.SerialNumber" type="text" />
+                    <span asp-validation-for="Input.SerialNumber" class="field-validation-error"></span>
+                </p>
 
-        <p>
-            <label asp-for="Input.ExternalId"></label>
-            <input asp-for="Input.ExternalId" type="text" />
-            <span asp-validation-for="Input.ExternalId" class="field-validation-error"></span>
-            <span class="description">Interní kód nebo číslo z externího systému.</span>
-        </p>
-    </fieldset>
+                <p>
+                    <label asp-for="Input.WarrantyUntil"></label>
+                    <input asp-for="Input.WarrantyUntil" type="date" />
+                </p>
+
+                <p>
+                    <label asp-for="Input.ExternalId"></label>
+                    <input asp-for="Input.ExternalId" type="text" />
+                    <span asp-validation-for="Input.ExternalId" class="field-validation-error"></span>
+                    <span class="description">Interní kód nebo číslo z externího systému.</span>
+                </p>
+            }
+
+        </div>
+    </div>
 
     <footer>
         <button type="submit" class="button">
@@ -141,12 +153,105 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Sekce pro typ položky — při přidání nové položky (skrytý input ItemType je readonly)
-        // Zatím statické zobrazení; pro budoucí přepínání typu při vytváření zde lze přidat toggle.
         (function () {
+            // ── Záložky ──────────────────────────────────────────────────────────
+            var tabs = document.querySelectorAll('#edit-tabs .tab-btn');
+            var panels = document.querySelectorAll('#edit-tabs .tab-panel');
+
+            function activateTab(targetId) {
+                tabs.forEach(function (btn) {
+                    var active = btn.dataset.tab === targetId;
+                    btn.classList.toggle('active', active);
+                    btn.setAttribute('aria-selected', String(active));
+                });
+                panels.forEach(function (panel) {
+                    panel.classList.toggle('active', panel.id === targetId);
+                });
+            }
+
+            tabs.forEach(function (btn) {
+                btn.addEventListener('click', function () { activateTab(btn.dataset.tab); });
+            });
+
+            // Po POST — přepnout na záložku s chybami validace
+            panels.forEach(function (panel) {
+                if (panel.querySelector('.field-validation-error:not(:empty)')) {
+                    var btn = document.querySelector('[data-tab="' + panel.id + '"]');
+                    if (btn) btn.classList.add('has-error');
+                    // Přepnout na první záložku s chybou (pokud není "basic" aktivní)
+                    if (!panel.classList.contains('active')) {
+                        activateTab(panel.id);
+                    }
+                }
+            });
+
+            // ── Výstroj: druh + velikost ─────────────────────────────────────────
             var itemType = document.querySelector('input[name="Input.ItemType"]').value;
-            document.getElementById('section-equipment').style.display = itemType === 'Equipment' ? 'block' : 'none';
-            document.getElementById('section-asset').style.display = itemType === 'Asset' ? 'block' : 'none';
+            if (itemType !== 'Equipment') return;
+
+            var categoryKinds = @Html.Raw(Model.CategoryKindsJson);
+
+            var categorySelect = document.getElementById('Input_CategoryId');
+            var kindSelect = document.getElementById('item-kind-select');
+            var sizeSelect = document.getElementById('size-select');
+            var sizeInput = document.getElementById('size-input');
+            if (!kindSelect) return;
+
+            // Načíst lokalizované názvy druhů ze server-rendered dropdownu (klíč = id jako string)
+            var kindNames = {};
+            Array.from(kindSelect.options).forEach(function (o) {
+                if (o.value) kindNames[o.value] = o.text;
+            });
+
+            function updateKinds() {
+                var catId = categorySelect.value;
+                var kinds = categoryKinds[catId];
+                var currentKindId = kindSelect.value;
+
+                kindSelect.innerHTML = '<option value="">— nevybráno —</option>';
+                if (kinds && kinds.length > 0) {
+                    kinds.forEach(function (k) {
+                        var opt = document.createElement('option');
+                        opt.value = String(k.id);
+                        opt.textContent = kindNames[String(k.id)] || k.itemKind;
+                        if (String(k.id) === currentKindId) opt.selected = true;
+                        kindSelect.appendChild(opt);
+                    });
+                }
+
+                updateSizes();
+            }
+
+            function updateSizes() {
+                var catId = categorySelect.value;
+                var kinds = categoryKinds[catId];
+                var selectedKindId = kindSelect.value;
+                var kindData = kinds ? kinds.find(function (k) { return String(k.id) === selectedKindId; }) : null;
+
+                if (kindData && kindData.sizes && kindData.sizes.length > 0) {
+                    var currentSize = sizeInput.value;
+                    sizeSelect.innerHTML = '<option value="">— vyberte —</option>';
+                    kindData.sizes.forEach(function (s) {
+                        var opt = document.createElement('option');
+                        opt.value = s;
+                        opt.textContent = s;
+                        if (s === currentSize) opt.selected = true;
+                        sizeSelect.appendChild(opt);
+                    });
+                    sizeInput.value = sizeSelect.value || sizeInput.value;
+                    sizeSelect.style.display = '';
+                    sizeInput.style.display = 'none';
+                } else {
+                    sizeSelect.style.display = 'none';
+                    sizeInput.style.display = '';
+                }
+            }
+
+            sizeSelect.addEventListener('change', function () { sizeInput.value = this.value; });
+            categorySelect.addEventListener('change', updateKinds);
+            kindSelect.addEventListener('change', updateSizes);
+
+            updateKinds();
         })();
     </script>
 }

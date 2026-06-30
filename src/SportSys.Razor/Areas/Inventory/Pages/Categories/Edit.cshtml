@@ -1,7 +1,14 @@
 @page
 @model EditModel
+@using SportSys.Database.Models.inventory
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @{
     ViewData["Title"] = Model.IsNew ? "Nová kategorie" : "Upravit kategorii";
+    var jsonOpts = new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } };
+    var kindsJson = JsonSerializer.Serialize(
+        Model.AvailableKinds.Select(k => new { id = k.Id, name = k.Name, key = k.Kind.ToString() }),
+        jsonOpts);
 }
 
 <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
@@ -40,12 +47,41 @@
         </label>
     </p>
 
-    <p>
-        <label asp-for="Input.AvailableSizesText"></label>
-        <span class="description">Jeden řádek = jedna velikost (např. XS, S, M, L, XL nebo 38, 39, 40…). Prázdné pole = kategorie nemá velikosti.</span>
-        <textarea asp-for="Input.AvailableSizesText" rows="6" class="textbox"></textarea>
-        <span asp-validation-for="Input.AvailableSizesText" class="field-validation-error"></span>
-    </p>
+    @* ── Druhy a velikosti ── *@
+    <fieldset id="kinds-fieldset">
+        <legend>@Html.DisplayNameFor(m => m.Input.CategoryKindInputs)</legend>
+        <span class="description">Pro každý druh (věková skupina, pohlaví) definujte povolené velikosti — jeden řádek = jedna velikost. Prázdné pole = kategorie nemá velikosti.</span>
+
+        <div id="kinds-container">
+            @for (int i = 0; i < Model.Input.CategoryKindInputs.Count; i++)
+            {
+                <div class="kind-row" data-index="@i">
+                    <input type="hidden" name="Input.CategoryKindInputs[@i].ItemKind"
+                           value="@Model.Input.CategoryKindInputs[i].ItemKind" />
+                    <div class="kind-row__header">
+                        <select name="Input.CategoryKindInputs[@i].ItemKind" class="kind-select">
+                            @foreach (var k in Model.AvailableKinds)
+                            {
+                                <option value="@k.Kind" selected="@(Model.Input.CategoryKindInputs[i].ItemKind == k.Kind)">
+                                    @k.Name
+                                </option>
+                            }
+                        </select>
+                        <button type="button" class="button tertiary icon-btn kind-remove-btn" title="Odebrat druh">
+                            <i class="fa-solid fa-trash fa-fw"></i>
+                        </button>
+                    </div>
+                    <textarea name="Input.CategoryKindInputs[@i].SizesText"
+                              rows="4" class="textbox kind-sizes"
+                              placeholder="Velikosti (jeden řádek = jedna velikost)">@Model.Input.CategoryKindInputs[i].SizesText</textarea>
+                </div>
+            }
+        </div>
+
+        <button type="button" id="add-kind-btn" class="button secondary">
+            <i class="fa-solid fa-plus fa-fw"></i> Přidat druh
+        </button>
+    </fieldset>
 
     <footer>
         <button type="submit" class="button">
@@ -59,4 +95,64 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var allKinds = @Html.Raw(kindsJson);
+            var container = document.getElementById('kinds-container');
+
+            function getNextIndex() {
+                return container.querySelectorAll('.kind-row').length;
+            }
+
+            function buildKindOptions(selectedKey) {
+                return allKinds.map(function (k) {
+                    var sel = k.key === selectedKey ? ' selected' : '';
+                    return '<option value="' + k.key + '"' + sel + '>' + k.name + '</option>';
+                }).join('');
+            }
+
+            function addKindRow(selectedKey, sizesText) {
+                var idx = getNextIndex();
+                var div = document.createElement('div');
+                div.className = 'kind-row';
+                div.dataset.index = idx;
+                div.innerHTML =
+                    '<div class="kind-row__header">' +
+                    '<select name="Input.CategoryKindInputs[' + idx + '].ItemKind" class="kind-select">' +
+                    buildKindOptions(selectedKey || '') +
+                    '</select>' +
+                    '<button type="button" class="button tertiary icon-btn kind-remove-btn" title="Odebrat druh">' +
+                    '<i class="fa-solid fa-trash fa-fw"></i></button>' +
+                    '</div>' +
+                    '<textarea name="Input.CategoryKindInputs[' + idx + '].SizesText" rows="4" class="textbox kind-sizes" ' +
+                    'placeholder="Velikosti (jeden řádek = jedna velikost)">' + (sizesText || '') + '</textarea>';
+                container.appendChild(div);
+                rebindRemoveButtons();
+            }
+
+            function rebindRemoveButtons() {
+                container.querySelectorAll('.kind-remove-btn').forEach(function (btn) {
+                    btn.onclick = function () {
+                        btn.closest('.kind-row').remove();
+                        reindexRows();
+                    };
+                });
+            }
+
+            function reindexRows() {
+                container.querySelectorAll('.kind-row').forEach(function (row, i) {
+                    row.dataset.index = i;
+                    row.querySelector('select').name = 'Input.CategoryKindInputs[' + i + '].ItemKind';
+                    row.querySelector('textarea').name = 'Input.CategoryKindInputs[' + i + '].SizesText';
+                });
+            }
+
+            document.getElementById('add-kind-btn').addEventListener('click', function () {
+                addKindRow('', '');
+            });
+
+            rebindRemoveButtons();
+        })();
+    </script>
 }
+

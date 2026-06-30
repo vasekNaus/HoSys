@@ -42,13 +42,15 @@ else
                     <td>@rink.City</td>
                     <td>@rink.ZipCode</td>
                     <td class="buttons">
-                        <a class="button secondary" asp-page="Edit" asp-route-id="@rink.Id">
-                            <i class="fa-solid fa-pen fa-fw"></i> Upravit
+                        <a class="button secondary icon-btn" asp-page="Edit" asp-route-id="@rink.Id"
+                           title="Upravit">
+                            <i class="fa-solid fa-pen fa-fw"></i>
                         </a>
                         <form method="post" asp-page-handler="Delete" asp-route-id="@rink.Id" style="display:inline">
-                            <button type="submit" class="button tertiary"
+                            <button type="submit" class="button tertiary icon-btn"
+                                    title="Smazat"
                                     onclick="return confirm('Opravdu chcete smazat zimní stadion @Html.Raw(Html.Encode(rink.Name))?')">
-                                <i class="fa-solid fa-trash fa-fw"></i> Smazat
+                                <i class="fa-solid fa-trash fa-fw"></i>
                             </button>
                         </form>
                     </td>
