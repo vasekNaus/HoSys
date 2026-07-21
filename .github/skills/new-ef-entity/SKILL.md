@@ -32,7 +32,8 @@ Vytvoř `src/SportSys.Database/Models/{schema}/{Entity}.cs`.
 - `[Table(nameof(Entity), Schema = Schemas.X)]` — **povinné**, bez atributu EF Core tabulku nenajde
 - `nameof` všude místo string literálů
 - Nullable vlastnosti označit `?`
-- FK pojmenovat `{Navigace}_Id` (konvence Apollo `IdConvention()`)
+- FK pojmenovat `{Navigace}Id` reálný a správný název pro sloupec v databázi zajistí extension metoda `IdConvention()`
+- k navigačním vlastnostem nedávat klíčové slovo virtual
 
 ```csharp
 using System.ComponentModel.DataAnnotations;
@@ -40,7 +41,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Models;
 
-namespace SportSys.Database.Models.sportSchema;
+namespace SportSys.Database.Models.sport;
 
 [Table(nameof(IceRink), Schema = Schemas.Sport)]
 [Index(nameof(Name), IsUnique = true, Name = "UX_IceRink_Name")]
@@ -57,13 +58,13 @@ public class IceRink
     public string? City { get; set; }
 
     // FK — použít atribut [ForeignKey] pouze pro složené FK nebo sdílené sloupce
-    public int? Season_Id { get; set; }
+    public int? SeasonId { get; set; }
 
     [ForeignKey(nameof(Season_Id))]     // ← jen pokud konvence nestačí
-    public virtual Season? Season { get; set; }
+    public Season? Season { get; set; }
 
     // Navigační kolekce
-    public virtual ICollection<Training> Trainings { get; set; } = [];
+    public ICollection<Training> Trainings { get; set; } = [];
 }
 ```
 
@@ -89,7 +90,7 @@ Pokud potřeba, vytvoř `src/SportSys.Database/Configurations/{schema}/{Entity}C
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SportSys.Database.Models.sportSchema;
+using SportSys.Database.Models.sport;
 
 namespace SportSys.Database.Configurations.sport;
 
@@ -110,32 +111,10 @@ public class TrainingConfiguration : IEntityTypeConfiguration<Training>
 
 > Konfigurace se registruje automaticky přes `ApplyConfigurationsFromAssembly()` — není třeba nic přidávat do DbContext.
 
-### 4. Přidat migraci
-
-```bash
-dotnet ef migrations add Add{Entity} --project src/SportSys.Database
-```
-
-Ověřit vygenerovanou migraci:
-- Tabulka má správné schéma
-- FK sloupce pojmenovány `{Entita}Id` (Apollo `IdConvention()`)
-- Computed columns jsou `PERSISTED` (stored: true → `computedColumnSql` + `stored`)
-- Default constraints mají explicitní název (ne hash)
-
-### 5. Aplikovat migraci
-
-```bash
-dotnet ef database update --project src/SportSys.Database
-```
-
-### 6. Sestavit solution
-
-```bash
-dotnet build SportSys.slnx
-```
 
 ## Omezení
-
+- ❌ Nikdy nepřidávej migraci 
+- ❌ Neprováděj build solution
 - ❌ Nepřidávat `HasColumnName` pro běžné FK sloupce — Apollo `IdConvention()` je pojmenuje automaticky
 - ❌ Nepřidávat automatické indexy na FK — `ForeignKeyIndexConvention` je odstraněna, přidávej indexy explicitně
 - ❌ Každý model musí mít `[Table]` atribut — bez něj EF Core tabulku nenajde (`TableNameFromDbSetConvention` je odstraněna)
@@ -150,8 +129,7 @@ dotnet build SportSys.slnx
 - [ ] FK pojmenovány dle konvence `{Navigace}_Id`
 - [ ] `DbSet<T>` přidáno do DbContext
 - [ ] Konfigurace Fluent API vytvořena pouze pokud je potřeba
-- [ ] Migrace přidána a ověřena
-- [ ] `dotnet build` proběhne bez chyb
+
 
 ## Reference
 
