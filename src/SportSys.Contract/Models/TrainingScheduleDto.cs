@@ -13,15 +13,52 @@ public class SeasonCategoryDto
     public int Order { get; set; }
 }
 
-public class TrainingScheduleItemDto
+public interface ITrainingScheduleItem
+{
+    int Id { get; }
+    TimeOnly TimeFrom { get; }
+    TimeOnly TimeTo { get; }
+    int? DurationMinutes { get; }
+    string SeasonCategoryName { get; }
+    string Location { get; }
+    string TrainingTypeName { get; }
+    string TrainingPhaseName { get; }
+    string Note { get; }
+}
+
+public class TrainingPlanScheduleItemDto : ITrainingScheduleItem
 {
     public int Id { get; set; }
-    public DateOnly Date { get; set; }
+    public DateOnly From { get; set; }
+    public DateOnly To { get; set; }
+    public string DayName { get; set; } = string.Empty;
     public TimeOnly TimeFrom { get; set; }
     public TimeOnly TimeTo { get; set; }
     public int? DurationMinutes { get; set; }
-    public string SeasonCategoryName { get; set; } = "";
-    public string Location { get; set; } = "";
-    public string TrainingTypeName { get; set; } = "";
-    public string Note { get; set; } = "";
+    public string SeasonCategoryName { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
+    public string TrainingTypeName { get; set; } = string.Empty;
+    public string TrainingPhaseName { get; set; } = string.Empty;
+    public string Note { get; set; } = string.Empty;
+
+    public DayOfWeek DayOfWeek
+    {
+        get
+        {
+            if (Enum.TryParse<DayOfWeek>(DayName, ignoreCase: false, out var day) &&
+                Enum.IsDefined(day) &&
+                DayName == day.ToString())
+            {
+                return day;
+            }
+
+            throw new InvalidOperationException(
+                $"TrainingPlan {Id} obsahuje neplatnou hodnotu DayName '{DayName}'.");
+        }
+    }
+}
+
+public class TrainingScheduleItemDto : TrainingPlanScheduleItemDto
+{
+    public DateOnly Date { get; set; }
 }

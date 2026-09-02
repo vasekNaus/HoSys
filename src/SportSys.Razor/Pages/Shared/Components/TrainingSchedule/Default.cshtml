@@ -1,0 +1,73 @@
+@model SportSys.Razor.Models.TrainingSchedule.TrainingScheduleComponentModel
+@{
+    var invariant = System.Globalization.CultureInfo.InvariantCulture;
+}
+
+<div class="schedule-legend">
+    @foreach (var (category, color) in Model.CategoryColors)
+    {
+        <div class="schedule-legend-item">
+            <span class="schedule-legend-swatch" style="background-color: @color"></span>
+            <span>@category</span>
+        </div>
+    }
+</div>
+
+<div class="schedule-timeline">
+    <div class="schedule-header">
+        <div class="schedule-date-col"></div>
+        <div class="schedule-track schedule-track--header">
+            @foreach (var marker in Model.Markers)
+            {
+                <span class="schedule-marker"
+                      style="left: @marker.Left.ToString("F2", invariant)%">@marker.Label</span>
+            }
+        </div>
+    </div>
+
+    @foreach (var row in Model.Rows)
+    {
+        <div class="schedule-row @(row.IsWeekend ? "schedule-row--weekend" : null)">
+            <div class="schedule-date-col">
+                <span class="schedule-dow">@row.PrimaryLabel</span>
+                @if (!string.IsNullOrWhiteSpace(row.SecondaryLabel))
+                {
+                    <span class="schedule-datenum">@row.SecondaryLabel</span>
+                }
+            </div>
+            <div class="schedule-tracks">
+                @if (row.Lanes.Count == 0)
+                {
+                    <div class="schedule-track">
+                        @foreach (var marker in Model.Markers)
+                        {
+                            <span class="schedule-gridline"
+                                  style="left: @marker.Left.ToString("F2", invariant)%"></span>
+                        }
+                    </div>
+                }
+                @foreach (var lane in row.Lanes)
+                {
+                    <div class="schedule-track">
+                        @foreach (var marker in Model.Markers)
+                        {
+                            <span class="schedule-gridline"
+                                  style="left: @marker.Left.ToString("F2", invariant)%"></span>
+                        }
+                        @foreach (var block in lane)
+                        {
+                            <div class="schedule-block"
+                                 style="left: @block.Left.ToString("F2", invariant)%; width: @block.Width.ToString("F2", invariant)%; background-color: @block.Color"
+                                 title="@block.Tooltip">
+                                <span class="schedule-block-cat">@block.Item.SeasonCategoryName</span>
+                                <span class="schedule-block-time">
+                                    @block.Item.TimeFrom.ToString("H:mm")–@block.Item.TimeTo.ToString("H:mm")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

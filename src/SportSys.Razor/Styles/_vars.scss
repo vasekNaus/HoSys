@@ -78,6 +78,16 @@ $FontFamily:    'Segoe UI', Arial, Helvetica, sans-serif;
   --color-info-text:      #2563eb;
   --color-info-subtle:    rgba(59, 130, 246, .12);
 
+  // Datové vizualizace — vzájemně rozlišitelné barvy s bílým textem
+  --color-chart-1: #2563eb;
+  --color-chart-2: #15803d;
+  --color-chart-3: #b45309;
+  --color-chart-4: #dc2626;
+  --color-chart-5: #7c3aed;
+  --color-chart-6: #0e7490;
+  --color-chart-7: #be185d;
+  --color-chart-8: #4d7c0f;
+
   // Stíny
   --shadow-sm:    0 1px 2px rgba(0, 0, 0, .06);
   --shadow-md:    0 4px 6px -1px rgba(0, 0, 0, .08), 0 2px 4px -2px rgba(0, 0, 0, .05);

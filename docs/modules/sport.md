@@ -2,9 +2,63 @@
 
 ## Účel
 
-Modul Sport spravuje sportovní číselníky a zobrazuje rozpis tréninků. Administrační
+Modul Sport spravuje sportovní číselníky a zobrazuje rozpisy tréninků. Administrační
 stránky jsou v Razor Area `sport` a přistupují k databázi výhradně přes služby
 projektu `SportSys.Contract`.
+
+## Rozvrhy tréninků
+
+| Stránka | Route | Zdroj dat |
+|---|---|---|
+| Reálný rozvrh | `/sport/Training/Schedule` | `sport.Training` |
+| Obecný týdenní plán | `/sport/Training/Plan` | `sport.TrainingPlan` |
+
+Původní route `/sport/Schedule` není zachována.
+
+### Společný datový kontrakt
+
+`ITrainingScheduleItem` definuje vlastnosti potřebné pro vykreslení bloku na
+časové ose. `TrainingPlanScheduleItemDto` interface implementuje a obsahuje navíc
+období `From–To` a `DayName`.
+
+`TrainingScheduleItemDto` přímo dědí z `TrainingPlanScheduleItemDto` a přidává
+konkrétní `Date`. U reálného tréninku jsou zděděné hodnoty nastaveny jako plán
+platný právě v den tréninku.
+
+### Sdílená ViewComponent
+
+Obě stránky předávají data přes `ITrainingScheduleViewModel` komponentě:
+
+- třída: `src/SportSys.Razor/ViewComponents/TrainingScheduleViewComponent.cs`,
+- view: `src/SportSys.Razor/Pages/Shared/Components/TrainingSchedule/Default.cshtml`,
+- prezentační modely: `src/SportSys.Razor/Models/TrainingSchedule/`.
+
+Komponenta pouze vykresluje předaná data. Zajišťuje časové markery, dynamický
+rozsah osy, rozdělení překryvů do lanes, barvy kategorií a bezpečně HTML
+enkódované tooltipy. Data načítají PageModely přes `TrainingScheduleService`.
+
+### Filtry Schedule
+
+- aktivní sezóna,
+- jedna nebo více aktivních kategorií,
+- datum od a do.
+
+Řádky odpovídají konkrétním datům z vybraného intervalu, včetně dnů bez tréninku.
+
+### Filtry Plan
+
+- aktivní sezóna,
+- jedna nebo více aktivních kategorií,
+- jeden typ tréninku,
+- jedna fáze tréninku.
+
+Plan vždy vykreslí pondělí až neděli včetně prázdných dnů. Zobrazuje všechny
+odpovídající záznamy bez omezení podle `From–To`; překrývající se záznamy a plány
+s různými obdobími platnosti jsou rozděleny do samostatných lanes. Platnost je
+uvedena v tooltipu.
+
+`TrainingPlan.DayName` musí obsahovat přesnou anglickou hodnotu `Monday` až
+`Sunday`. Neplatná hodnota vyvolá explicitní chybu a není tiše přeskočena.
 
 ## Spravované číselníky
 
