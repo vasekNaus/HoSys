@@ -12,7 +12,7 @@ user-invocable: true
 ## Kdy použít
 
 - Nastavuješ výchozí hodnotu sloupce pomocí Fluent API
-- Potřebuješ předvídatelný název DB constraintu (pro migrace, diff skripty, CI)
+- Potřebuješ předvídatelný název DB constraintu (pro diff skripty, CI a uživatelem vytvořené migrace)
 - EF Core by jinak vygeneroval náhodný hash v názvu (např. `DF__IceRink__ZipCode__3A4CA8FD`)
 
 ## Postup
@@ -40,24 +40,21 @@ user-invocable: true
    - `DF_SeasonCategory_BirthYears`
    - `DF_Training_CreatedAt`
 
-3. Přidej migraci:
-   ```bash
-   dotnet ef migrations add Add_DF_{Tabulka}_{Sloupec} --project src/SportSys.Database
-   ```
-
-4. Ověř, že migrace obsahuje správný název constraintu v `AddColumn` nebo `AlterColumn`.
+3. Migraci nevytvářej ani neupravuj. Vytvoření migrace a kontrolu výsledného
+   `AddColumn` nebo `AlterColumn` provádí výhradně uživatel.
 
 ## Omezení
 
 - Skill se týká výhradně Fluent API v `IEntityTypeConfiguration<T>` — ne datových atributů.
 - Pojmenovaný constraint nelze nastavit přes data atributy — vždy vyžaduje Fluent API.
+- Agent nesmí vytvářet ani upravovat EF Core migrace.
 
 ## Checklist
 
 - [ ] `HasDefaultValue` nebo `HasDefaultValueSql` má druhý parametr s názvem constraintu
 - [ ] Název odpovídá vzoru `DF_{TabulkaBezSchématu}_{Sloupec}`
-- [ ] Migrace přidána a ověřena
-- [ ] Migrace obsahuje název constraintu (ne náhodný hash)
+- [ ] Změna je připravena pro uživatelem vytvořenou migraci
+- [ ] Nebyla vytvořena ani upravena žádná migrace
 
 ## Reference
 

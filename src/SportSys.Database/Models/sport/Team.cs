@@ -30,6 +30,8 @@ public partial class Team
 
     public int? HomeIceRinkId { get; set; }
 
+    public bool IsActive { get; set; } = true;
+
     public virtual IceRink? HomeIceRink { get; set; }
 
     [InverseProperty(nameof(Match.HomeTeam))]

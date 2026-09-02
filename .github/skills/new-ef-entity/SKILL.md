@@ -2,7 +2,7 @@
 name: new-ef-entity
 description: >
   Přidá novou EF Core entitu do SportSys — model, datové atributy,
-  konfiguraci Fluent API (pokud je potřeba) a databázovou migraci.
+  konfiguraci Fluent API (pokud je potřeba), bez vytvoření databázové migrace.
   Použij tento skill když přidáváš novou tabulku nebo rozšiřuješ
   existující databázové schéma.
 user-invocable: true
@@ -113,7 +113,7 @@ public class TrainingConfiguration : IEntityTypeConfiguration<Training>
 
 
 ## Omezení
-- ❌ Nikdy nepřidávej migraci 
+- ❌ Nikdy nepřidávej ani neupravuj migraci — vytvoření migrace provádí výhradně uživatel
 - ❌ Neprováděj build solution
 - ❌ Nepřidávat `HasColumnName` pro běžné FK sloupce — Apollo `IdConvention()` je pojmenuje automaticky
 - ❌ Nepřidávat automatické indexy na FK — `ForeignKeyIndexConvention` je odstraněna, přidávej indexy explicitně

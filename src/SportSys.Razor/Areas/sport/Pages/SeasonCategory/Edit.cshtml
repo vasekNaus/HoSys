@@ -1,0 +1,65 @@
+@page
+@model EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nová kategorie sezóny" : "Upravit kategorii sezóny";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Creating" />
+
+    @if (Model.IsNew)
+    {
+        <p>
+            <label asp-for="Input.SeasonId">Sezóna</label>
+            <select asp-for="Input.SeasonId" asp-items="Model.SeasonItems"></select>
+            <span asp-validation-for="Input.SeasonId" class="field-validation-error"></span>
+        </p>
+        <p>
+            <label asp-for="Input.Name">Název</label>
+            <input asp-for="Input.Name" type="text" />
+            <span asp-validation-for="Input.Name" class="field-validation-error"></span>
+        </p>
+    }
+    else
+    {
+        <input type="hidden" asp-for="Input.SeasonId" />
+        <input type="hidden" asp-for="Input.Name" />
+        <p>
+            <label asp-for="Input.SeasonId">Sezóna</label>
+            <select asp-for="Input.SeasonId" asp-items="Model.SeasonItems" disabled></select>
+        </p>
+        <p>
+            <label asp-for="Input.Name">Název</label>
+            <input asp-for="Input.Name" type="text" readonly />
+        </p>
+    }
+
+    @Html.EditorFor(m => m.Input)
+
+    <footer>
+        <button type="submit" class="button">
+            <i class="fa-solid fa-floppy-disk fa-fw"></i> Uložit
+        </button>
+        <a class="button secondary" asp-page="Index">
+            <i class="fa-solid fa-xmark fa-fw"></i> Zrušit
+        </a>
+        @if (!Model.IsNew)
+        {
+            <button type="submit"
+                    asp-page-handler="SetActive"
+                    name="isActive"
+                    value="@(!Model.Input.IsActive)"
+                    class="button tertiary"
+                    onclick="@(Model.Input.IsActive ? "return confirm('Opravdu chcete kategorii sezóny zneaktivnit?')" : null)">
+                <i class="fa-solid @(Model.Input.IsActive ? "fa-trash" : "fa-rotate-left") fa-fw"></i>
+                @(Model.Input.IsActive ? "Zneaktivnit" : "Aktivovat")
+            </button>
+        }
+    </footer>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

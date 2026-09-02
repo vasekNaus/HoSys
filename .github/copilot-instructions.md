@@ -18,8 +18,6 @@ dotnet build SportSys.slnx
 dotnet run --project src/SportSys.Razor
 dotnet run --project src/SportSys.ConsoleApp
 
-dotnet ef migrations add <NazevMigrace> --project src/SportSys.Database
-dotnet ef database update --project src/SportSys.Database
 dotnet ef migrations list --project src/SportSys.Database
 ```
 
@@ -54,6 +52,7 @@ Solution: formát `.slnx`. Závislost: **Razor → Contract → Database → SQL
 - ❌ `DbContext`, Identity ani auth nesmí být registrovány v Razor projektu — jediné místo je `AddSportSysServices()` v `SportSys.Contract/ServiceCollectionExtensions.cs`.
 
 **EF Core:**
+- ❌ Nikdy nevytvářet EF Core migrace — agent upraví modely a konfigurace, ale vytvoření a aplikaci migrace provádí výhradně uživatel.
 - ❌ Nikdy nepřidávat `HasColumnName` pro běžné FK — Apollo `IdConvention()` je pojmenuje automaticky; ruční přepis způsobí konflikty migrace.
 - ❌ Každý model musí mít `[Table(nameof(X), Schema = Schemas.Y)]` — `TableNameFromDbSetConvention` je odstraněna, bez atributu EF Core tabulku nenajde.
 - ❌ Indexy na FK nevznikají automaticky — `ForeignKeyIndexConvention` je odstraněna; přidávej indexy výhradně explicitně přes `[Index]`.
@@ -75,6 +74,7 @@ Solution: formát `.slnx`. Závislost: **Razor → Contract → Database → SQL
 | EF Core modely, konvence, migrace | `docs/conventions.md` |
 | Architektura vrstev, DB schémata | `docs/architecture.md` |
 | Modul Inventory | `docs/inventory.md` |
+| Modul Sport, sportovní číselníky | `docs/modules/sport.md` |
 | Autentizace, autorizace, Identity | `docs/modules/auth.md` |
 | Frontend, SCSS, ikony | `docs/modules/frontend.md`, `.github/skills/barevna-schemata/hc-klatovy/` |
 | Přidání lookup tabulky | `.github/skills/lookup-table/SKILL.md` |

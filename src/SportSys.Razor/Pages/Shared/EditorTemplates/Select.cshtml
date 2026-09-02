@@ -1,0 +1,7 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    Layout = "/Pages/Shared/EditorTemplates/_Layout.cshtml";
+    var itemsKey = $"{ViewData.ModelMetadata.PropertyName}Items";
+    var items = ViewData[itemsKey] as IEnumerable<SelectListItem> ?? [];
+}
+@Html.DropDownList(string.Empty, items)

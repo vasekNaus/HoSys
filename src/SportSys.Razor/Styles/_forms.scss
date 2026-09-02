@@ -161,6 +161,21 @@ form {
   }
 }
 
+.checkbox-field {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         .375rem;
+
+  label {
+    margin-bottom: 0;
+  }
+
+  .field-validation-error {
+    flex-basis: 100%;
+  }
+}
+
 label {
   display:       inline-block;
   font-weight:   600;

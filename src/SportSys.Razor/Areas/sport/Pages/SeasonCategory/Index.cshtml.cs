@@ -3,18 +3,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SportSys.Contract.Models;
 using SportSys.Contract.Services;
 
-namespace SportSys.Razor.Areas.sport.Pages.IceRink;
+namespace SportSys.Razor.Areas.sport.Pages.SeasonCategory;
 
 public class IndexModel : PageModel
 {
-    private readonly IceRinkService _service;
+    private readonly SeasonCategoryService _service;
 
-    public IndexModel(IceRinkService service)
+    public IndexModel(SeasonCategoryService service)
     {
         _service = service;
     }
-
-    public List<IceRinkDto> IceRinks { get; set; } = [];
 
     [TempData]
     public string? StatusMessage { get; set; }
@@ -25,20 +23,23 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public bool? IsActive { get; set; } = true;
 
+    public List<SeasonCategoryListItem> Categories { get; set; } = [];
+
     public async Task OnGetAsync(CancellationToken ct)
     {
-        IceRinks = await _service.GetAllAsync(Search, IsActive, ct);
+        Categories = await _service.GetAllAsync(Search, IsActive, ct);
     }
 
     public async Task<IActionResult> OnPostSetActiveAsync(
-        int id,
+        int seasonId,
+        string name,
         bool isActive,
         CancellationToken ct)
     {
-        await _service.SetActiveAsync(id, isActive, ct);
+        await _service.SetActiveAsync(seasonId, name, isActive, ct);
         StatusMessage = isActive
-            ? "Zimní stadion byl aktivován."
-            : "Zimní stadion byl zneaktivněn.";
+            ? "Kategorie sezóny byla aktivována."
+            : "Kategorie sezóny byla zneaktivněna.";
         return RedirectToPage(new { Search, IsActive });
     }
 }

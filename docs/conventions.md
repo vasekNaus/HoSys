@@ -1,5 +1,13 @@
 # Konvence kódu — SportSys
 
+## EF Core migrace
+
+❌ **Agent nikdy nevytváří EF Core migrace.** Při změně databázového modelu upraví entity,
+`DbContext` a Fluent API konfigurace, ale příkaz `dotnet ef migrations add` nespouští a
+nevytváří ani neupravuje soubory v `src/SportSys.Database/Migrations/`.
+
+Vytvoření a aplikaci migrace provádí výhradně uživatel po kontrole změn modelu.
+
 ## EF Core: Data atributy vs. Fluent API
 
 **Data atributy mají přednost.** Fluent API se používá výhradně pro věci, které atributy neumožňují.

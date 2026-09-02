@@ -3,19 +3,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SportSys.Contract.Models;
 using SportSys.Contract.Services;
 
-namespace SportSys.Razor.Areas.sport.Pages.IceRink;
+namespace SportSys.Razor.Areas.sport.Pages.Season;
 
 public class EditModel : PageModel
 {
-    private readonly IceRinkService _service;
+    private readonly SeasonService _service;
 
-    public EditModel(IceRinkService service)
+    public EditModel(SeasonService service)
     {
         _service = service;
     }
 
     [BindProperty]
-    public IceRinkDto Input { get; set; } = new();
+    public SeasonEditDto Input { get; set; } = new();
 
     [TempData]
     public string? StatusMessage { get; set; }
@@ -25,7 +25,13 @@ public class EditModel : PageModel
     public async Task<IActionResult> OnGetAsync(int? id, CancellationToken ct)
     {
         if (id is null)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var startYear = today.Month >= 7 ? today.Year : today.Year - 1;
+            Input.From = new DateOnly(startYear, 7, 1);
+            Input.To = new DateOnly(startYear + 1, 6, 30);
             return Page();
+        }
 
         var dto = await _service.GetByIdAsync(id.Value, ct);
         if (dto is null)
@@ -43,12 +49,12 @@ public class EditModel : PageModel
         if (Input.Id == 0)
         {
             await _service.CreateAsync(Input, ct);
-            StatusMessage = "Zimní stadion byl vytvořen.";
+            StatusMessage = "Sezóna byla vytvořena.";
         }
         else
         {
             await _service.UpdateAsync(Input, ct);
-            StatusMessage = "Zimní stadion byl uložen.";
+            StatusMessage = "Sezóna byla uložena.";
         }
 
         return RedirectToPage("Index");
@@ -57,9 +63,7 @@ public class EditModel : PageModel
     public async Task<IActionResult> OnPostSetActiveAsync(bool isActive, CancellationToken ct)
     {
         await _service.SetActiveAsync(Input.Id, isActive, ct);
-        StatusMessage = isActive
-            ? "Zimní stadion byl aktivován."
-            : "Zimní stadion byl zneaktivněn.";
+        StatusMessage = isActive ? "Sezóna byla aktivována." : "Sezóna byla zneaktivněna.";
         return RedirectToPage("Index");
     }
 }

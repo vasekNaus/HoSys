@@ -1,7 +1,7 @@
 @page
 @model IndexModel
 @{
-    ViewData["Title"] = "Zimní stadiony";
+    ViewData["Title"] = "Týmy";
 }
 
 @if (Model.StatusMessage is not null)
@@ -14,8 +14,8 @@
 <form method="get" class="filter-form">
     <div class="filter-row">
         <div class="field">
-            <label asp-for="Search">Název nebo město</label>
-            <input asp-for="Search" type="search" placeholder="Hledat stadion…" />
+            <label asp-for="Search">Kód, název nebo město</label>
+            <input asp-for="Search" type="search" placeholder="Hledat tým…" />
         </div>
         <div class="field">
             <label asp-for="IsActive">Stav</label>
@@ -38,52 +38,54 @@
 
 <p>
     <a class="button" asp-page="Edit">
-        <i class="fa-solid fa-plus fa-fw"></i> Přidat zimní stadion
+        <i class="fa-solid fa-plus fa-fw"></i> Přidat tým
     </a>
 </p>
 
-@if (Model.IceRinks.Count == 0)
+@if (Model.Teams.Count == 0)
 {
-    <p class="text-muted">Žádné zimní stadiony nejsou zadány.</p>
+    <p class="text-muted">Žádné týmy neodpovídají filtru.</p>
 }
 else
 {
     <table class="grid">
         <thead>
             <tr>
+                <th>Kód</th>
                 <th>Název</th>
-                <th>Ulice</th>
                 <th>Město</th>
-                <th>PSČ</th>
+                <th>Domácí stadion</th>
                 <th>Stav</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var rink in Model.IceRinks)
+            @foreach (var team in Model.Teams)
             {
-                <tr class="@(!rink.IsActive ? "inactive-row" : null)">
-                    <td>@rink.Name</td>
-                    <td>@rink.Street</td>
-                    <td>@rink.City</td>
-                    <td>@rink.ZipCode</td>
-                    <td>@(rink.IsActive ? "Aktivní" : "Neaktivní")</td>
+                <tr class="@(!team.IsActive ? "inactive-row" : null)">
+                    <td>@team.Code</td>
+                    <td>@team.Name</td>
+                    <td>@team.City</td>
+                    <td>@team.HomeIceRinkName</td>
+                    <td>@(team.IsActive ? "Aktivní" : "Neaktivní")</td>
                     <td class="buttons">
-                        <a class="button secondary icon-btn" asp-page="Edit" asp-route-id="@rink.Id"
+                        <a class="button secondary icon-btn"
+                           asp-page="Edit"
+                           asp-route-id="@team.Id"
                            title="Upravit">
                             <i class="fa-solid fa-pen fa-fw"></i>
                         </a>
                         <form method="post"
                               asp-page-handler="SetActive"
-                              asp-route-id="@rink.Id"
-                              asp-route-isActive="@(!rink.IsActive)"
+                              asp-route-id="@team.Id"
+                              asp-route-isActive="@(!team.IsActive)"
                               asp-route-search="@Model.Search"
                               style="display:inline">
                             <button type="submit"
                                     class="button tertiary icon-btn"
-                                    title="@(rink.IsActive ? "Zneaktivnit" : "Aktivovat")"
-                                    onclick="@(rink.IsActive ? "return confirm('Opravdu chcete zimní stadion zneaktivnit?')" : null)">
-                                <i class="fa-solid @(rink.IsActive ? "fa-trash" : "fa-rotate-left") fa-fw"></i>
+                                    title="@(team.IsActive ? "Zneaktivnit" : "Aktivovat")"
+                                    onclick="@(team.IsActive ? "return confirm('Opravdu chcete tým zneaktivnit?')" : null)">
+                                <i class="fa-solid @(team.IsActive ? "fa-trash" : "fa-rotate-left") fa-fw"></i>
                             </button>
                         </form>
                     </td>

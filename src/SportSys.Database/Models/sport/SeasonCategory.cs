@@ -33,6 +33,8 @@ public partial class SeasonCategory
     [StringLength(4000)]
     public required string BirthYears { get; set; }
 
+    public bool IsActive { get; set; } = true;
+
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
     [ForeignKey(nameof(SeasonId))]

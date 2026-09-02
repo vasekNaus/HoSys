@@ -10,5 +10,8 @@ public class IceRinkConfiguration : IEntityTypeConfiguration<IceRink>
     {
         builder.Property(e => e.ZipCode)
                .HasDefaultValue("", "DF_IceRink_ZipCode");
+
+        builder.Property(e => e.IsActive)
+               .HasDefaultValue(true, "DF_IceRink_IsActive");
     }
 }

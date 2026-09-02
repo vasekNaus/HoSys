@@ -1,0 +1,14 @@
+@{
+    Layout = "/Pages/Shared/EditorTemplates/_Layout.cshtml";
+    var type = ViewData["InputType"] as string ?? "text";
+    var cssClass = ViewData["InputCssClass"] as string ?? "textbox";
+}
+@Html.TextBox(
+    string.Empty,
+    ViewData.TemplateInfo.FormattedModelValue,
+    new
+    {
+        type,
+        @class = cssClass,
+        placeholder = ViewData.ModelMetadata.Placeholder,
+    })

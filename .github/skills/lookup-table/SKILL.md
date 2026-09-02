@@ -141,14 +141,11 @@ public static class ETrainingType
 
 Klíče jsou prosté názvy enum členů (bez prefixu).
 
-### 5. Přidat migraci a ověřit
+### 5. Připravit změny pro migraci
 
-```bash
-dotnet ef migrations add Seed{Entity}LookupTable --project src/SportSys.Database
-dotnet ef database update --project src/SportSys.Database
-```
-
-Ověřit, že migrace obsahuje `InsertData` pro všechny enum členy.
+Zkontrolovat, že model a konfigurace obsahují všechny hodnoty potřebné pro následné
+vygenerování `InsertData`. Migraci nevytvářet ani neaplikovat — tento krok provádí
+výhradně uživatel.
 
 ## Omezení
 
@@ -156,6 +153,7 @@ Ověřit, že migrace obsahuje `InsertData` pro všechny enum členy.
 - ❌ Neporovnávat přes magic číslo — vždy `(int)ETrainingType.Ice`
 - ❌ Neukládat lokalizovaný text do DB — sloupec `Name` = `enum.ToString()`
 - ❌ Neupravovat auto-generated modely — vždy partial `.Seed.cs`
+- ❌ Nevytvářet ani neupravovat EF Core migrace
 
 ## Checklist
 
@@ -165,8 +163,8 @@ Ověřit, že migrace obsahuje `InsertData` pro všechny enum členy.
 - [ ] `Resources/E{Entita}.cs` — ResourceManager wrapper
 - [ ] `Resources/E{Entita}.resx` — anglický fallback
 - [ ] `Resources/E{Entita}.cs.resx` — české překlady
-- [ ] Migrace přidána a ověřena (`InsertData` přítomno)
-- [ ] `dotnet ef database update` provedeno
+- [ ] Model a konfigurace jsou připravené pro uživatelem vytvořenou migraci
+- [ ] Nebyla vytvořena ani upravena žádná migrace
 
 ## Reference
 

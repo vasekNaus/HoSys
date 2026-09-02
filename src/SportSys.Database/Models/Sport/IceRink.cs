@@ -28,6 +28,8 @@ public partial class IceRink
   [StringLength(100)]
   public required string ZipCode { get; set; }
 
+  public bool IsActive { get; set; } = true;
+
   public Geometry? Location { get; set; }
 
   public virtual ICollection<Match> Matches { get; set; } = new List<Match>();

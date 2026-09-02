@@ -3,18 +3,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SportSys.Contract.Models;
 using SportSys.Contract.Services;
 
-namespace SportSys.Razor.Areas.sport.Pages.IceRink;
+namespace SportSys.Razor.Areas.sport.Pages.Season;
 
 public class IndexModel : PageModel
 {
-    private readonly IceRinkService _service;
+    private readonly SeasonService _service;
 
-    public IndexModel(IceRinkService service)
+    public IndexModel(SeasonService service)
     {
         _service = service;
     }
-
-    public List<IceRinkDto> IceRinks { get; set; } = [];
 
     [TempData]
     public string? StatusMessage { get; set; }
@@ -25,9 +23,11 @@ public class IndexModel : PageModel
     [BindProperty(SupportsGet = true)]
     public bool? IsActive { get; set; } = true;
 
+    public List<SeasonListItem> Seasons { get; set; } = [];
+
     public async Task OnGetAsync(CancellationToken ct)
     {
-        IceRinks = await _service.GetAllAsync(Search, IsActive, ct);
+        Seasons = await _service.GetAllAsync(Search, IsActive, ct);
     }
 
     public async Task<IActionResult> OnPostSetActiveAsync(
@@ -36,9 +36,7 @@ public class IndexModel : PageModel
         CancellationToken ct)
     {
         await _service.SetActiveAsync(id, isActive, ct);
-        StatusMessage = isActive
-            ? "Zimní stadion byl aktivován."
-            : "Zimní stadion byl zneaktivněn.";
+        StatusMessage = isActive ? "Sezóna byla aktivována." : "Sezóna byla zneaktivněna.";
         return RedirectToPage(new { Search, IsActive });
     }
 }

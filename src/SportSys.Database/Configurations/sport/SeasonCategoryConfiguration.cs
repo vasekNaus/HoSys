@@ -16,5 +16,8 @@ public class SeasonCategoryConfiguration : IEntityTypeConfiguration<SeasonCatego
 
         builder.Property(e => e.BirthYears)
                .HasDefaultValue("[]", "DF_SeasonCategory_BirthYears");
+
+        builder.Property(e => e.IsActive)
+               .HasDefaultValue(true, "DF_SeasonCategory_IsActive");
     }
 }

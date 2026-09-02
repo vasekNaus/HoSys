@@ -41,6 +41,11 @@ table.grid {
         background-color: var(--color-brand-primary-subtle);
         font-style:       italic;
       }
+
+      &.inactive-row td {
+        background-color: var(--color-bg-subtle);
+        color:            var(--color-text-muted);
+      }
     }
 
     td.buttons {

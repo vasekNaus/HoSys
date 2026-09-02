@@ -42,6 +42,38 @@
         <ul>
             <li><a asp-area="" asp-page="/Index"><i class="fa-solid fa-house fa-fw"></i> Úvod</a></li>
             <li>
+                <a asp-area="sport" asp-page="/Schedule/Index">
+                    <i class="fa-solid fa-hockey-puck fa-fw"></i> Sport
+                </a>
+                <ul>
+                    <li>
+                        <a asp-area="sport" asp-page="/Schedule/Index">
+                            <i class="fa-solid fa-calendar-days fa-fw"></i> Rozpis
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="sport" asp-page="/IceRink/Index">
+                            <i class="fa-solid fa-warehouse fa-fw"></i> Zimní stadiony
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="sport" asp-page="/Team/Index">
+                            <i class="fa-solid fa-people-group fa-fw"></i> Týmy
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="sport" asp-page="/Season/Index">
+                            <i class="fa-solid fa-calendar fa-fw"></i> Sezóny
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-area="sport" asp-page="/SeasonCategory/Index">
+                            <i class="fa-solid fa-layer-group fa-fw"></i> Kategorie sezón
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
                 <a asp-area="Inventory" asp-page="/Manufacturers/Index">
                     <i class="fa-solid fa-box-open fa-fw"></i> Sklad
                 </a>

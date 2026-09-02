@@ -22,6 +22,8 @@ public partial class Season
 
     public DateOnly To { get; set; }
 
+    public bool IsActive { get; set; } = true;
+
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
     public virtual ICollection<SeasonCategory> SeasonCategories { get; set; } = new List<SeasonCategory>();

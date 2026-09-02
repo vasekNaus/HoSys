@@ -1,0 +1,10 @@
+@{
+    Layout = "/Pages/Shared/EditorTemplates/_Layout.cshtml";
+    var value = ViewData.Model switch
+    {
+        DateOnly dateOnly => dateOnly.ToString("yyyy-MM-dd"),
+        DateTime dateTime => dateTime.ToString("yyyy-MM-dd"),
+        _ => string.Empty,
+    };
+}
+@Html.TextBox(string.Empty, value, new { type = "date", @class = "short" })
