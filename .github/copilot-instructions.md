@@ -76,7 +76,7 @@ Solution: formát `.slnx`. Závislost: **Razor → Contract → Database → SQL
 | Architektura vrstev, DB schémata | `docs/architecture.md` |
 | Modul Inventory | `docs/inventory.md` |
 | Autentizace, autorizace, Identity | `docs/modules/auth.md` |
-| Frontend, SCSS, ikony | `docs/modules/frontend.md`, `.github/barevna-schemata/hc-klatovy/` |
+| Frontend, SCSS, ikony | `docs/modules/frontend.md`, `.github/skills/barevna-schemata/hc-klatovy/` |
 | Přidání lookup tabulky | `.github/skills/lookup-table/SKILL.md` |
 | Přidání EF Core entity | `.github/skills/new-ef-entity/SKILL.md` |
 | Scaffolding Identity stránek | `.github/skills/identity-scaffold-cleanup/SKILL.md` |

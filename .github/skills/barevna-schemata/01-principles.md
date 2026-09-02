@@ -1,6 +1,6 @@
 # Obecné principy — Barevná schémata pro sportovní weby
 
-Tento dokument obsahuje obecné principy platné pro **všechna barevná schémata** v tomto prostoru. Jsou nezávislé na konkrétním klubu nebo schématu.
+Tento dokument obsahuje obecné principy platné pro **všechna barevná schémata** v tomto systému. Jsou nezávislé na konkrétním klubu nebo schématu.
 
 ---
 
@@ -69,7 +69,7 @@ Výzkum Nielsen Norman Group ukazuje:
 
 ## 3. Architektura tokenů
 
-Všechna schémata v tomto prostoru používají tříúrovňovou hierarchii tokenů:
+Všechna schémata používají tříúrovňovou hierarchii tokenů:
 
 ```
 Layer 1 — PRIMITIVNÍ TOKENY   (např. --sport-red-500)

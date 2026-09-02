@@ -29,7 +29,7 @@ namespace SportSys.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ParentCategory_Id = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    AvailableSizesJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryKindJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SortOrder = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -59,6 +59,20 @@ namespace SportSys.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InventorySession", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemKind",
+                schema: "inventory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemKind", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -311,7 +325,8 @@ namespace SportSys.Database.Migrations
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedByUserId = table.Column<int>(type: "int", nullable: true),
-                    Size = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                    Size = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ItemKind_Id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -321,6 +336,12 @@ namespace SportSys.Database.Migrations
                         column: x => x.CategoryId,
                         principalSchema: "inventory",
                         principalTable: "Category",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Equipment_ItemKind_ItemKind_Id",
+                        column: x => x.ItemKind_Id,
+                        principalSchema: "inventory",
+                        principalTable: "ItemKind",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Equipment_Location_AssignedLocationId",
@@ -394,6 +415,21 @@ namespace SportSys.Database.Migrations
                         principalSchema: "identity",
                         principalTable: "User",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                schema: "inventory",
+                table: "ItemKind",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Dětské" },
+                    { 2, "Youth" },
+                    { 3, "Juniorské" },
+                    { 4, "Seniorské" },
+                    { 5, "Dámské" },
+                    { 6, "Pánské" },
+                    { 7, "Unisex" }
                 });
 
             migrationBuilder.InsertData(
@@ -490,6 +526,10 @@ namespace SportSys.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Category",
+                schema: "inventory");
+
+            migrationBuilder.DropTable(
+                name: "ItemKind",
                 schema: "inventory");
 
             migrationBuilder.DropTable(

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SportSys.Contract.Models.inventory;
 using SportSys.Database.Context;
-using DbLocation = SportSys.Database.Models.dbo.Location;
+using DbLocation = SportSys.Database.Models.inventory.Location;
 
 namespace SportSys.Contract.Services;
 
@@ -22,13 +22,11 @@ public class LocationService
             query = query.Where(l => l.Name.Contains(nameFilter));
 
         return await query
-            .OrderBy(l => l.ParentLocation == null ? "" : l.ParentLocation.Name)
-            .ThenBy(l => l.Name)
+            .OrderBy(l => l.Name)
             .Select(l => new LocationListItem
             {
                 Id = l.Id,
                 Name = l.Name,
-                ParentLocationName = l.ParentLocation != null ? l.ParentLocation.Name : null,
                 IsActive = l.IsActive,
             })
             .ToListAsync(ct);
@@ -43,7 +41,6 @@ public class LocationService
                 Id = l.Id,
                 Name = l.Name,
                 Description = l.Description,
-                ParentLocationId = l.ParentLocationId,
                 IsActive = l.IsActive,
             })
             .FirstOrDefaultAsync(ct);
@@ -68,7 +65,6 @@ public class LocationService
         {
             Name = model.Name!,
             Description = model.Description,
-            ParentLocationId = model.ParentLocationId,
             IsActive = model.IsActive,
         };
         _db.Locations.Add(entity);
@@ -84,7 +80,6 @@ public class LocationService
 
         entity.Name = model.Name!;
         entity.Description = model.Description;
-        entity.ParentLocationId = model.ParentLocationId;
         entity.IsActive = model.IsActive;
 
         await _db.SaveChangesAsync(ct);

@@ -57,38 +57,6 @@ namespace SportSys.Database.Migrations
                     b.ToTable("Coach", "dbo");
                 });
 
-            modelBuilder.Entity("SportSys.Database.Models.dbo.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int?>("ParentLocationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Location", "dbo", t =>
-                        {
-                            t.Property("ParentLocationId")
-                                .HasColumnName("ParentLocation_Id");
-                        });
-                });
-
             modelBuilder.Entity("SportSys.Database.Models.dbo.Manufacturer", b =>
                 {
                     b.Property<int>("Id")
@@ -782,6 +750,31 @@ namespace SportSys.Database.Migrations
                             t.Property("MemberId")
                                 .HasColumnName("Member_Id");
                         });
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Location", "inventory");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.inventory.PurchaseDocument", b =>
@@ -1515,7 +1508,7 @@ namespace SportSys.Database.Migrations
                     b.ToTable("Equipment", "inventory", t =>
                         {
                             t.Property("ItemKindId")
-                                .HasColumnName("ItemKindId");
+                                .HasColumnName("ItemKind_Id");
                         });
                 });
 
@@ -1619,15 +1612,6 @@ namespace SportSys.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SportSys.Database.Models.dbo.Location", b =>
-                {
-                    b.HasOne("SportSys.Database.Models.dbo.Location", "ParentLocation")
-                        .WithMany("ChildLocations")
-                        .HasForeignKey("ParentLocationId");
-
-                    b.Navigation("ParentLocation");
-                });
-
             modelBuilder.Entity("SportSys.Database.Models.identity.RoleClaim", b =>
                 {
                     b.HasOne("SportSys.Database.Models.identity.Role", null)
@@ -1690,7 +1674,7 @@ namespace SportSys.Database.Migrations
 
             modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryCheck", b =>
                 {
-                    b.HasOne("SportSys.Database.Models.dbo.Location", "ActualLocation")
+                    b.HasOne("SportSys.Database.Models.inventory.Location", "ActualLocation")
                         .WithMany()
                         .HasForeignKey("ActualLocationId");
 
@@ -1713,7 +1697,7 @@ namespace SportSys.Database.Migrations
 
             modelBuilder.Entity("SportSys.Database.Models.inventory.InventoryItem", b =>
                 {
-                    b.HasOne("SportSys.Database.Models.dbo.Location", "AssignedLocation")
+                    b.HasOne("SportSys.Database.Models.inventory.Location", "AssignedLocation")
                         .WithMany("AssignedInventoryItems")
                         .HasForeignKey("AssignedLocationId");
 
@@ -1722,7 +1706,7 @@ namespace SportSys.Database.Migrations
                         .HasForeignKey("CategoryId")
                         .IsRequired();
 
-                    b.HasOne("SportSys.Database.Models.dbo.Location", "CurrentLocation")
+                    b.HasOne("SportSys.Database.Models.inventory.Location", "CurrentLocation")
                         .WithMany("CurrentInventoryItems")
                         .HasForeignKey("CurrentLocationId");
 
@@ -1772,12 +1756,12 @@ namespace SportSys.Database.Migrations
                         .WithMany()
                         .HasForeignKey("ChangedByUserId");
 
-                    b.HasOne("SportSys.Database.Models.dbo.Location", "NewLocation")
+                    b.HasOne("SportSys.Database.Models.inventory.Location", "NewLocation")
                         .WithMany()
                         .HasForeignKey("NewLocationId")
                         .IsRequired();
 
-                    b.HasOne("SportSys.Database.Models.dbo.Location", "PreviousLocation")
+                    b.HasOne("SportSys.Database.Models.inventory.Location", "PreviousLocation")
                         .WithMany()
                         .HasForeignKey("PreviousLocationId");
 
@@ -2038,15 +2022,6 @@ namespace SportSys.Database.Migrations
                     b.Navigation("CoachTrainings");
                 });
 
-            modelBuilder.Entity("SportSys.Database.Models.dbo.Location", b =>
-                {
-                    b.Navigation("AssignedInventoryItems");
-
-                    b.Navigation("ChildLocations");
-
-                    b.Navigation("CurrentInventoryItems");
-                });
-
             modelBuilder.Entity("SportSys.Database.Models.dboSchema.CoachRole", b =>
                 {
                     b.Navigation("CoachTrainingEntitlementCoachRoles");
@@ -2060,6 +2035,13 @@ namespace SportSys.Database.Migrations
             modelBuilder.Entity("SportSys.Database.Models.inventory.InventorySession", b =>
                 {
                     b.Navigation("InventoryChecks");
+                });
+
+            modelBuilder.Entity("SportSys.Database.Models.inventory.Location", b =>
+                {
+                    b.Navigation("AssignedInventoryItems");
+
+                    b.Navigation("CurrentInventoryItems");
                 });
 
             modelBuilder.Entity("SportSys.Database.Models.inventory.PurchaseDocument", b =>

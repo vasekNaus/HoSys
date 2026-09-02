@@ -49,13 +49,13 @@ partial class Program
     //  diff3 = EF.Functions.DateDiffMinute(timeOnlyNow, x.TimeFrom)  //x.Block!.Date.ToDateTime(TimeOnly.MinValue)
     //}).ToList();
 
-    var folderPath = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\PowerBI\202605";
+    var folderPath = @"e:\Data\vasek.naus@outlook.cz\OneDrive\Hokej\Výbor\Dokumenty\PowerBI\202606";
     var connStr = "Server=.\\SQL2025;Database=SportSys;Trusted_Connection=True;TrustServerCertificate=True;";
 
     foreach (var file in Directory.EnumerateFiles(folderPath, "*.xlsx"))
     {
-      if (file.Contains("Krasanovský") || file.Contains("Vondryska"))
-        await ImportRun.ImportAsync(file, connStr);
+      if (file.Contains("Krasanovský"))
+      await ImportRun.ImportAsync(file, connStr);
     }
 
     // Import zápasů z games.xlsx

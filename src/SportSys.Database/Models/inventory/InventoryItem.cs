@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using SportSys.Database.Models.dbo;
 
-
-
 namespace SportSys.Database.Models.inventory;
 
 public abstract class InventoryItem

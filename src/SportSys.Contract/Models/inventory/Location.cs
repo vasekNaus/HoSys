@@ -15,9 +15,6 @@ public class Location
     [Display(Name = "Popis")]
     public string? Description { get; set; }
 
-    [Display(Name = "Nadřazené umístění")]
-    public int? ParentLocationId { get; set; }
-
     [Display(Name = "Aktivní")]
     public bool IsActive { get; set; } = true;
 }
@@ -26,7 +23,6 @@ public class LocationListItem
 {
     public int Id { get; set; }
     public string Name { get; set; } = "";
-    public string? ParentLocationName { get; set; }
     public bool IsActive { get; set; }
 }
 

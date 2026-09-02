@@ -16,18 +16,6 @@
     </p>
 
     <p>
-        <label asp-for="Input.ParentLocationId"></label>
-        <select asp-for="Input.ParentLocationId" class="textbox">
-            <option value="">— žádné —</option>
-            @foreach (var loc in Model.ParentLocations)
-            {
-                <option value="@loc.Id" selected="@(Model.Input.ParentLocationId == loc.Id)">@loc.Name</option>
-            }
-        </select>
-        <span asp-validation-for="Input.ParentLocationId" class="field-validation-error"></span>
-    </p>
-
-    <p>
         <label asp-for="Input.Description"></label>
         <textarea asp-for="Input.Description"></textarea>
         <span asp-validation-for="Input.Description" class="field-validation-error"></span>

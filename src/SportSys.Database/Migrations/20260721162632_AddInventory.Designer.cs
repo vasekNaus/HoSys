@@ -13,8 +13,8 @@ using SportSys.Database.Context;
 namespace SportSys.Database.Migrations
 {
     [DbContext(typeof(SportSysDbContext))]
-    [Migration("20260630134143_AddItemKind")]
-    partial class AddItemKind
+    [Migration("20260721162632_AddInventory")]
+    partial class AddInventory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1518,7 +1518,7 @@ namespace SportSys.Database.Migrations
                     b.ToTable("Equipment", "inventory", t =>
                         {
                             t.Property("ItemKindId")
-                                .HasColumnName("ItemKindId");
+                                .HasColumnName("ItemKind_Id");
                         });
                 });
 

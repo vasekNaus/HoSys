@@ -17,14 +17,10 @@ public class EditModel : PageModel
     [BindProperty]
     public Location Input { get; set; } = new();
 
-    public List<LocationSelectItem> ParentLocations { get; set; } = [];
-
     public bool IsNew => Input.Id == 0;
 
     public async Task<IActionResult> OnGetAsync(int? id, CancellationToken ct)
     {
-        ParentLocations = await _service.GetSelectListAsync(excludeId: id, ct);
-
         if (id is null) return Page();
 
         var model = await _service.GetByIdAsync(id.Value, ct);
@@ -38,8 +34,6 @@ public class EditModel : PageModel
     {
         if (!ModelState.IsValid)
         {
-            ParentLocations = await _service.GetSelectListAsync(
-                excludeId: Input.Id == 0 ? null : Input.Id, ct);
             return Page();
         }
 

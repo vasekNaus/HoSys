@@ -68,9 +68,8 @@ public class SportSysDbContext : IdentityDbContext<User, Role, int, UserClaim, U
   // dbo – sdílené entity
   public virtual DbSet<Manufacturer> Manufacturers { get; set; }
 
-  public virtual DbSet<Location> Locations { get; set; }
-
   // inventory – lookup
+  public virtual DbSet<Location> Locations { get; set; }
   public virtual DbSet<Category> InventoryCategories { get; set; }
 
   public virtual DbSet<ItemKind> InventoryItemKinds { get; set; }

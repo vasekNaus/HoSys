@@ -45,7 +45,6 @@ else
         <thead>
             <tr>
                 <th>Název</th>
-                <th>Nadřazené umístění</th>
                 <th>Aktivní</th>
                 <th></th>
             </tr>
@@ -55,7 +54,6 @@ else
             {
                 <tr>
                     <td>@loc.Name</td>
-                    <td>@(loc.ParentLocationName ?? "—")</td>
                     <td>
                         @if (loc.IsActive)
                         {
