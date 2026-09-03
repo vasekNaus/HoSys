@@ -96,6 +96,11 @@ $FontFamily:    'Segoe UI', Arial, Helvetica, sans-serif;
 
   // Překryvy
   --color-overlay: rgba(8, 9, 32, .50);
+
+  // Rozvrh tréninků
+  --color-schedule-row-odd:             var(--color-surface-1);
+  --color-schedule-row-even:            var(--color-surface-2);
+  --color-schedule-row-weekend-overlay: var(--color-brand-secondary-subtle);
 }
 
 // =================================================================
@@ -161,6 +166,10 @@ $FontFamily:    'Segoe UI', Arial, Helvetica, sans-serif;
   --shadow-lg:    0 10px 20px rgba(0, 0, 0, .50), 0 4px 8px rgba(0, 0, 0, .30);
   --shadow-brand: 0 4px 20px rgba(216, 35, 42, .35);
   --color-overlay: rgba(0, 0, 0, .70);
+
+  --color-schedule-row-odd:             var(--color-surface-1);
+  --color-schedule-row-even:            var(--color-surface-2);
+  --color-schedule-row-weekend-overlay: var(--color-brand-secondary-subtle);
 }
 
 // Automatické přepnutí dle OS preference (bez JS)
@@ -209,5 +218,8 @@ $FontFamily:    'Segoe UI', Arial, Helvetica, sans-serif;
     --shadow-md:    0 4px 8px rgba(0, 0, 0, .40), 0 2px 4px rgba(0, 0, 0, .30);
     --shadow-brand: 0 4px 20px rgba(216, 35, 42, .35);
     --color-overlay: rgba(0, 0, 0, .70);
+    --color-schedule-row-odd:             var(--color-surface-1);
+    --color-schedule-row-even:            var(--color-surface-2);
+    --color-schedule-row-weekend-overlay: var(--color-brand-secondary-subtle);
   }
 }

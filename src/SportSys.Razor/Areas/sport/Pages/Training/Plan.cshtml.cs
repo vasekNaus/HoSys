@@ -93,9 +93,12 @@ public class PlanModel : PageModel
             .ToDictionary(g => g.Key, g => g.Cast<ITrainingScheduleItem>().ToList());
 
         var rows = WeekDays
-            .Select(day => new TrainingScheduleRow
+            .Select((day, index) => new TrainingScheduleRow
             {
                 PrimaryLabel = FormatDayOfWeek(day),
+                Parity = index % 2 == 0
+                    ? TrainingScheduleRowParity.Odd
+                    : TrainingScheduleRowParity.Even,
                 IsWeekend = day is DayOfWeek.Saturday or DayOfWeek.Sunday,
                 Items = byDay.GetValueOrDefault(day) ?? [],
             })

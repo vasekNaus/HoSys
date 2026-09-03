@@ -37,6 +37,12 @@ Komponenta pouze vykresluje předaná data. Zajišťuje časové markery, dynami
 rozsah osy, rozdělení překryvů do lanes, barvy kategorií a bezpečně HTML
 enkódované tooltipy. Data načítají PageModely přes `TrainingScheduleService`.
 
+PageModel určuje typovanou paritu každého řádku. Schedule ji odvozuje z čísla
+dne v měsíci, takže zůstává stabilní i při změně začátku intervalu. Plan ji
+odvozuje z pořadí pondělí až neděle, kde pondělí je liché a úterý sudé.
+ViewComponent převádí paritu na CSS variantu řádku a kombinuje ji s nezávislým
+víkendovým zvýrazněním.
+
 ### Filtry Schedule
 
 - aktivní sezóna,

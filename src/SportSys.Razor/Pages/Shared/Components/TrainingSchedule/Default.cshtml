@@ -27,7 +27,13 @@
 
     @foreach (var row in Model.Rows)
     {
-        <div class="schedule-row @(row.IsWeekend ? "schedule-row--weekend" : null)">
+        var parityClass = row.Parity switch
+        {
+            SportSys.Razor.Models.TrainingSchedule.TrainingScheduleRowParity.Odd => "schedule-row--odd",
+            SportSys.Razor.Models.TrainingSchedule.TrainingScheduleRowParity.Even => "schedule-row--even",
+            _ => throw new ArgumentOutOfRangeException(nameof(row.Parity), row.Parity, null),
+        };
+        <div class="schedule-row @parityClass @(row.IsWeekend ? "schedule-row--weekend" : null)">
             <div class="schedule-date-col">
                 <span class="schedule-dow">@row.PrimaryLabel</span>
                 @if (!string.IsNullOrWhiteSpace(row.SecondaryLabel))

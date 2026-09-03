@@ -21,6 +21,7 @@ public class TrainingScheduleComponentModel
             {
                 PrimaryLabel = row.PrimaryLabel,
                 SecondaryLabel = row.SecondaryLabel,
+                Parity = row.Parity,
                 IsWeekend = row.IsWeekend,
                 Lanes = CreateLanes(row.Items),
             })
@@ -129,6 +130,7 @@ public class TrainingScheduleComponentRow
 {
     public required string PrimaryLabel { get; init; }
     public string? SecondaryLabel { get; init; }
+    public required TrainingScheduleRowParity Parity { get; init; }
     public bool IsWeekend { get; init; }
     public IReadOnlyList<IReadOnlyList<TrainingScheduleBlock>> Lanes { get; init; } = [];
 }
