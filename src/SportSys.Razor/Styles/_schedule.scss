@@ -145,8 +145,30 @@ $header-height:   1.75rem;
 
   &:last-child { border-bottom: none; }
 
-  &--weekend {
-    background-color: var(--color-brand-secondary-subtle);
+  &--odd {
+    background-color: var(--color-schedule-row-odd);
+  }
+
+  &--even {
+    background-color: var(--color-schedule-row-even);
+  }
+
+  &--odd.schedule-row--weekend {
+    background:
+      linear-gradient(
+        var(--color-schedule-row-weekend-overlay),
+        var(--color-schedule-row-weekend-overlay)
+      ),
+      var(--color-schedule-row-odd);
+  }
+
+  &--even.schedule-row--weekend {
+    background:
+      linear-gradient(
+        var(--color-schedule-row-weekend-overlay),
+        var(--color-schedule-row-weekend-overlay)
+      ),
+      var(--color-schedule-row-even);
   }
 }
 

@@ -80,6 +80,9 @@ public class ScheduleModel : PageModel
             {
                 PrimaryLabel = FormatDayOfWeek(date.DayOfWeek),
                 SecondaryLabel = date.ToString("d.M.", CultureInfo.InvariantCulture),
+                Parity = date.Day % 2 == 0
+                    ? TrainingScheduleRowParity.Even
+                    : TrainingScheduleRowParity.Odd,
                 IsWeekend = date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday,
                 Items = byDate.GetValueOrDefault(date) ?? [],
             });
