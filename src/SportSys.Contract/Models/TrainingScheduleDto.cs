@@ -19,6 +19,8 @@ public interface ITrainingScheduleItem
     TimeOnly TimeFrom { get; }
     TimeOnly TimeTo { get; }
     int? DurationMinutes { get; }
+    Guid? GroupId { get; }
+    int SeasonCategoryOrder { get; }
     string SeasonCategoryName { get; }
     string Location { get; }
     string TrainingTypeName { get; }
@@ -35,6 +37,8 @@ public class TrainingPlanScheduleItemDto : ITrainingScheduleItem
     public TimeOnly TimeFrom { get; set; }
     public TimeOnly TimeTo { get; set; }
     public int? DurationMinutes { get; set; }
+    public Guid? GroupId { get; set; }
+    public int SeasonCategoryOrder { get; set; }
     public string SeasonCategoryName { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
     public string TrainingTypeName { get; set; } = string.Empty;

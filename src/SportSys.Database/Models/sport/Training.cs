@@ -34,6 +34,8 @@ public partial class Training : SportEvent
 
   public virtual TrainingPlan? TrainingPlan { get; set; }
 
+  public virtual TrainingGroup? GroupMembership { get; set; }
+
   [DeleteBehavior(DeleteBehavior.ClientSetNull)]
   public virtual TrainingState TrainingState { get; set; } = null!;
 

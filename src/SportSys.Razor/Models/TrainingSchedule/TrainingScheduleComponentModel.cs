@@ -61,21 +61,16 @@ public class TrainingScheduleComponentModel
     {
         var lanes = new List<List<TrainingScheduleBlock>>();
 
-        foreach (var item in items.OrderBy(i => i.TimeFrom).ThenBy(i => i.TimeTo))
-        {
-            var block = new TrainingScheduleBlock
-            {
-                Item = item,
-                Left = GetLeft(item.TimeFrom),
-                Width = GetWidth(item.TimeFrom, item.TimeTo),
-                Color = CategoryColors.TryGetValue(item.SeasonCategoryName, out var color)
-                    ? color
-                    : "var(--color-text-muted)",
-                Tooltip = CreateTooltip(item),
-            };
+        var blocks = CreateBlocks(items)
+            .OrderBy(block => block.TimeFrom)
+            .ThenBy(block => block.TimeTo)
+            .ThenBy(block => block.SeasonCategoryOrder)
+            .ThenBy(block => block.MinimumItemId);
 
+        foreach (var block in blocks)
+        {
             var lane = lanes.FirstOrDefault(existing =>
-                existing.Count == 0 || existing[^1].Item.TimeTo <= item.TimeFrom);
+                existing.Count == 0 || existing[^1].TimeTo <= block.TimeFrom);
 
             if (lane is null)
             {
@@ -87,6 +82,49 @@ public class TrainingScheduleComponentModel
         }
 
         return lanes;
+    }
+
+    private IEnumerable<TrainingScheduleBlock> CreateBlocks(
+        IReadOnlyList<ITrainingScheduleItem> items)
+    {
+        foreach (var item in items.Where(item => item.GroupId is null))
+            yield return CreateBlock([item]);
+
+        foreach (var group in items
+            .Where(item => item.GroupId is not null)
+            .GroupBy(item => item.GroupId!.Value))
+        {
+            yield return CreateBlock(group);
+        }
+    }
+
+    private TrainingScheduleBlock CreateBlock(IEnumerable<ITrainingScheduleItem> sourceItems)
+    {
+        var items = sourceItems
+            .OrderBy(item => item.SeasonCategoryOrder)
+            .ThenBy(item => item.SeasonCategoryName, StringComparer.Ordinal)
+            .ThenBy(item => item.Id)
+            .ToList();
+
+        var primaryItem = items[0];
+        var timeFrom = items.Min(item => item.TimeFrom);
+        var timeTo = items.Max(item => item.TimeTo);
+
+        return new TrainingScheduleBlock
+        {
+            Items = items,
+            Title = string.Join(" + ", items.Select(item => item.SeasonCategoryName)),
+            TimeFrom = timeFrom,
+            TimeTo = timeTo,
+            SeasonCategoryOrder = primaryItem.SeasonCategoryOrder,
+            MinimumItemId = items.Min(item => item.Id),
+            Left = GetLeft(timeFrom),
+            Width = GetWidth(timeFrom, timeTo),
+            Color = CategoryColors.TryGetValue(primaryItem.SeasonCategoryName, out var color)
+                ? color
+                : "var(--color-text-muted)",
+            Tooltip = string.Join(" | ", items.Select(CreateTooltip)),
+        };
     }
 
     private double GetLeft(TimeOnly time)
@@ -137,7 +175,12 @@ public class TrainingScheduleComponentRow
 
 public class TrainingScheduleBlock
 {
-    public required ITrainingScheduleItem Item { get; init; }
+    public required IReadOnlyList<ITrainingScheduleItem> Items { get; init; }
+    public required string Title { get; init; }
+    public TimeOnly TimeFrom { get; init; }
+    public TimeOnly TimeTo { get; init; }
+    public int SeasonCategoryOrder { get; init; }
+    public int MinimumItemId { get; init; }
     public required string Color { get; init; }
     public required string Tooltip { get; init; }
     public double Left { get; init; }

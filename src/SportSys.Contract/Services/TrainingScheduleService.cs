@@ -83,6 +83,10 @@ public class TrainingScheduleService
                 TimeFrom = t.TimeFrom,
                 TimeTo = t.TimeTo,
                 DurationMinutes = t.DurationMinutes,
+                GroupId = t.GroupMembership == null
+                    ? null
+                    : t.GroupMembership.GroupId,
+                SeasonCategoryOrder = t.SeasonCategory.Order,
                 SeasonCategoryName = t.SeasonCategoryName,
                 Location = t.Location,
                 TrainingTypeName = t.TrainingType.Name,
@@ -120,6 +124,10 @@ public class TrainingScheduleService
                 TimeFrom = p.TimeFrom,
                 TimeTo = p.TimeTo,
                 DurationMinutes = p.DurationMinutes,
+                GroupId = p.GroupMembership == null
+                    ? null
+                    : p.GroupMembership.GroupId,
+                SeasonCategoryOrder = p.SeasonCategory.Order,
                 SeasonCategoryName = p.SeasonCategoryName,
                 Location = p.Location,
                 TrainingTypeName = p.TrainingType.Name,

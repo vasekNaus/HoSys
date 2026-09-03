@@ -37,6 +37,25 @@ Komponenta pouze vykresluje předaná data. Zajišťuje časové markery, dynami
 rozsah osy, rozdělení překryvů do lanes, barvy kategorií a bezpečně HTML
 enkódované tooltipy. Data načítají PageModely přes `TrainingScheduleService`.
 
+Spojené položky používají dvě nezávislé vazební tabulky. `sport.TrainingGroup`
+sdružuje pouze reálné tréninky a `sport.TrainingPlanGroup` pouze tréninkové
+plány. Více členských řádků se stejným `GroupId` tvoří skupinu; položka bez
+členského řádku zůstává samostatná. Shodná hodnota `GroupId` v obou tabulkách
+nevyjadřuje vzájemnou vazbu.
+
+Komponenta seskupuje položky pouze uvnitř aktuálního řádku a teprve potom
+rozděluje výsledné bloky do lanes. Titulek spojeného bloku obsahuje názvy všech
+kategorií oddělené ` + ` a seřazené podle `SeasonCategory.Order`, názvu
+kategorie a ID položky. Časový rozsah vede od nejčasnějšího začátku po
+nejpozdější konec; případná časová mezera mezi členy je tedy součástí
+společného bloku. Barvu určuje první kategorie a tooltip zachovává informace
+o všech členech oddělené ` | `. Nepropojené kolidující bloky zůstávají
+v samostatných lanes.
+
+Při materializaci více reálných tréninků z propojených plánů se pro vzniklé
+tréninky vytvoří nová skupina v `TrainingGroup`. Identifikátor skupiny z
+`TrainingPlanGroup` se mezi tabulkami nekopíruje.
+
 PageModel určuje typovanou paritu každého řádku. Schedule ji odvozuje z čísla
 dne v měsíci, takže zůstává stabilní i při změně začátku intervalu. Plan ji
 odvozuje z pořadí pondělí až neděle, kde pondělí je liché a úterý sudé.

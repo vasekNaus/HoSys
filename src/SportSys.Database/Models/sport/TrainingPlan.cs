@@ -53,6 +53,8 @@ public partial class TrainingPlan
 
     public virtual ICollection<Training> Training { get; set; } = new List<Training>();
 
+    public virtual TrainingPlanGroup? GroupMembership { get; set; }
+
     [DeleteBehavior(DeleteBehavior.ClientSetNull)]
     public virtual TrainingPhase TrainingPhase { get; set; } = null!;
 

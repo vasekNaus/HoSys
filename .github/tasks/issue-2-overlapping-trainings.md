@@ -1,6 +1,6 @@
 # Implementační plán: #2 Zachování zobrazení překrývajících se tréninků
 
-**Stav:** Připraveno k implementaci.
+**Stav:** Implementováno a ověřeno.
 
 ## Kontext
 
@@ -23,7 +23,10 @@ Změna se týká obou stránek:
   - nepřekrývající se položky zůstávají ve stejném lane.
 - Lane algoritmus musí podporovat libovolný počet současných kolizí, ne pouze dvě.
 - Explicitně spojené položky se v rámci jednoho dne vykreslí jako jeden blok.
-- Spojení podporuje libovolný počet reálných tréninků i tréninkových plánů.
+- Spojení podporuje libovolný počet položek stejného typu:
+  - reálné tréninky lze spojovat pouze s dalšími `Training`,
+  - tréninkové plány lze spojovat pouze s dalšími `TrainingPlan`,
+  - `Training` a `TrainingPlan` se nikdy nestávají členy stejné skupiny.
 - Viditelný titulek spojeného bloku vznikne spojením názvů kategorií znakem `+`.
 - Opakované názvy se neodstraňují; každý člen skupiny přispěje jednou částí.
 - Části titulku se řadí podle `SeasonCategory.Order`, následně podle názvu
@@ -42,63 +45,84 @@ Změna se týká obou stránek:
 
 ## Datový návrh
 
-Použít sdílenou entitu `TrainingGroup` v databázovém schématu `sport`.
+Použít dvě nezávislé vazební tabulky v databázovém schématu `sport`.
+Samostatná hlavičková tabulka skupiny ani společná skupina pro oba typy položek
+nevznikne.
 
 ```text
 sport.TrainingGroup
-└── Id
+├── GroupId uniqueidentifier
+└── TrainingId int → sport.Training.Id
 
-sport.Training
-└── TrainingGroupId NULL → sport.TrainingGroup.Id
+PK  (GroupId, TrainingId)
+UQ  (TrainingId)
 
-sport.TrainingPlan
-└── TrainingGroupId NULL → sport.TrainingGroup.Id
+sport.TrainingPlanGroup
+├── GroupId uniqueidentifier
+└── TrainingPlanId int → sport.TrainingPlan.Id
+
+PK  (GroupId, TrainingPlanId)
+UQ  (TrainingPlanId)
 ```
+
+`GroupId` je logický identifikátor skupiny generovaný aplikací. Více řádků se
+stejným `GroupId` tvoří jednu skupinu. Unikátní index na ID člena zajišťuje, že
+jedna položka může patřit nejvýše do jedné skupiny. Položka bez řádku ve vazební
+tabulce je samostatná.
 
 Tento model umožní:
 
-- přiřadit libovolný počet položek ke stejné skupině,
+- spojit libovolný počet reálných tréninků přes `TrainingGroup`,
+- spojit libovolný počet tréninkových plánů přes `TrainingPlanGroup`,
 - ponechat nespojené položky bez pomocných záznamů,
-- použít stejné group ID pro odpovídající plán i reálné tréninky,
-- zachovat skutečné FK na obou typech položek bez polymorfní vazební tabulky.
+- vynutit oddělené skupiny pro `Training` a `TrainingPlan`,
+- odstranit skupinu smazáním jejích vazebních řádků bez smazání tréninků nebo
+  plánů.
 
-Smazání `TrainingGroup` pouze nastaví FK členů na `NULL`; nesmí odstranit
-tréninky ani plány.
+Při smazání `Training` nebo `TrainingPlan` se smaže pouze jeho vazební řádek.
+Prázdná skupina fyzicky neexistuje, protože skupinu reprezentují přímo její
+členské řádky.
 
-## Fáze 1: EF Core model skupiny
+## Fáze 1: EF Core model vazebních tabulek
 
 Upravit projekt `src/SportSys.Database`.
 
-1. Vytvořit:
-
-   `Models/Sport/TrainingGroup.cs`
-
-   Entita musí obsahovat:
+1. Vytvořit `Models/Sport/TrainingGroup.cs` jako vazební entitu:
 
    - `[Table(nameof(TrainingGroup), Schema = Schemas.Sport)]`,
-   - primární klíč `Id`,
-   - kolekce `Trainings` a `TrainingPlans`.
+   - složený primární klíč `GroupId + TrainingId`,
+   - `Guid GroupId`,
+   - `int TrainingId`,
+   - povinnou navigaci `Training`,
+   - unikátní index `UX_TrainingGroup_TrainingId`,
+   - delete behavior `Cascade` z `Training` pouze na vazební řádek.
 
-2. Rozšířit `Models/Sport/Training.cs`:
+2. Vytvořit `Models/Sport/TrainingPlanGroup.cs` stejným vzorem:
 
-   - nullable `TrainingGroupId`,
-   - nullable navigaci `TrainingGroup`,
-   - explicitní index `IX_Training_TrainingGroupId`,
-   - delete behavior `SetNull`.
+   - `[Table(nameof(TrainingPlanGroup), Schema = Schemas.Sport)]`,
+   - složený primární klíč `GroupId + TrainingPlanId`,
+   - `Guid GroupId`,
+   - `int TrainingPlanId`,
+   - povinnou navigaci `TrainingPlan`,
+   - unikátní index `UX_TrainingPlanGroup_TrainingPlanId`,
+   - delete behavior `Cascade` z `TrainingPlan` pouze na vazební řádek.
 
-3. Stejně rozšířit `Models/Sport/TrainingPlan.cs`.
-   Index se bude jmenovat `IX_TrainingPlan_TrainingGroupId`.
+3. Rozšířit `Models/Sport/Training.cs` o nullable referenční navigaci na jeho
+   jediný vazební řádek. `Training` nebude obsahovat sloupec `GroupId`.
 
-4. Přidat `DbSet<TrainingGroup>` do:
+4. Stejně rozšířit `Models/Sport/TrainingPlan.cs`. Ani `TrainingPlan` nebude
+   obsahovat sloupec `GroupId`.
+
+5. Přidat `DbSet<TrainingGroup>` a `DbSet<TrainingPlanGroup>` do:
 
    `Context/SportSysDbContext.cs`.
 
-5. Nepřidávat Fluent API konfiguraci, pokud nebude potřeba vyjádřit pravidlo,
+6. Nepřidávat Fluent API konfiguraci, pokud nebude potřeba vyjádřit pravidlo,
    které nelze zapsat atributem.
 
-6. Nepřidávat `HasColumnName`; pojmenování FK zajistí Apollo `IdConvention()`.
+7. Nepřidávat `HasColumnName`; pojmenování FK zajistí Apollo `IdConvention()`.
 
-7. Nevytvářet ani neupravovat EF Core migraci. Migraci vytvoří uživatel.
+8. Nevytvářet ani neupravovat EF Core migraci. Migraci vytvoří uživatel.
 
 ## Fáze 2: Datový kontrakt pro seskupování
 
@@ -109,15 +133,20 @@ Upravit:
 Rozšířit `ITrainingScheduleItem` a jeho implementace o:
 
 ```csharp
-int? TrainingGroupId { get; }
+Guid? GroupId { get; }
 int SeasonCategoryOrder { get; }
 ```
 
 Význam:
 
-- `TrainingGroupId == null` znamená samostatný blok,
+- `GroupId == null` znamená samostatný blok,
 - shodné nenulové ID označuje členy jednoho spojeného bloku,
 - `SeasonCategoryOrder` určuje pořadí částí výsledného titulku a primární barvu.
+
+`GroupId` má společný prezentační název pouze proto, aby sdílená komponenta
+pracovala se stejným kontraktem. U reálných tréninků pochází z
+`TrainingGroup`, u plánů z `TrainingPlanGroup`; skupiny se mezi těmito tabulkami
+nesdílejí.
 
 Do Contract DTO se nepřenáší EF navigace ani databázové entity.
 
@@ -127,17 +156,19 @@ Upravit:
 
 `src/SportSys.Contract/Services/TrainingScheduleService.cs`
 
-V obou projekcích doplnit:
+V obou projekcích doplnit načtení ID z příslušné vazební tabulky:
 
 ```csharp
-TrainingGroupId = entity.TrainingGroupId;
+GroupId = entity.GroupMembership == null
+    ? null
+    : entity.GroupMembership.GroupId;
 SeasonCategoryOrder = entity.SeasonCategory.Order;
 ```
 
 Konkrétně:
 
-1. `GetTrainingsAsync` přenese skupinu reálného tréninku.
-2. `GetTrainingPlansAsync` přenese skupinu tréninkového plánu.
+1. `GetTrainingsAsync` přenese `GroupId` z `TrainingGroup`.
+2. `GetTrainingPlansAsync` přenese `GroupId` z `TrainingPlanGroup`.
 3. Stávající databázové filtry a řazení zůstanou zachovány.
 4. Služba nebude vytvářet prezentační bloky ani lanes.
 
@@ -150,8 +181,8 @@ Upravit:
 Před rozdělením do lanes převést položky řádku na interní
 `TrainingScheduleBlock`:
 
-1. Položku bez `TrainingGroupId` převést na samostatný blok.
-2. Položky se shodným nenulovým `TrainingGroupId` seskupit do jednoho bloku.
+1. Položku bez `GroupId` převést na samostatný blok.
+2. Položky se shodným nenulovým `GroupId` seskupit do jednoho bloku.
 3. Členy skupiny seřadit podle:
    - `SeasonCategoryOrder`,
    - `SeasonCategoryName`,
@@ -226,11 +257,16 @@ se sestaví jako obyčejný text a nesmí používat `Html.Raw`.
 
 Při všech budoucích zápisech platí:
 
-- jedna položka může mít nejvýše jedno `TrainingGroupId`,
-- skupina může obsahovat libovolný počet položek,
-- při zrušení spojení posledního člena lze prázdnou `TrainingGroup` odstranit,
-- materializuje-li se reálný `Training` z `TrainingPlan`, převezme
-  `TrainingGroupId` plánu,
+- jedna položka může mít nejvýše jeden členský řádek díky unikátnímu indexu,
+- skupina může obsahovat libovolný počet položek stejného typu,
+- spojení skupiny vznikne vložením nejméně dvou řádků se stejným novým
+  `GroupId`,
+- zrušení spojení znamená smazání příslušných vazebních řádků,
+- skupiny `TrainingGroup` a `TrainingPlanGroup` jsou nezávislé; shodná hodnota
+  `GroupId` v obou tabulkách nevyjadřuje vazbu mezi plánem a tréninkem,
+- materializuje-li se více reálných `Training` z propojených `TrainingPlan`,
+  musí zápis pro vzniklé tréninky vytvořit novou skupinu v `TrainingGroup`;
+  `GroupId` z `TrainingPlanGroup` se nekopíruje napříč tabulkami,
 - připojení položek z různých řádků nezpůsobí jejich sloučení napříč daty;
   komponenta je vždy seskupuje pouze uvnitř aktuálního řádku.
 
@@ -246,12 +282,13 @@ Aktualizovat:
 
 Doplnit:
 
-- význam `TrainingGroup`,
-- společné použití pro Schedule a Plan,
+- význam vazebních tabulek `TrainingGroup` a `TrainingPlanGroup`,
+- jejich oddělené použití pro Schedule a Plan,
 - pravidla sestavení titulku a časového rozsahu,
 - pořadí seskupení před lane algoritmem,
 - zachování samostatných lanes pro nepropojené kolize,
-- pravidlo převzetí group ID při materializaci plánu.
+- pravidlo vytvoření nové skupiny reálných tréninků při materializaci
+  propojených plánů.
 
 Po dokončení změnit stav tohoto plánu na implementováno a ověřeno.
 
@@ -277,6 +314,7 @@ Po dokončení změnit stav tohoto plánu na implementováno a ověřeno.
    | Spojená skupina kolidující se samostatnou položkou | Dva lanes |
    | Dvě spojené skupiny ve vzájemné kolizi | Dva lanes |
    | Stejné group ID ve dvou datech | Jeden blok v každém dni |
+   | Shodné group ID v obou vazebních tabulkách | Žádné propojení mezi Plan a Schedule |
    | Prázdný den | Jeden prázdný track jako dosud |
 
 3. U spojeného bloku ověřit:
@@ -308,4 +346,5 @@ Po dokončení změnit stav tohoto plánu na implementováno a ověřeno.
 - změna filtrů Schedule nebo Plan,
 - změna barevné palety kategorií,
 - editace nebo vytvoření EF Core migrace,
+- společné skupiny obsahující současně `Training` i `TrainingPlan`,
 - skupiny zápasů nebo jiných typů `SportEvent`.
